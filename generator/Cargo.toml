@@ -1,0 +1,9 @@
+[package]
+name = "pest_generator"
+version = "0.1.0"
+authors = ["Dragoș Tiselice <dragostiselice@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+proc-macro2 = "0.4"
+quote = "0.6"

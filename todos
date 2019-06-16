@@ -1,0 +1,14 @@
+x insensitive strings
+x raw strings
+x ^ syntax
+x optional braces
+x optional trailing commas
+x optional leading choice op
+- parse expressions
+- use internal Spans
+- implement old validators
+- add new module-level validator
+- implement name resolution
+- implement HIR
+- implement LIR
+- mitigate exponential "(" - s? - s? ")"

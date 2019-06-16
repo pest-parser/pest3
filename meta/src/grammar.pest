@@ -1,0 +1,117 @@
+// pest. The Elegant Parser
+// Copyright (c) 2019 Dragoș Tiselice
+//
+// Licensed under the Apache License, Version 2.0
+// <LICENSE-APACHE or http://www.apache.org/licenses/LICENSE-2.0> or the MIT
+// license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+// option. All files in the project carrying such notice may not be copied,
+// modified, or distributed except according to those terms.
+
+grammar_rules = _{
+	SOI ~ import* ~ grammar_rule ~ (import | grammar_rule)* ~ EOI
+}
+
+import = { "use" ~ string ~ ("as" ~ identifier)? }
+
+grammar_rule = {
+    (identifier | overridable_operator) ~ arguments? ~
+    assignment_operator ~ modifier? ~
+    (
+        opening_brace ~ expression ~ closing_brace |
+        expression
+    )
+}
+
+assignment_operator  = { "=" }
+trivia_opening_brace = { "~{" }
+opening_brace        = { "{" }
+closing_brace        = { "}" }
+opening_paren        = { "(" }
+closing_paren        = { ")" }
+opening_brack        = { "[" }
+closing_brack        = { "]" }
+
+arguments = { opening_paren ~ identifier ~ (comma ~ identifier)* ~ comma? ~ closing_paren }
+
+modifier = _{
+    silent_modifier |
+    atomic_modifier |
+    non_atomic_modifier
+}
+
+silent_modifier     = { "_" }
+atomic_modifier     = { "@" }
+non_atomic_modifier = { "!" }
+
+expression =  {
+    (choice_operator? ~ term ~ choice_operator)? ~
+    term ~ (infix_operator ~ term)*
+}
+term       =  { prefix_operator* ~ node ~ postfix_operator* }
+node       = _{ opening_paren ~ expression ~ closing_paren | terminal }
+terminal   = _{ string | raw_string | insensitive_string | path | range }
+
+overridable_operator = _{ tilde_operator | caret_operator }
+prefix_operator      = _{ positive_predicate_operator | negative_predicate_operator }
+infix_operator       = _{ sequence_operator | tilde_operator | caret_operator | choice_operator }
+postfix_operator     = _{
+    optional_operator |
+    overridable_operator? ~ (
+        repeat_operator |
+        repeat_once_operator |
+        bounded_repeat
+    )
+}
+
+positive_predicate_operator = { "&" }
+negative_predicate_operator = { "!" }
+sequence_operator           = { "-" }
+choice_operator             = { "|" }
+optional_operator           = { "?" }
+repeat_operator             = { "*" }
+repeat_once_operator        = { "+" }
+tilde_operator              = { "~" }
+caret_operator              = { "^" }
+range_operator              = { ".." }
+
+bounded_repeat = { opening_brace ~ ((number? ~ range_operator ~ number?) | number) ~ closing_brace }
+
+number  = @{ "0" | '1'..'9' ~ '0'..'9'* }
+integer = @{ ("+" | "-")? ~ number }
+
+comma = { "," }
+
+path  = { identifier ~ (ancestry_operator ~ identifier)* ~ (call | slice)? }
+call  = { opening_paren ~ expression ~ (comma ~ expression)* ~ comma? ~ closing_paren }
+slice = { opening_brack ~ integer? ~ range_operator ~ integer? ~ closing_brack }
+
+ancestry_operator = { "::" }
+
+identifier = @{ ("_" | alpha) ~ ("_" | alpha_num)* }
+alpha      = _{ 'a'..'z' | 'A'..'Z' }
+alpha_num  = _{ alpha | '0'..'9' }
+
+raw_string    = ${ "r" ~ PUSH(pound*) ~ quote ~ inner_raw_str ~ quote ~ POP }
+inner_raw_str =  { (!("\"" ~ PEEK) ~ ANY)* }
+
+string             = ${ quote ~ inner_str ~ quote }
+insensitive_string = ${ "i" ~ string }
+range              =  { character ~ range_operator ~ character }
+character          = ${ single_quote ~ inner_chr ~ single_quote }
+
+inner_str = @{ (!("\"" | "\\") ~ ANY)* ~ (escape ~ inner_str)? }
+inner_chr = @{ escape | ANY }
+escape    = @{ "\\" ~ ("\"" | "\\" | "r" | "n" | "t" | "0" | "'" | code | unicode) }
+code      = @{ "x" ~ hex_digit{2} }
+unicode   = @{ "u" ~ opening_brace ~ hex_digit{1, 6} ~ closing_brace }
+hex_digit = @{ '0'..'9' | 'a'..'f' | 'A'..'F' }
+
+quote          = { "\"" }
+single_quote   = { "'" }
+pound          = { "#" }
+
+newline    = _{ "\n" | "\r\n" }
+WHITESPACE = _{ " " | "\t" | newline }
+
+block_comment = _{ "/*" ~ (block_comment | !"*/" ~ ANY)* ~ "*/" }
+COMMENT       = _{ block_comment | ("//" ~ (!newline ~ ANY)*) }
