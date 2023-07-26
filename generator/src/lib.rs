@@ -4,14 +4,14 @@ mod state_builder;
 struct State<'i> {
     input: &'i [u8],
     index: usize,
-    result: bool
+    result: bool,
 }
 
 macro_rules! peek {
     ( $state:expr, $callback:expr ) => {
         match $state.input.get($state.index) {
             Some(&val) => val,
-            None => return $callback($state)
+            None => return $callback($state),
         }
     };
 }
@@ -24,7 +24,7 @@ macro_rules! pop {
                 $state.index += 1;
                 val
             }
-            None => return $callback($state)
+            None => return $callback($state),
         }
     };
 }
@@ -34,7 +34,7 @@ impl<'i> State<'i> {
         Self {
             input: input.as_bytes(),
             index: 0,
-            result: true
+            result: true,
         }
     }
 

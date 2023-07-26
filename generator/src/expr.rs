@@ -13,5 +13,5 @@ pub enum Expr {
     Seq(Box<Expr>, Box<Expr>),
     Choice(Box<Expr>, Box<Expr>),
     Rep(Box<Expr>),
-    Pred(Box<Expr>, bool)
+    Pred(Box<Expr>, bool),
 }

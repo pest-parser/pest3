@@ -1,35 +1,20 @@
+#![allow(clippy::result_large_err)]
 use std::{
     char,
     fs::File,
     io::Read,
     mem,
-    ops::{
-        Bound,
-        RangeBounds
-    },
-    path::{
-        Path,
-        PathBuf
-    },
+    ops::{Bound, RangeBounds},
+    path::{Path, PathBuf},
     rc::Rc,
-    str::FromStr
+    str::FromStr,
 };
 
 use pest::{
-    error::{
-        Error,
-        ErrorVariant
-    },
-    iterators::{
-        Pair,
-        Pairs
-    },
+    error::{Error, ErrorVariant},
+    iterators::{Pair, Pairs},
+    pratt_parser::{Assoc, Op, PrattParser},
     Parser,
-    prec_climber::{
-        Assoc,
-        Operator,
-        PrecClimber
-    }
 };
 
 mod grammar {
@@ -47,14 +32,14 @@ pub enum Modifier {
     Normal,
     Silent,
     Atomic,
-    NonAtomic
+    NonAtomic,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Span {
     pub path: Rc<PathBuf>,
     pub start: usize,
-    pub end: usize
+    pub end: usize,
 }
 
 impl Span {
@@ -62,7 +47,7 @@ impl Span {
         Span {
             path: Rc::clone(&self.path),
             start,
-            end: self.end
+            end: self.end,
         }
     }
 
@@ -70,7 +55,7 @@ impl Span {
         Span {
             path: Rc::clone(&self.path),
             start: self.start,
-            end
+            end,
         }
     }
 
@@ -78,7 +63,7 @@ impl Span {
         Span {
             path: Rc::clone(&self.path),
             start,
-            end
+            end,
         }
     }
 
@@ -90,7 +75,7 @@ impl Span {
         Span {
             path: Rc::clone(&self.path),
             start: self.start,
-            end: other.end
+            end: other.end,
         }
     }
 }
@@ -98,7 +83,7 @@ impl Span {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Range<T> {
     pub start: Option<T>,
-    pub end: Option<T>
+    pub end: Option<T>,
 }
 
 impl<T: Copy> Range<T> {
@@ -106,13 +91,13 @@ impl<T: Copy> Range<T> {
         let start = match range.start_bound() {
             Bound::Included(start) => Some(*start),
             Bound::Unbounded => None,
-            _ => unimplemented!()
+            _ => unimplemented!(),
         };
 
         let end = match range.end_bound() {
             Bound::Excluded(end) => Some(*end),
             Bound::Unbounded => None,
-            _ => unimplemented!()
+            _ => unimplemented!(),
         };
 
         Range { start, end }
@@ -125,19 +110,19 @@ pub struct ParseRule {
     pub args: Vec<String>,
     pub modifier: Modifier,
     pub span: Span,
-    pub node: ParseNode
+    pub node: ParseNode,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ParseNode {
     pub expr: ParseExpr,
-    pub span: Span
+    pub span: Span,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum PathArgs {
     Call(Vec<ParseNode>),
-    Slice(Range<isize>)
+    Slice(Range<isize>),
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -154,26 +139,25 @@ pub enum ParseExpr {
     Rep(Box<ParseNode>),
     RepOnce(Box<ParseNode>),
     RepRange(Box<ParseNode>, Range<usize>),
-    Separated(Box<ParseNode>, char)
+    Separated(Box<ParseNode>, char),
 }
 
 fn skip(rule: Rule, pairs: &mut Pairs<Rule>) {
     if let Some(current_rule) = pairs.peek().map(|pair| pair.as_rule()) {
         if current_rule == rule {
-            pairs.next().expect(&format!("expected {:?}", rule));
+            pairs
+                .next()
+                .unwrap_or_else(|| panic!("expected {:?}", rule));
         }
     }
 }
 
-pub fn parse<P: AsRef<Path>>(
-    input: &str,
-    root: &P
-) -> Result<Vec<ParseRule>, Error<Rule>> {
+pub fn parse<P: AsRef<Path>>(input: &str, root: &P) -> Result<Vec<ParseRule>, Error<Rule>> {
     fn parse<P: AsRef<Path>>(
         input: &str,
         root: &P,
         rules: &mut Vec<ParseRule>,
-        module: Option<&str>
+        module: Option<&str>,
     ) -> Result<(), Error<Rule>> {
         let pairs = grammar::Parser::parse(Rule::grammar_rules, input)?;
 
@@ -197,14 +181,12 @@ pub fn parse<P: AsRef<Path>>(
                         let mut input = String::new();
 
                         if file.read_to_string(&mut input).is_err() {
-                            return Err(
-                                Error::new_from_span(
-                                    ErrorVariant::CustomError {
-                                        message: format!("cannot read from '{}'", path_string)
-                                    },
-                                    path_pair.as_span()
-                                )
-                            );
+                            return Err(Error::new_from_span(
+                                ErrorVariant::CustomError {
+                                    message: format!("cannot read from '{}'", path_string),
+                                },
+                                path_pair.as_span(),
+                            ));
                         }
 
                         let mut is_aliased = false;
@@ -218,14 +200,9 @@ pub fn parse<P: AsRef<Path>>(
                                         &input,
                                         &root,
                                         rules,
-                                        Some(&format!("{}::{}", module, pair.as_str()))
+                                        Some(&format!("{}::{}", module, pair.as_str())),
                                     )?,
-                                    None => parse(
-                                        &input,
-                                        &root,
-                                        rules,
-                                        Some(pair.as_str())
-                                    )?
+                                    None => parse(&input, &root, rules, Some(pair.as_str()))?,
                                 };
                             }
                         }
@@ -234,20 +211,18 @@ pub fn parse<P: AsRef<Path>>(
                             parse(&input, &root, rules, module)?;
                         }
                     } else {
-                        return Err(
-                            Error::new_from_span(
-                                ErrorVariant::CustomError {
-                                    message: format!("cannot open '{}'", path_string)
-                                },
-                                path_pair.as_span()
-                            )
-                        );
+                        return Err(Error::new_from_span(
+                            ErrorVariant::CustomError {
+                                message: format!("cannot open '{}'", path_string),
+                            },
+                            path_pair.as_span(),
+                        ));
                     }
                 }
                 Rule::grammar_rule => {
                     rules.push(parse_rule(pair, root.as_ref().to_path_buf())?);
                 }
-                _ => ()
+                _ => (),
             }
         }
 
@@ -266,17 +241,19 @@ fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>>
     let span = Span {
         path: Rc::new(path),
         start: span.start(),
-        end: span.end()
+        end: span.end(),
     };
 
     let mut pairs = rule.into_inner();
 
-    let name = pairs.next()
+    let name = pairs
+        .next()
         .expect("expected Rule::identifier")
         .as_str()
         .to_string();
 
-    let args: Vec<_> = pairs.next()
+    let args: Vec<_> = pairs
+        .next()
         .unwrap()
         .into_inner()
         .filter(|pair| pair.as_rule() == Rule::identifier)
@@ -287,7 +264,7 @@ fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>>
         Rule::silent_modifier => Modifier::Silent,
         Rule::atomic_modifier => Modifier::Atomic,
         Rule::non_atomic_modifier => Modifier::NonAtomic,
-        _ => Modifier::Normal
+        _ => Modifier::Normal,
     };
 
     if modifier != Modifier::Normal {
@@ -296,23 +273,20 @@ fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>>
 
     skip(Rule::opening_brace, &mut pairs);
 
-    let climber = PrecClimber::new(vec![
-        Operator::new(Rule::choice_operator, Assoc::Right),
-        Operator::new(Rule::sequence_operator, Assoc::Right) |
-        Operator::new(Rule::tilde_operator, Assoc::Right) |
-        Operator::new(Rule::caret_operator, Assoc::Right)
-    ]);
-    let node = parse_node(pairs.next().unwrap(), &span, &climber)?;
+    let pratt_parser = PrattParser::new()
+        .op(Op::infix(Rule::choice_operator, Assoc::Right))
+        .op(Op::infix(Rule::sequence_operator, Assoc::Right)
+            | Op::infix(Rule::tilde_operator, Assoc::Right)
+            | Op::infix(Rule::caret_operator, Assoc::Right));
+    let node = parse_node(pairs.next().unwrap(), &span, &pratt_parser)?;
 
-    Ok(
-        ParseRule {
-            name,
-            args,
-            modifier,
-            span,
-            node
-        }
-    )
+    Ok(ParseRule {
+        name,
+        args,
+        modifier,
+        span,
+        node,
+    })
 }
 
 fn parse_prefix(pair: Pair<Rule>, child: ParseNode) -> ParseNode {
@@ -320,7 +294,7 @@ fn parse_prefix(pair: Pair<Rule>, child: ParseNode) -> ParseNode {
     let expr = match pair.as_rule() {
         Rule::positive_predicate_operator => ParseExpr::PosPred(Box::new(child)),
         Rule::negative_predicate_operator => ParseExpr::NegPred(Box::new(child)),
-        _ => unreachable!()
+        _ => unreachable!(),
     };
 
     ParseNode { expr, span }
@@ -329,7 +303,7 @@ fn parse_prefix(pair: Pair<Rule>, child: ParseNode) -> ParseNode {
 fn parse_path(
     pair: Pair<Rule>,
     span: &Span,
-    climber: &PrecClimber<Rule>
+    pratt_parser: &PrattParser<Rule>,
 ) -> Result<ParseNode, Error<Rule>> {
     let span = span.from_pest(pair.as_span());
     let mut path = vec![];
@@ -350,14 +324,14 @@ fn parse_path(
                 pairs.next().unwrap(); // opening_paren
 
                 while let Some(Rule::expression) = pairs.peek().map(|pair| pair.as_rule()) {
-                    args.push(parse_node(pairs.next().unwrap(), &span, climber)?);
+                    args.push(parse_node(pairs.next().unwrap(), &span, pratt_parser)?);
                     skip(Rule::comma, &mut pairs);
                 }
 
                 Some(PathArgs::Call(args))
             }
             Rule::slice => Some(PathArgs::Slice(parse_range(&mut pair.into_inner())?)),
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     } else {
         None
@@ -370,14 +344,12 @@ fn parse_path(
 
 fn parse_string(pair: Pair<Rule>, span: &Span) -> Result<ParseNode, Error<Rule>> {
     let string = pair.as_str();
-    let content = unescape(&string[1..string.len() - 1]).ok_or(
-        Error::new_from_span(
-            ErrorVariant::CustomError {
-                message: "incorrect string literal".to_string()
-            },
-            pair.as_span()
-        )
-    )?;
+    let content = unescape(&string[1..string.len() - 1]).ok_or(Error::new_from_span(
+        ErrorVariant::CustomError {
+            message: "incorrect string literal".to_string(),
+        },
+        pair.as_span(),
+    ))?;
 
     let expr = ParseExpr::Str(content.to_owned());
     let span = span.from_pest(pair.as_span());
@@ -399,14 +371,12 @@ fn parse_raw_string(pair: Pair<Rule>, span: &Span) -> ParseNode {
 
 fn parse_insensitive_string(pair: Pair<Rule>, span: &Span) -> Result<ParseNode, Error<Rule>> {
     let string = pair.as_str();
-    let content = unescape(&string[2..string.len() - 1]).ok_or(
-        Error::new_from_span(
-            ErrorVariant::CustomError {
-                message: "incorrect string literal".to_string()
-            },
-            pair.as_span()
-        )
-    )?;
+    let content = unescape(&string[2..string.len() - 1]).ok_or(Error::new_from_span(
+        ErrorVariant::CustomError {
+            message: "incorrect string literal".to_string(),
+        },
+        pair.as_span(),
+    ))?;
 
     let expr = ParseExpr::Insens(content.to_owned());
     let span = span.from_pest(pair.as_span());
@@ -420,31 +390,27 @@ fn parse_char_range(pair: Pair<Rule>, span: &Span) -> Result<ParseNode, Error<Ru
 
     let pair = pairs.next().unwrap();
     let string = pair.as_str();
-    let content_start = unescape(&string[1..string.len() - 1]).ok_or(
-        Error::new_from_span(
-            ErrorVariant::CustomError {
-                message: "incorrect char literal".to_string()
-            },
-            pair.as_span()
-        )
-    )?;
+    let content_start = unescape(&string[1..string.len() - 1]).ok_or(Error::new_from_span(
+        ErrorVariant::CustomError {
+            message: "incorrect char literal".to_string(),
+        },
+        pair.as_span(),
+    ))?;
 
     pairs.next().unwrap(); // range_operator
 
     let pair = pairs.next().unwrap();
     let string = pair.as_str();
-    let content_end = unescape(&string[1..string.len() - 1]).ok_or(
-        Error::new_from_span(
-            ErrorVariant::CustomError {
-                message: "incorrect char literal".to_string()
-            },
-            pair.as_span()
-        )
-    )?;
+    let content_end = unescape(&string[1..string.len() - 1]).ok_or(Error::new_from_span(
+        ErrorVariant::CustomError {
+            message: "incorrect char literal".to_string(),
+        },
+        pair.as_span(),
+    ))?;
 
     let expr = ParseExpr::Range(
         content_start.chars().next().unwrap(),
-        content_end.chars().next().unwrap()
+        content_end.chars().next().unwrap(),
     );
 
     Ok(ParseNode { expr, span })
@@ -454,14 +420,12 @@ fn pair_to<F: FromStr>(pair: Pair<Rule>) -> Result<F, Error<Rule>> {
     if let Ok(number) = pair.as_str().parse() {
         Ok(number)
     } else {
-        Err(
-            Error::new_from_span(
-                ErrorVariant::CustomError {
-                    message: format!("number cannot overflow {} bytes", mem::size_of::<F>()),
-                },
-                pair.into_span(),
-            )
-        )
+        Err(Error::new_from_span(
+            ErrorVariant::CustomError {
+                message: format!("number cannot overflow {} bytes", mem::size_of::<F>()),
+            },
+            pair.as_span(),
+        ))
     }
 }
 
@@ -469,9 +433,8 @@ fn parse_range<F: FromStr + Copy>(pairs: &mut Pairs<Rule>) -> Result<Range<F>, E
     pairs.next().unwrap(); // opening_brace | opening_brack
 
     let rules: Vec<_> = pairs.clone().map(|pair| pair.as_rule()).collect();
-    let numbers = pairs.filter(|pair| {
-            pair.as_rule() == Rule::number || pair.as_rule() == Rule::integer
-        })
+    let numbers = pairs
+        .filter(|pair| pair.as_rule() == Rule::number || pair.as_rule() == Rule::integer)
         .map(pair_to::<F>)
         .collect::<Result<Vec<_>, _>>()?;
 
@@ -479,29 +442,29 @@ fn parse_range<F: FromStr + Copy>(pairs: &mut Pairs<Rule>) -> Result<Range<F>, E
         // a..b}
         [_, Rule::range_operator, _, _] => Range {
             start: Some(numbers[0]),
-            end: Some(numbers[1])
+            end: Some(numbers[1]),
         },
         // a..}
         [_, Rule::range_operator, _] => Range {
             start: Some(numbers[0]),
-            end: None
+            end: None,
         },
         // ..b}
         [Rule::range_operator, _, _] => Range {
             start: None,
-            end: Some(numbers[0])
+            end: Some(numbers[0]),
         },
         // ..}
         [Rule::range_operator, _] => Range {
             start: None,
-            end: None
+            end: None,
         },
         // a}
         [_, _] => Range {
             start: Some(numbers[0]),
-            end: Some(numbers[0])
+            end: Some(numbers[0]),
         },
-        _ => unreachable!()
+        _ => unreachable!(),
     };
     Ok(range)
 }
@@ -522,28 +485,28 @@ fn parse_bounded_repeat(pair: Pair<Rule>, child: ParseNode) -> Result<ParseExpr,
 
     let range = parse_range(&mut pair.clone().into_inner())?;
 
-    if let Range { start: Some(start), end: Some(end) } = range {
+    if let Range {
+        start: Some(start),
+        end: Some(end),
+    } = range
+    {
         if start > end {
-            return Err(
-                Error::new_from_span(
-                    ErrorVariant::CustomError {
-                        message: format!("repetition range void ({} > {})", start, end),
-                    },
-                    inner_span(pair),
-                )
-            );
+            return Err(Error::new_from_span(
+                ErrorVariant::CustomError {
+                    message: format!("repetition range void ({} > {})", start, end),
+                },
+                inner_span(pair),
+            ));
         }
     }
 
     if let Some(0) = range.end {
-        return Err(
-            Error::new_from_span(
-                ErrorVariant::CustomError {
-                    message: "cannot repeat 0 times".to_string(),
-                },
-                inner_span(pair),
-            )
-        );
+        return Err(Error::new_from_span(
+            ErrorVariant::CustomError {
+                message: "cannot repeat 0 times".to_string(),
+            },
+            inner_span(pair),
+        ));
     }
 
     Ok(ParseExpr::RepRange(Box::new(child), range))
@@ -552,7 +515,7 @@ fn parse_bounded_repeat(pair: Pair<Rule>, child: ParseNode) -> Result<ParseExpr,
 fn parse_postfix(pair: Pair<Rule>, child: ParseNode) -> Result<ParseNode, Error<Rule>> {
     let span = match pair.as_rule() {
         Rule::overridable_operator => child.span.start(pair.as_span().start()),
-        _ => child.span.end(pair.as_span().end())
+        _ => child.span.end(pair.as_span().end()),
     };
     let expr = match pair.as_rule() {
         Rule::optional_operator => ParseExpr::Opt(Box::new(child)),
@@ -562,7 +525,7 @@ fn parse_postfix(pair: Pair<Rule>, child: ParseNode) -> Result<ParseNode, Error<
         Rule::repeat_operator => ParseExpr::Rep(Box::new(child)),
         Rule::repeat_once_operator => ParseExpr::RepOnce(Box::new(child)),
         Rule::bounded_repeat => parse_bounded_repeat(pair, child)?,
-        _ => unreachable!()
+        _ => unreachable!(),
     };
 
     Ok(ParseNode { expr, span })
@@ -571,7 +534,7 @@ fn parse_postfix(pair: Pair<Rule>, child: ParseNode) -> Result<ParseNode, Error<
 fn parse_term(
     pair: Pair<Rule>,
     span: &Span,
-    climber: &PrecClimber<Rule>
+    pratt_parser: &PrattParser<Rule>,
 ) -> Result<ParseNode, Error<Rule>> {
     let mut prefix_pairs = vec![];
     let mut postfix_pairs = vec![];
@@ -579,41 +542,45 @@ fn parse_term(
 
     for pair in pair.into_inner() {
         match pair.as_rule() {
-            Rule::positive_predicate_operator |
-            Rule::negative_predicate_operator => prefix_pairs.push(pair),
-            Rule::optional_operator |
-            Rule::tilde_operator |
-            Rule::caret_operator |
-            Rule::repeat_operator |
-            Rule::repeat_once_operator |
-            Rule::bounded_repeat => postfix_pairs.push(pair),
+            Rule::positive_predicate_operator | Rule::negative_predicate_operator => {
+                prefix_pairs.push(pair)
+            }
+            Rule::optional_operator
+            | Rule::tilde_operator
+            | Rule::caret_operator
+            | Rule::repeat_operator
+            | Rule::repeat_once_operator
+            | Rule::bounded_repeat => postfix_pairs.push(pair),
             Rule::opening_paren | Rule::closing_paren => (),
-            Rule::expression => expression = Some(parse_node(pair, span, climber)?),
-            Rule::path => expression = Some(parse_path(pair, span, climber)?),
+            Rule::expression => expression = Some(parse_node(pair, span, pratt_parser)?),
+            Rule::path => expression = Some(parse_path(pair, span, pratt_parser)?),
             Rule::string => expression = Some(parse_string(pair, span)?),
             Rule::raw_string => expression = Some(parse_raw_string(pair, span)),
             Rule::insensitive_string => expression = Some(parse_insensitive_string(pair, span)?),
             Rule::range => expression = Some(parse_char_range(pair, span)?),
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 
-    let expression = postfix_pairs.into_iter()
-        .try_fold(expression.unwrap(), |child, pair| parse_postfix(pair, child));
+    let expression = postfix_pairs
+        .into_iter()
+        .try_fold(expression.unwrap(), |child, pair| {
+            parse_postfix(pair, child)
+        });
 
-    Ok(prefix_pairs.into_iter().rfold(expression?, |child, pair| parse_prefix(pair, child)))
+    Ok(prefix_pairs
+        .into_iter()
+        .rfold(expression?, |child, pair| parse_prefix(pair, child)))
 }
 
 fn parse_node(
     expr: Pair<Rule>,
     span: &Span,
-    climber: &PrecClimber<Rule>
+    pratt_parser: &PrattParser<Rule>,
 ) -> Result<ParseNode, Error<Rule>> {
-    let infix = |
-        lhs: Result<ParseNode, Error<Rule>>,
-        op: Pair<Rule>,
-        rhs: Result<ParseNode, Error<Rule>>
-    | {
+    let infix = |lhs: Result<ParseNode, Error<Rule>>,
+                 op: Pair<Rule>,
+                 rhs: Result<ParseNode, Error<Rule>>| {
         let lhs = lhs?;
         let rhs = rhs?;
 
@@ -623,7 +590,7 @@ fn parse_node(
             Rule::tilde_operator => ParseExpr::Seq(Box::new(lhs), Box::new(rhs), Some('~')),
             Rule::caret_operator => ParseExpr::Seq(Box::new(lhs), Box::new(rhs), Some('^')),
             Rule::choice_operator => ParseExpr::Choice(Box::new(lhs), Box::new(rhs)),
-            _ => unreachable!()
+            _ => unreachable!(),
         };
 
         Ok(ParseNode { expr, span })
@@ -631,19 +598,19 @@ fn parse_node(
     let mut pairs = expr.into_inner();
 
     skip(Rule::choice_operator, &mut pairs);
-
-    climber.climb(pairs, |pair| parse_term(pair, span, climber), infix)
+    pratt_parser
+        .map_primary(|pair| parse_term(pair, span, pratt_parser))
+        .map_infix(move |lhs, op, rhs| infix(lhs, op, rhs))
+        .parse(pairs)
 }
 
 fn string_content(pair: &Pair<Rule>) -> Result<String, Error<Rule>> {
-    let string = unescape(pair.as_str()).ok_or(
-        Error::new_from_span(
-            ErrorVariant::CustomError {
-                message: "invalid string literal".to_string()
-            },
-            pair.as_span()
-        )
-    )?;
+    let string = unescape(pair.as_str()).ok_or(Error::new_from_span(
+        ErrorVariant::CustomError {
+            message: "invalid string literal".to_string(),
+        },
+        pair.as_span(),
+    ))?;
     Ok(string)
 }
 
@@ -687,7 +654,7 @@ fn unescape(string: &str) -> Option<String> {
 
                     let string: String = chars.clone().take_while(|c| *c != '}').collect();
 
-                    if string.len() < 1 || 6 < string.len() {
+                    if string.is_empty() || 6 < string.len() {
                         return None;
                     }
 
@@ -707,7 +674,7 @@ fn unescape(string: &str) -> Option<String> {
             },
             Some('"') => (),
             Some(c) => result.push(c),
-            None => return Some(result)
+            None => return Some(result),
         };
     }
 }
@@ -715,11 +682,7 @@ fn unescape(string: &str) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use pest::{
-        consumes_to,
-        fails_with,
-        parses_to
-    };
+    use pest::{consumes_to, fails_with, parses_to};
 
     type PestParser = grammar::Parser;
 
@@ -1211,7 +1174,7 @@ mod tests {
     fn child() -> ParseNode {
         ParseNode {
             expr: ParseExpr::Str("".to_string()),
-            span: span("", 0)
+            span: span("", 0),
         }
     }
 
@@ -1219,17 +1182,16 @@ mod tests {
         Span {
             start: offset,
             end: offset + input.len(),
-            path: Rc::new(PathBuf::from("span"))
+            path: Rc::new(PathBuf::from("span")),
         }
     }
 
-    fn climber() -> PrecClimber<Rule> {
-        PrecClimber::new(vec![
-            Operator::new(Rule::choice_operator, Assoc::Right),
-            Operator::new(Rule::sequence_operator, Assoc::Right) |
-            Operator::new(Rule::tilde_operator, Assoc::Right) |
-            Operator::new(Rule::caret_operator, Assoc::Right)
-        ])
+    fn climber() -> PrattParser<Rule> {
+        PrattParser::new()
+            .op(Op::infix(Rule::choice_operator, Assoc::Right))
+            .op(Op::infix(Rule::sequence_operator, Assoc::Right)
+                | Op::infix(Rule::tilde_operator, Assoc::Right)
+                | Op::infix(Rule::caret_operator, Assoc::Right))
     }
 
     macro_rules! expr {
@@ -1325,7 +1287,10 @@ mod tests {
     fn parse_string_escaped() {
         let input = r#""a\nb""#;
 
-        let pair = PestParser::parse(Rule::string, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::string, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_string(pair, &span(input, 0)).unwrap(),
@@ -1340,7 +1305,10 @@ mod tests {
     fn parse_string_raw() {
         let input = r##"r"a""##;
 
-        let pair = PestParser::parse(Rule::raw_string, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::raw_string, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_raw_string(pair, &span(input, 0)),
@@ -1355,7 +1323,10 @@ mod tests {
     fn parse_insensitive_string_escaped() {
         let input = r#"i"a\nb""#;
 
-        let pair = PestParser::parse(Rule::insensitive_string, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::insensitive_string, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_insensitive_string(pair, &span(input, 0)).unwrap(),
@@ -1370,7 +1341,10 @@ mod tests {
     fn parse_char_range_escaped() {
         let input = "'\x12'..'\u{555}'";
 
-        let pair = PestParser::parse(Rule::range, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::range, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_char_range(pair, &span(input, 0)).unwrap(),
@@ -1385,7 +1359,10 @@ mod tests {
     fn parse_path_simple() {
         let input = "a::b";
 
-        let pair = PestParser::parse(Rule::path, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::path, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_path(pair, &span(input, 0), &climber()).unwrap(),
@@ -1400,26 +1377,27 @@ mod tests {
     fn parse_path_with_call() {
         let input = "a::b::c(d, e)";
 
-        let pair = PestParser::parse(Rule::path, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::path, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_path(pair, &span(input, 0), &climber()).unwrap(),
             ParseNode {
-                expr: expr!(
-                    Path(
-                        ["a", "b", "c"],
-                        Call(
-                            ParseNode {
-                                expr: expr!(Path(["d"])),
-                                span: span("d", 8)
-                            },
-                            ParseNode {
-                                expr: expr!(Path(["e"])),
-                                span: span("e", 11)
-                            }
-                        )
+                expr: expr!(Path(
+                    ["a", "b", "c"],
+                    Call(
+                        ParseNode {
+                            expr: expr!(Path(["d"])),
+                            span: span("d", 8)
+                        },
+                        ParseNode {
+                            expr: expr!(Path(["e"])),
+                            span: span("e", 11)
+                        }
                     )
-                ),
+                )),
                 span: span(input, 0)
             }
         );
@@ -1429,14 +1407,15 @@ mod tests {
     fn parse_path_with_slice() {
         let input = "a[0..1]";
 
-        let pair = PestParser::parse(Rule::path, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::path, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_path(pair, &span(input, 0), &climber()).unwrap(),
             ParseNode {
-                expr: expr!(
-                    Path(["a"], Slice(0..1))
-                ),
+                expr: expr!(Path(["a"], Slice(0..1))),
                 span: span(input, 0)
             }
         );
@@ -1446,7 +1425,10 @@ mod tests {
     fn parse_range_full() {
         let input = "{1..2}";
 
-        let pair = PestParser::parse(Rule::bounded_repeat, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::bounded_repeat, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_bounded_repeat(pair, child()).unwrap(),
@@ -1458,7 +1440,10 @@ mod tests {
     fn parse_range_lower_bound_only() {
         let input = "{1..}";
 
-        let pair = PestParser::parse(Rule::bounded_repeat, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::bounded_repeat, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_bounded_repeat(pair, child()).unwrap(),
@@ -1470,7 +1455,10 @@ mod tests {
     fn parse_range_upper_bound_only() {
         let input = "{..2}";
 
-        let pair = PestParser::parse(Rule::bounded_repeat, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::bounded_repeat, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_bounded_repeat(pair, child()).unwrap(),
@@ -1482,7 +1470,10 @@ mod tests {
     fn parse_range_unbounded() {
         let input = "{..}";
 
-        let pair = PestParser::parse(Rule::bounded_repeat, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::bounded_repeat, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_bounded_repeat(pair, child()).unwrap(),
@@ -1494,7 +1485,10 @@ mod tests {
     fn parse_range_exact() {
         let input = "{1}";
 
-        let pair = PestParser::parse(Rule::bounded_repeat, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::bounded_repeat, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_bounded_repeat(pair, child()).unwrap(),
@@ -1506,26 +1500,21 @@ mod tests {
     fn parse_prefixes() {
         let input = "!&a";
 
-        let pair = PestParser::parse(Rule::expression, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::expression, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
         assert_eq!(
             parse_node(pair, &span(input, 0), &climber()).unwrap(),
             ParseNode {
-                expr: expr!(
-                    NegPred(
-                        ParseNode {
-                            expr: expr!(
-                                PosPred(
-                                    ParseNode {
-                                        expr: expr!(Path(["a"])),
-                                        span: span("a", 2)
-                                    }
-                                )
-                            ),
-                            span: span("&a", 1)
-                        }
-                    )
-                ),
+                expr: expr!(NegPred(ParseNode {
+                    expr: expr!(PosPred(ParseNode {
+                        expr: expr!(Path(["a"])),
+                        span: span("a", 2)
+                    })),
+                    span: span("&a", 1)
+                })),
                 span: span(input, 0)
             }
         );
@@ -1535,62 +1524,57 @@ mod tests {
     fn parse_infixes() {
         let input = "a ~ b ^ c | d - e";
 
-        let pair = PestParser::parse(Rule::expression, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::expression, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
-        let lhs = expr!(
-            Seq(
-                ParseNode {
-                    expr: expr!(Path(["a"])),
-                    span: span("a ", 0)
-                },
-                ParseNode {
-                    expr: expr!(
-                        Seq(
-                            ParseNode {
-                                expr: expr!(Path(["b"])),
-                                span: span("b ", 4)
-                            },
-                            ParseNode {
-                                expr: expr!(Path(["c"])),
-                                span: span("c ", 8)
-                            },
-                            '^'
-                        )
-                    ),
-                    span: span("b ^ c ", 4)
-                },
-                '~'
-            )
-        );
+        let lhs = expr!(Seq(
+            ParseNode {
+                expr: expr!(Path(["a"])),
+                span: span("a ", 0)
+            },
+            ParseNode {
+                expr: expr!(Seq(
+                    ParseNode {
+                        expr: expr!(Path(["b"])),
+                        span: span("b ", 4)
+                    },
+                    ParseNode {
+                        expr: expr!(Path(["c"])),
+                        span: span("c ", 8)
+                    },
+                    '^'
+                )),
+                span: span("b ^ c ", 4)
+            },
+            '~'
+        ));
 
-        let rhs = expr!(
-            Seq(
-                ParseNode {
-                    expr: expr!(Path(["d"])),
-                    span: span("d ", 12)
-                },
-                ParseNode {
-                    expr: expr!(Path(["e"])),
-                    span: span("e", 16)
-                }
-            )
-        );
+        let rhs = expr!(Seq(
+            ParseNode {
+                expr: expr!(Path(["d"])),
+                span: span("d ", 12)
+            },
+            ParseNode {
+                expr: expr!(Path(["e"])),
+                span: span("e", 16)
+            }
+        ));
 
         assert_eq!(
             parse_node(pair, &span(input, 0), &climber()).unwrap(),
             ParseNode {
-                expr: expr!(
-                    Choice(
-                        ParseNode {
-                            expr: lhs,
-                            span: span("a ~ b ^ c ", 0)
-                        },
-                        ParseNode {
-                            expr: rhs,
-                            span: span("d - e", 12)
-                        }
-                    )
-                ),
+                expr: expr!(Choice(
+                    ParseNode {
+                        expr: lhs,
+                        span: span("a ~ b ^ c ", 0)
+                    },
+                    ParseNode {
+                        expr: rhs,
+                        span: span("d - e", 12)
+                    }
+                )),
                 span: span(input, 0)
             }
         );
@@ -1600,53 +1584,40 @@ mod tests {
     fn parse_postfixes() {
         let input = "a~{1}+*?";
 
-        let pair = PestParser::parse(Rule::expression, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::expression, input)
+            .unwrap()
+            .next()
+            .unwrap();
 
-        let exact = expr!(
-            RepRange(
-                ParseNode {
-                    expr: expr!(
-                        Separated(
-                            ParseNode {
-                                expr: expr!(Path(["a"])),
-                                span: span("a", 0)
-                            },
-                            '~'
-                        )
-                    ),
-                    span: span("a~", 0)
-                },
-                1..1
-            )
-        );
+        let exact = expr!(RepRange(
+            ParseNode {
+                expr: expr!(Separated(
+                    ParseNode {
+                        expr: expr!(Path(["a"])),
+                        span: span("a", 0)
+                    },
+                    '~'
+                )),
+                span: span("a~", 0)
+            },
+            1..1
+        ));
 
-        let repeat = expr!(
-            Rep(
-                ParseNode {
-                    expr: expr!(
-                        RepOnce(
-                            ParseNode {
-                                expr: exact,
-                                span: span("a~{1}", 0)
-                            }
-                        )
-                    ),
-                    span: span("a~{1}+", 0)
-                }
-            )
-        );
+        let repeat = expr!(Rep(ParseNode {
+            expr: expr!(RepOnce(ParseNode {
+                expr: exact,
+                span: span("a~{1}", 0)
+            })),
+            span: span("a~{1}+", 0)
+        }));
 
         assert_eq!(
             parse_node(pair, &span(input, 0), &climber()).unwrap(),
             ParseNode {
-                expr: expr!(
-                    Opt(
-                        ParseNode {
-                            expr: repeat,
-                            span: span("a~{1}+*", 0)
-                        }
-                    )
-                ),
+                expr: expr!(Opt(ParseNode {
+                    expr: repeat,
+                    span: span("a~{1}+*", 0)
+                })),
                 span: span(input, 0)
             }
         );
@@ -1662,7 +1633,10 @@ mod tests {
     fn repeat_overflow() {
         let input = "a{18446744073709551616}";
 
-        let pair = PestParser::parse(Rule::expression, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::expression, input)
+            .unwrap()
+            .next()
+            .unwrap();
         parse_node(pair, &span(input, 0), &climber()).unwrap_or_else(|e| panic!("{}", e));
     }
 
@@ -1676,7 +1650,10 @@ mod tests {
     fn repeat_overflow_start() {
         let input = "a{18446744073709551616..}";
 
-        let pair = PestParser::parse(Rule::expression, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::expression, input)
+            .unwrap()
+            .next()
+            .unwrap();
         parse_node(pair, &span(input, 0), &climber()).unwrap_or_else(|e| panic!("{}", e));
     }
 
@@ -1690,7 +1667,10 @@ mod tests {
     fn repeat_overflow_end() {
         let input = "a{..18446744073709551616}";
 
-        let pair = PestParser::parse(Rule::expression, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::expression, input)
+            .unwrap()
+            .next()
+            .unwrap();
         parse_node(pair, &span(input, 0), &climber()).unwrap_or_else(|e| panic!("{}", e));
     }
 
@@ -1704,7 +1684,10 @@ mod tests {
     fn repeat_zero() {
         let input = "a{0}";
 
-        let pair = PestParser::parse(Rule::expression, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::expression, input)
+            .unwrap()
+            .next()
+            .unwrap();
         parse_node(pair, &span(input, 0), &climber()).unwrap_or_else(|e| panic!("{}", e));
     }
 
@@ -1718,7 +1701,10 @@ mod tests {
     fn repeat_void() {
         let input = "a{1..0}";
 
-        let pair = PestParser::parse(Rule::expression, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::expression, input)
+            .unwrap()
+            .next()
+            .unwrap();
         parse_node(pair, &span(input, 0), &climber()).unwrap_or_else(|e| panic!("{}", e));
     }
 
@@ -1732,7 +1718,10 @@ mod tests {
     fn incorrect_string() {
         let input = r#""\u{ffffff}""#;
 
-        let pair = PestParser::parse(Rule::expression, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::expression, input)
+            .unwrap()
+            .next()
+            .unwrap();
         parse_node(pair, &span(input, 0), &climber()).unwrap_or_else(|e| panic!("{}", e));
     }
 
@@ -1746,7 +1735,10 @@ mod tests {
     fn incorrect_insensitive_string() {
         let input = r#"i"\u{ffffff}""#;
 
-        let pair = PestParser::parse(Rule::expression, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::expression, input)
+            .unwrap()
+            .next()
+            .unwrap();
         parse_node(pair, &span(input, 0), &climber()).unwrap_or_else(|e| panic!("{}", e));
     }
 
@@ -1760,7 +1752,10 @@ mod tests {
     fn incorrect_char_start() {
         let input = r"'\xff'..'a'";
 
-        let pair = PestParser::parse(Rule::expression, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::expression, input)
+            .unwrap()
+            .next()
+            .unwrap();
         parse_node(pair, &span(input, 0), &climber()).unwrap_or_else(|e| panic!("{}", e));
     }
 
@@ -1774,7 +1769,10 @@ mod tests {
     fn incorrect_char_end() {
         let input = r"'a'..'\xff'";
 
-        let pair = PestParser::parse(Rule::expression, input).unwrap().next().unwrap();
+        let pair = PestParser::parse(Rule::expression, input)
+            .unwrap()
+            .next()
+            .unwrap();
         parse_node(pair, &span(input, 0), &climber()).unwrap_or_else(|e| panic!("{}", e));
     }
 

@@ -2,7 +2,7 @@
 name = "pest_meta"
 version = "0.1.0"
 authors = ["Dragoș Tiselice <dragostiselice@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 pest = "2.1"
