@@ -22,18 +22,11 @@ mod grammar {
 
     #[derive(Parser)]
     #[grammar = "grammar.pest"]
+    #[non_exhaustive]
     pub struct Parser;
 }
 
 use grammar::Rule;
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum Modifier {
-    Normal,
-    Silent,
-    Atomic,
-    NonAtomic,
-}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Span {
@@ -108,7 +101,6 @@ impl<T: Copy> Range<T> {
 pub struct ParseRule {
     pub name: String,
     pub args: Vec<String>,
-    pub modifier: Modifier,
     pub span: Span,
     pub node: ParseNode,
 }
@@ -260,17 +252,6 @@ fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>>
         .map(|pair| pair.as_str().to_string())
         .collect();
 
-    let modifier = match pairs.peek().unwrap().as_rule() {
-        Rule::silent_modifier => Modifier::Silent,
-        Rule::atomic_modifier => Modifier::Atomic,
-        Rule::non_atomic_modifier => Modifier::NonAtomic,
-        _ => Modifier::Normal,
-    };
-
-    if modifier != Modifier::Normal {
-        pairs.next().unwrap(); // modifier
-    }
-
     skip(Rule::opening_brace, &mut pairs);
 
     let pratt_parser = PrattParser::new()
@@ -283,7 +264,6 @@ fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>>
     Ok(ParseRule {
         name,
         args,
-        modifier,
         span,
         node,
     })
@@ -687,6 +667,19 @@ mod tests {
     type PestParser = grammar::Parser;
 
     #[test]
+    #[ignore = "todo"]
+    fn grammar_test() {
+        let input = include_str!("../tests/pest3sample.pest");
+        parses_to! {
+            parser: PestParser,
+            input: input,
+            rule: Rule::grammar_rules,
+            tokens: [
+                ]
+        }
+    }
+
+    #[test]
     fn rules() {
         parses_to! {
             parser: PestParser,
@@ -760,23 +753,22 @@ mod tests {
     fn rule() {
         parses_to! {
             parser: PestParser,
-            input: "a = ! b - c",
+            input: "a = b - c",
             rule: Rule::grammar_rule,
             tokens: [
-                grammar_rule(0, 11, [
+                grammar_rule(0, 9, [
                     identifier(0, 1),
                     assignment_operator(2, 3),
-                    non_atomic_modifier(4, 5),
-                    expression(6, 11, [
-                        term(6, 8, [
-                            path(6, 8, [
-                                identifier(6, 7)
+                    expression(4, 9, [
+                        term(4, 6, [
+                            path(4, 6, [
+                                identifier(4, 5)
                             ])
                         ]),
-                        sequence_operator(8, 9),
-                        term(10, 11, [
-                            path(10, 11, [
-                                identifier(10, 11)
+                        sequence_operator(6, 7),
+                        term(8, 9, [
+                            path(8, 9, [
+                                identifier(8, 9)
                             ])
                         ])
                     ])
@@ -789,28 +781,27 @@ mod tests {
     fn rule_with_brace() {
         parses_to! {
             parser: PestParser,
-            input: "a = ! { b - c }",
+            input: "a = { b - c }",
             rule: Rule::grammar_rule,
             tokens: [
-                grammar_rule(0, 15, [
+                grammar_rule(0, 13, [
                     identifier(0, 1),
                     assignment_operator(2, 3),
-                    non_atomic_modifier(4, 5),
-                    opening_brace(6, 7),
-                    expression(8, 14, [
-                        term(8, 10, [
-                            path(8, 10, [
-                                identifier(8, 9)
+                    opening_brace(4, 5),
+                    expression(6, 12, [
+                        term(6, 8, [
+                            path(6, 8, [
+                                identifier(6, 7)
                             ])
                         ]),
-                        sequence_operator(10, 11),
-                        term(12, 14, [
-                            path(12, 14, [
-                                identifier(12, 13)
+                        sequence_operator(8, 9),
+                        term(10, 12, [
+                            path(10, 12, [
+                                identifier(10, 11)
                             ])
                         ])
                     ]),
-                    closing_brace(14, 15)
+                    closing_brace(12, 13)
                 ])
             ]
         };
@@ -1059,9 +1050,6 @@ mod tests {
             rule: Rule::grammar_rules,
             positives: vec![
                 Rule::opening_brace,
-                Rule::silent_modifier,
-                Rule::atomic_modifier,
-                Rule::non_atomic_modifier,
                 Rule::expression
             ],
             negatives: vec![],

@@ -1,0 +1,94 @@
+string = "abc"
+insensitive = ^"abc"
+range = '0'..'9'
+ident = string
+pos_pred = &string
+neg_pred = !string
+double_neg_pred = !!string
+sequence = string - string
+sequence_trivia = string ~ string
+sequence_nested = !{string ~ string}
+choice = string | range
+choice_trivia = string ~| range
+choice_prefix = { | string | range }
+optional = string?
+optional_trivia = string~?
+repeat = string*
+repeat_trivia = string~*
+repeat_once = string+
+repeat_once_trivia = string~+
+repeat_min_max = string{2, 3}
+repeat_min_max_trivia = string~{2, 3}
+repeat_exact = string{2}
+repeat_exact_trivia = string~{2}
+repeat_min = string{2,}
+repeat_min_trivia = string~{2,}
+repeat_max = string{, 2}
+repeat_max_trivia = string~{, 2}
+
+seperated(e) = e ~ ("," ~ e)*
+seperated_call = seperated(string)
+
+soi_at_start = pest::soi ~ string
+push(exp) = pest::stack::push(exp)
+
+use pest::stack as stack;
+pop() = stack::pop
+pop_all() = stack::pop_all
+peek() = stack::peek
+peek_all() = stack::peek_all
+peek_slice() = stack::peek[1..-2]
+repeat_mutate_stack =  (push('a'..'c') ~ ",")* ~ pop() ~ pop() ~ pop()
+repeat_mutate_stack_pop_all = (push('a'..'c') ~ ",")* ~ pop_all()
+will_fail = repeat_mutate_stack_pop_all ~ "FAIL"
+stack_resume_after_fail = will_fail | repeat_mutate_stack_pop_all
+peek_ = push(range) ~ push(range) ~ peek() ~ peek()
+peek_all = push(range) ~ push(range) ~ peek_all()
+peek_slice_23 = push(range) ~ push(range) ~ push(range) ~ push(range) ~ push(range) ~ peek_slice()
+pop_ = push(range) ~ push(range) ~ pop() ~ pop()
+pop_all = push(range) ~ push(range) ~ pop_all()
+pop_fail = push(range) ~ !pop() ~ range ~ pop()
+checkpoint_restore = push("") ~ (push("a") ~ "b" ~ pop() | drop() ~ "b" | pop() ~ "a") ~ pest::eoi
+
+ascii_digits = pest::ascii_digit+
+ascii_nonzero_digits = pest::ascii_nonzero_digit+
+ascii_bin_digits = pest::ascii_bin_digit+
+ascii_oct_digits = pest::ascii_oct_digit+
+ascii_hex_digits = pest::ascii_hex_digit+
+ascii_alpha_lowers = pest::ascii_alpha_lower+
+ascii_alpha_uppers = pest::ascii_alpha_upper+
+ascii_alphas = pest::ascii_alpha+
+ascii_alphanumerics = pest::ascii_alphanumeric+
+asciis = pest::ascii+
+newline = pest::newline+
+unicode = pest::unicode::xid_start ~ pest::unicode::xid_continue*
+
+han() = pest::unicode::han+
+hangul() = pest::unicode::hangul+
+hiragana() = pest::unicode::hiragana+
+arabic() = pest::unicode::arabic+
+emoji() = pest::unicode::emoji+
+
+whitespace = " "
+comment = "$"+
+~ = (whitespace | comment)*
+
+// Line comment
+
+/* 1-line multiline comment */
+
+/*
+	N-line multiline comment
+*/
+
+/*
+	// Line comment inside multiline
+
+	/*
+		(Multiline inside) multiline
+	*/
+
+	Invalid segment of grammar below (repeated rule)
+
+	WHITESPACE = _{ "hi" }
+*/
