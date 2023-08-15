@@ -7,24 +7,32 @@ neg_pred = !string
 double_neg_pred = !!string
 sequence = string - string
 sequence_trivia = string ~ string
+sequence_trivia_mandatory = string ^ string
 sequence_nested = !(string ~ string)
 choice = string | range
 choice_trivia = string ~| range
+choice_trivia_mandatory = string ^| range
 choice_prefix = { | string | range }
 optional = string?
 optional_trivia = string~?
 repeat = string*
 repeat_trivia = string~*
+repeat_trivia_mandatory = string^*
 repeat_once = string+
 repeat_once_trivia = string~+
+repeat_once_trivia_mandatory = string^+
 repeat_min_max = string{2..3}
 repeat_min_max_trivia = string~{2..3}
+repeat_min_max_trivia_mandatory = string^{2..3}
 repeat_exact = string{2}
 repeat_exact_trivia = string~{2}
+repeat_exact_trivia_mandatory = string^{2}
 repeat_min = string{2..}
 repeat_min_trivia = string~{2..}
+repeat_min_trivia_mandatory = string^{2..}
 repeat_max = string{..2}
 repeat_max_trivia = string~{..2}
+repeat_max_trivia_mandatory = string^{..2}
 
 seperated(e) = e ~ ("," ~ e)*
 seperated_call = seperated(string)
@@ -72,6 +80,7 @@ emoji() = pest::unicode::emoji+
 whitespace = " "
 comment = "$"+
 ~ = (whitespace | comment)*
+^ = (whitespace | comment)*
 
 // Line comment
 

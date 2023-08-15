@@ -34,7 +34,7 @@ closing_brack        = { "]" }
 arguments = { opening_paren ~ (identifier ~ (comma ~ identifier)* ~ comma?)? ~ closing_paren }
 
 expression =  {
-    (tilde_operator? ~ choice_operator? ~ term ~ tilde_operator? ~ choice_operator)? ~
+    (overridable_operator? ~ choice_operator? ~ term ~ overridable_operator? ~ choice_operator)? ~
     term ~ (infix_operator ~ term)*
 }
 term       =  { prefix_operator* ~ node ~ postfix_operator* }
@@ -45,7 +45,7 @@ overridable_operator = _{ tilde_operator | caret_operator }
 prefix_operator      = _{ positive_predicate_operator | negative_predicate_operator }
 infix_operator       = _{ sequence_operator | tilde_operator | caret_operator | choice_operator }
 postfix_operator     = _{
-    tilde_operator? ~ (
+    overridable_operator? ~ (
         optional_operator |
         repeat_operator |
         repeat_once_operator |
