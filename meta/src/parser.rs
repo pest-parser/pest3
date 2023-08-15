@@ -667,16 +667,10 @@ mod tests {
     type PestParser = grammar::Parser;
 
     #[test]
-    #[ignore = "todo"]
     fn grammar_test() {
         let input = include_str!("../tests/pest3sample.pest");
-        parses_to! {
-            parser: PestParser,
-            input: input,
-            rule: Rule::grammar_rules,
-            tokens: [
-                ]
-        }
+        let parsed = PestParser::parse(Rule::grammar_rules, input);
+        assert!(parsed.is_ok());
     }
 
     #[test]
