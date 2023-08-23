@@ -160,6 +160,9 @@ pub fn parse<P: AsRef<Path>>(input: &str, root: &P) -> Result<Vec<ParseRule>, Er
 
                     let path_pair = pairs.next().expect("import Pair must contain path");
                     let path_string = string_content(&path_pair)?;
+                    if path_string.starts_with("pest") {
+                        continue;
+                    }
                     let path = Path::new(&path_string);
 
                     let path = if path.is_relative() {
@@ -167,7 +170,6 @@ pub fn parse<P: AsRef<Path>>(input: &str, root: &P) -> Result<Vec<ParseRule>, Er
                     } else {
                         path.to_path_buf()
                     };
-
                     if let Ok(mut file) = File::open(&path) {
                         let root = path.parent().expect("path cannot be root");
                         let mut input = String::new();
@@ -253,6 +255,7 @@ fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>>
         .collect();
 
     skip(Rule::opening_brace, &mut pairs);
+    skip(Rule::assignment_operator, &mut pairs);
 
     let pratt_parser = PrattParser::new()
         .op(Op::infix(Rule::choice_operator, Assoc::Right))
@@ -667,7 +670,6 @@ mod tests {
     type PestParser = grammar::Parser;
 
     #[test]
-    #[ignore = "FIXME: choice operator with trivia in the Pratt Parser"]
     fn grammar_test() {
         let input = include_str!("../tests/pest3sample.pest");
         let parsed = parse(input, &Path::new("../tests/pest3sample.pest"));
