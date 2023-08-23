@@ -103,6 +103,7 @@ pub struct ParseRule {
     pub args: Vec<String>,
     pub span: Span,
     pub node: ParseNode,
+    pub silent: bool,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -170,6 +171,7 @@ pub fn parse<P: AsRef<Path>>(input: &str, root: &P) -> Result<Vec<ParseRule>, Er
                     } else {
                         path.to_path_buf()
                     };
+                    // FIXME: provide an alternative for pest_vm / web environments
                     if let Ok(mut file) = File::open(&path) {
                         let root = path.parent().expect("path cannot be root");
                         let mut input = String::new();
@@ -254,6 +256,11 @@ fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>>
         .map(|pair| pair.as_str().to_string())
         .collect();
 
+    let silent = matches!(pairs.peek().unwrap().as_rule(), Rule::silent_modifier);
+
+    if silent {
+        pairs.next().unwrap(); // modifier
+    }
     skip(Rule::opening_brace, &mut pairs);
     skip(Rule::assignment_operator, &mut pairs);
 
@@ -269,6 +276,7 @@ fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>>
         args,
         span,
         node,
+        silent,
     })
 }
 
@@ -1047,6 +1055,7 @@ mod tests {
             rule: Rule::grammar_rules,
             positives: vec![
                 Rule::opening_brace,
+                Rule::silent_modifier,
                 Rule::expression
             ],
             negatives: vec![],

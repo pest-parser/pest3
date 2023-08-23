@@ -41,21 +41,21 @@ soi_at_start = pest::soi ~ string
 push(exp) = pest::stack::push(exp)
 
 use pest::stack as stack
-pop() = stack::pop
+pop = _{stack::pop}
 pop_all() = stack::pop_all
 peek() = stack::peek
 peek_all() = stack::peek_all
 peek_slice() = stack::peek[1..-2]
-repeat_mutate_stack =  (push('a'..'c') ~ ",")* ~ pop() ~ pop() ~ pop()
+repeat_mutate_stack =  (push('a'..'c') ~ ",")* ~ pop ~ pop ~ pop
 repeat_mutate_stack_pop_all = (push('a'..'c') ~ ",")* ~ pop_all()
 will_fail = repeat_mutate_stack_pop_all ~ "FAIL"
 stack_resume_after_fail = will_fail | repeat_mutate_stack_pop_all
 peek_ = push(range) ~ push(range) ~ peek() ~ peek()
 peek_all = push(range) ~ push(range) ~ peek_all()
 peek_slice_23 = push(range) ~ push(range) ~ push(range) ~ push(range) ~ push(range) ~ peek_slice()
-pop_ = push(range) ~ push(range) ~ pop() ~ pop()
+pop_ = push(range) ~ push(range) ~ pop ~ pop
 pop_all = push(range) ~ push(range) ~ pop_all()
-pop_fail = push(range) ~ !pop() ~ range ~ pop()
+pop_fail = push(range) ~ !pop ~ range ~ pop
 checkpoint_restore = push("") ~ (push("a") ~ "b" ~ pop() | drop() ~ "b" | pop() ~ "a") ~ pest::eoi
 
 ascii_digits = pest::ascii_digit+

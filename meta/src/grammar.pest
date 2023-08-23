@@ -15,7 +15,7 @@ import = { "use" ~ path ~ ("as" ~ identifier)? }
 
 grammar_rule = {
     (identifier | overridable_operator) ~ arguments? ~
-    assignment_operator ~
+    assignment_operator ~ silent_modifier? ~
     (
         opening_brace ~ expression ~ closing_brace |
         expression
@@ -32,6 +32,8 @@ opening_brack        = { "[" }
 closing_brack        = { "]" }
 
 arguments = { opening_paren ~ (identifier ~ (comma ~ identifier)* ~ comma?)? ~ closing_paren }
+
+silent_modifier     = { "_" }
 
 expression =  {
     (choice_operator? ~ term ~ choice_operator)? ~
