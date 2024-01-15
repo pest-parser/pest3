@@ -11,3 +11,4 @@ pest = { path = "./pest" }
 pest_meta = { path = "./meta" }
 pest_generator = { path = "./generator" }
 unicode-width = { version = "0.1.11" }
+pest2 = { version = "2.7.6", package = "pest" }
