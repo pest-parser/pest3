@@ -1,8 +1,8 @@
 [package]
 name = "pest_meta"
-version = "0.1.0"
-authors = ["Dragoș Tiselice <dragostiselice@gmail.com>"]
-edition = "2021"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
 
 [dependencies]
 pest = "2.1"
