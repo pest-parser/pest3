@@ -1,5 +1,6 @@
+#[macro_export]
 macro_rules! choice_type {
-    ( $name:ident, $( ( $variant:ident, $type:ident ) ),* ) => {
+    ( $name:ident, $( ( $variant:ident, $type:ident ) ),* $(,)? ) => {
         #[derive(Clone, Debug, Eq, Hash, PartialEq)]
         pub enum $name<$( $type ),*> {
             $( $variant($type) ),*
