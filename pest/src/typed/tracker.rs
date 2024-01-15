@@ -10,13 +10,14 @@
 //! Tracker for parsing failures.
 
 // Copied from [pest-typed/tracker.rs].
-// 
+//
 // [pest-typed/tracker.rs]: https://github.com/TheVeryDarkness/pest-typed/blob/0.12.1/main/src/tracker.rs
 
+use super::wrapper::Rule as RuleWrapper;
 use crate::{
     error::{Error, ErrorVariant},
     position::Position,
-    RuleType, RuleWrapper,
+    RuleType,
 };
 use alloc::{
     borrow::ToOwned,
@@ -245,12 +246,12 @@ impl<'i, R: RuleType> Tracker<'i, R> {
     /// Collect attempts to [`Error<R>`]
     pub fn collect(self) -> Error<R> {
         let pos = self.position;
-        match pest::Position::new(pos.input, pos.pos()).ok_or_else(|| {
+        match Position::new(pos.input, pos.pos()).ok_or_else(|| {
             Error::new_from_pos(
                 ErrorVariant::CustomError {
                     message: format!("Internal error (invalid character index {}).", pos.pos()),
                 },
-                pest::Position::from_start(pos.input),
+                Position::from_start(pos.input),
             )
         }) {
             Ok(pos) => {
@@ -286,7 +287,7 @@ mod tests {
     }
     mod rule_wrappers {
         use super::Rule;
-        use crate::RuleWrapper;
+        use super::RuleWrapper;
 
         macro_rules! wrap {
             ($name:ident) => {
