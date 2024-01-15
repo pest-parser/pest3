@@ -1,0 +1,17 @@
+[package]
+name = "pest_derive"
+
+# authors = [] # List authors later :)
+version.workspace = true
+edition.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+proc-macro = true
+
+[dependencies]
+pest_generator.workspace = true
+
+[dev-dependencies]
+pest.workspace = true
