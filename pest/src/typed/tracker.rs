@@ -13,11 +13,10 @@
 //
 // [pest-typed/tracker.rs]: https://github.com/TheVeryDarkness/pest-typed/blob/0.12.1/main/src/tracker.rs
 
-use super::wrapper::Rule as RuleWrapper;
+use super::{wrapper::Rule as RuleWrapper, RuleType};
 use crate::{
     error::{Error, ErrorVariant},
     position::Position,
-    RuleType,
 };
 use alloc::{
     borrow::ToOwned,
@@ -176,6 +175,26 @@ impl<'i, R: RuleType> Tracker<'i, R> {
     }
     /// Record if the result doesn't match the state during calling `f`.
     #[inline]
+    pub(crate) fn record_during_with_option<T>(
+        &mut self,
+        pos: Position<'i>,
+        f: impl FnOnce(&mut Self) -> Option<(Position<'i>, T)>,
+        rule: R,
+    ) -> Option<(Position<'i>, T)> {
+        if let Some((_, _, has_children)) = self.stack.last_mut() {
+            *has_children = true;
+        }
+        self.stack.push((rule, pos, false));
+        let res = f(self);
+        let succeeded = res.is_some();
+        let (_r, _pos, has_children) = self.stack.pop().unwrap();
+        if !has_children {
+            self.record(rule, pos, succeeded);
+        }
+        res
+    }
+    /// Record if the result doesn't match the state during calling `f`.
+    #[inline]
     pub fn record_during<T: RuleWrapper<R>, E>(
         &mut self,
         pos: Position<'i>,
@@ -251,12 +270,12 @@ impl<'i, R: RuleType> Tracker<'i, R> {
                 ErrorVariant::CustomError {
                     message: format!("Internal error (invalid character index {}).", pos.pos()),
                 },
-                Position::from_start(pos.input),
+                pest2::Position::from_start(pos.input),
             )
         }) {
             Ok(pos) => {
                 let message = self.collect_to_message();
-                Error::new_from_pos(ErrorVariant::CustomError { message }, pos)
+                Error::new_from_pos(ErrorVariant::CustomError { message }, pos.into())
             }
             Err(err) => err,
         }
@@ -276,6 +295,8 @@ impl<'i, R: RuleType> Tracker<'i, R> {
 
 #[cfg(test)]
 mod tests {
+    use crate::typed::template::NONE;
+
     use super::*;
     #[derive(Clone, Copy, Debug, Hash, Eq, Ord, PartialEq, PartialOrd)]
     enum Rule {
@@ -284,6 +305,10 @@ mod tests {
         Main,
         Body,
         EOI,
+    }
+    impl RuleType for Rule {
+        const EOI: Self = Self::EOI;
+        type Trivia<'i> = NONE;
     }
     mod rule_wrappers {
         use super::Rule;
