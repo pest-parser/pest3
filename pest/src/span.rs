@@ -208,7 +208,7 @@ impl<'i> Span<'i> {
     /// enum Rule {}
     ///
     /// let input = "abc";
-    /// let mut state: Box<pest::ParserState<'_, Rule>> = pest::ParserState::new(input).skip(1).unwrap();
+    /// let mut state: Box<pest2::ParserState<'_, Rule>> = pest2::ParserState::new(input).skip(1).unwrap();
     /// let start_pos = state.position().clone();
     /// state = state.match_string("b").unwrap();
     /// let span = start_pos.span(&state.position().clone());
@@ -252,7 +252,7 @@ impl<'i> Span<'i> {
     /// enum Rule {}
     ///
     /// let input = "a\nb\nc";
-    /// let mut state: Box<pest::ParserState<'_, Rule>> = pest::ParserState::new(input).skip(2).unwrap();
+    /// let mut state: Box<pest2::ParserState<'_, Rule>> = pest2::ParserState::new(input).skip(2).unwrap();
     /// let start_pos = state.position().clone();
     /// state = state.match_string("b\nc").unwrap();
     /// let span = start_pos.span(&state.position().clone());
@@ -270,14 +270,14 @@ impl<'i> Span<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest;
-    /// # use pest::Span;
+    /// # use pest2;
+    /// # use pest2::Span;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
     ///
     /// let input = "a\nb\nc";
-    /// let mut state: Box<pest::ParserState<'_, Rule>> = pest::ParserState::new(input).skip(2).unwrap();
+    /// let mut state: Box<pest2::ParserState<'_, Rule>> = pest2::ParserState::new(input).skip(2).unwrap();
     /// let start_pos = state.position().clone();
     /// state = state.match_string("b\nc").unwrap();
     /// let span = start_pos.span(&state.position().clone());
@@ -359,7 +359,7 @@ impl<'i> fmt::Display for Span<'i> {
 /// ```
 /// # use pest;
 /// # use pest::Span;
-/// # use pest::merge_spans;
+/// # use pest::span::merge_spans;
 ///
 /// // Example 1: Contiguous spans
 /// let input = "abc\ndef\nghi";

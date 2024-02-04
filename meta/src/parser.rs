@@ -17,7 +17,7 @@ use pest::{
     Parser,
 };
 
-mod grammar {
+pub(crate) mod grammar {
     use pest_derive::Parser;
 
     #[derive(Parser)]
@@ -28,7 +28,9 @@ mod grammar {
 
 use grammar::Rule;
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+use crate::doc::DocComment;
+
+#[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Span {
     pub path: Rc<PathBuf>,
     pub start: usize,
@@ -73,7 +75,7 @@ impl Span {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Range<T> {
     pub start: Option<T>,
     pub end: Option<T>,
@@ -97,7 +99,7 @@ impl<T: Copy> Range<T> {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq)]
 pub struct ParseRule {
     pub name: String,
     pub args: Vec<String>,
@@ -106,19 +108,30 @@ pub struct ParseRule {
     pub silent: bool,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct ParseNode {
     pub expr: ParseExpr,
     pub span: Span,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub enum PathArgs {
     Call(Vec<ParseNode>),
     Slice(Range<isize>),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
+pub enum Trivia {
+    /// Without trivia.
+    #[default]
+    None,
+    /// With optional trivia.
+    Optional,
+    /// With mandatory trivia.
+    Mandatory,
+}
+
+#[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub enum ParseExpr {
     Str(String),
     Insens(String),
@@ -126,13 +139,13 @@ pub enum ParseExpr {
     Path(Vec<String>, Option<PathArgs>),
     PosPred(Box<ParseNode>),
     NegPred(Box<ParseNode>),
-    Seq(Box<ParseNode>, Box<ParseNode>, Option<char>),
+    Seq(Box<ParseNode>, Box<ParseNode>, Option<Trivia>),
     Choice(Box<ParseNode>, Box<ParseNode>),
     Opt(Box<ParseNode>),
     Rep(Box<ParseNode>),
     RepOnce(Box<ParseNode>),
     RepRange(Box<ParseNode>, Range<usize>),
-    Separated(Box<ParseNode>, char),
+    Separated(Box<ParseNode>, Trivia),
 }
 
 fn skip(rule: Rule, pairs: &mut Pairs<Rule>) {
@@ -145,91 +158,106 @@ fn skip(rule: Rule, pairs: &mut Pairs<Rule>) {
     }
 }
 
-pub fn parse<P: AsRef<Path>>(input: &str, root: &P) -> Result<Vec<ParseRule>, Error<Rule>> {
-    fn parse<P: AsRef<Path>>(
-        input: &str,
-        root: &P,
-        rules: &mut Vec<ParseRule>,
-        module: Option<&str>,
-    ) -> Result<(), Error<Rule>> {
-        let pairs = grammar::Parser::parse(Rule::grammar_rules, input)?;
+fn _parse<P: AsRef<Path>>(
+    input: &str,
+    root: &P,
+    rules: &mut Vec<ParseRule>,
+    doc: &mut DocComment,
+    module: Option<&str>,
+) -> Result<(), Error<Rule>> {
+    let pairs = grammar::Parser::parse(Rule::grammar_rules, input)?;
 
-        for pair in pairs {
-            match pair.as_rule() {
-                Rule::import => {
-                    let mut pairs = pair.into_inner();
+    for pair in pairs {
+        match pair.as_rule() {
+            Rule::import => {
+                let mut pairs = pair.into_inner();
 
-                    let path_pair = pairs.next().expect("import Pair must contain path");
-                    let path_string = string_content(&path_pair)?;
-                    if path_string.starts_with("pest") {
-                        continue;
-                    }
-                    let path = Path::new(&path_string);
+                let path_pair = pairs.next().expect("import Pair must contain path");
+                let path_string = string_content(&path_pair)?;
+                if path_string.starts_with("pest") {
+                    continue;
+                }
+                let path = Path::new(&path_string);
 
-                    let path = if path.is_relative() {
-                        root.as_ref().join(path)
-                    } else {
-                        path.to_path_buf()
-                    };
-                    // FIXME: provide an alternative for pest_vm / web environments
-                    if let Ok(mut file) = File::open(&path) {
-                        let root = path.parent().expect("path cannot be root");
-                        let mut input = String::new();
+                let path = if path.is_relative() {
+                    root.as_ref().join(path)
+                } else {
+                    path.to_path_buf()
+                };
+                // FIXME: provide an alternative for pest_vm / web environments
+                if let Ok(mut file) = File::open(&path) {
+                    let root = path.parent().expect("path cannot be root");
+                    let mut input = String::new();
 
-                        if file.read_to_string(&mut input).is_err() {
-                            return Err(Error::new_from_span(
-                                ErrorVariant::CustomError {
-                                    message: format!("cannot read from '{}'", path_string),
-                                },
-                                path_pair.as_span(),
-                            ));
-                        }
-
-                        let mut is_aliased = false;
-
-                        if let Some(pair) = pairs.next() {
-                            if pair.as_rule() == Rule::identifier {
-                                is_aliased = true;
-
-                                match module {
-                                    Some(module) => parse(
-                                        &input,
-                                        &root,
-                                        rules,
-                                        Some(&format!("{}::{}", module, pair.as_str())),
-                                    )?,
-                                    None => parse(&input, &root, rules, Some(pair.as_str()))?,
-                                };
-                            }
-                        }
-
-                        if !is_aliased {
-                            parse(&input, &root, rules, module)?;
-                        }
-                    } else {
+                    if file.read_to_string(&mut input).is_err() {
                         return Err(Error::new_from_span(
                             ErrorVariant::CustomError {
-                                message: format!("cannot open '{}'", path_string),
+                                message: format!("cannot read from '{}'", path_string),
                             },
                             path_pair.as_span(),
                         ));
                     }
-                }
-                Rule::grammar_rule => {
-                    rules.push(parse_rule(pair, root.as_ref().to_path_buf())?);
-                }
-                _ => (),
-            }
-        }
 
-        Ok(())
+                    let mut is_aliased = false;
+
+                    if let Some(pair) = pairs.next() {
+                        if pair.as_rule() == Rule::identifier {
+                            is_aliased = true;
+
+                            match module {
+                                Some(module) => _parse(
+                                    &input,
+                                    &root,
+                                    rules,
+                                    doc,
+                                    Some(&format!("{}::{}", module, pair.as_str())),
+                                )?,
+                                None => _parse(&input, &root, rules, doc, Some(pair.as_str()))?,
+                            };
+                        }
+                    }
+
+                    if !is_aliased {
+                        _parse(&input, &root, rules, doc, module)?;
+                    }
+                } else {
+                    return Err(Error::new_from_span(
+                        ErrorVariant::CustomError {
+                            message: format!("cannot open '{}'", path_string),
+                        },
+                        path_pair.as_span(),
+                    ));
+                }
+            }
+            Rule::grammar_rule => {
+                rules.push(parse_rule(pair, root.as_ref().to_path_buf())?);
+            }
+            _ => (),
+        }
     }
 
-    let mut rules = vec![];
+    Ok(())
+}
 
-    parse(input, root, &mut rules, None)?;
+pub fn parse<P: AsRef<Path>>(input: &str, root: &P) -> Result<Vec<ParseRule>, Error<Rule>> {
+    let mut rules = vec![];
+    let mut doc = DocComment::default();
+
+    _parse(input, root, &mut rules, &mut doc, None)?;
 
     Ok(rules)
+}
+
+pub fn parse_with_doc_comment<P: AsRef<Path>>(
+    input: &str,
+    root: &P,
+) -> Result<(Vec<ParseRule>, DocComment), Error<Rule>> {
+    let mut rules = vec![];
+    let mut doc = DocComment::default();
+
+    _parse(input, root, &mut rules, &mut doc, None)?;
+
+    Ok((rules, doc))
 }
 
 fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>> {
@@ -510,9 +538,8 @@ fn parse_postfix(pair: Pair<Rule>, child: ParseNode) -> Result<ParseNode, Error<
     };
     let expr = match pair.as_rule() {
         Rule::optional_operator => ParseExpr::Opt(Box::new(child)),
-        Rule::tilde_operator | Rule::caret_operator => {
-            ParseExpr::Separated(Box::new(child), pair.as_str().chars().next().unwrap())
-        }
+        Rule::tilde_operator => ParseExpr::Separated(Box::new(child), Trivia::Optional),
+        Rule::caret_operator => ParseExpr::Separated(Box::new(child), Trivia::Mandatory),
         Rule::repeat_operator => ParseExpr::Rep(Box::new(child)),
         Rule::repeat_once_operator => ParseExpr::RepOnce(Box::new(child)),
         Rule::bounded_repeat => parse_bounded_repeat(pair, child)?,
@@ -578,8 +605,12 @@ fn parse_node(
         let span = lhs.span.union(&rhs.span);
         let expr = match op.as_rule() {
             Rule::sequence_operator => ParseExpr::Seq(Box::new(lhs), Box::new(rhs), None),
-            Rule::tilde_operator => ParseExpr::Seq(Box::new(lhs), Box::new(rhs), Some('~')),
-            Rule::caret_operator => ParseExpr::Seq(Box::new(lhs), Box::new(rhs), Some('^')),
+            Rule::tilde_operator => {
+                ParseExpr::Seq(Box::new(lhs), Box::new(rhs), Some(Trivia::Optional))
+            }
+            Rule::caret_operator => {
+                ParseExpr::Seq(Box::new(lhs), Box::new(rhs), Some(Trivia::Mandatory))
+            }
             Rule::choice_operator => ParseExpr::Choice(Box::new(lhs), Box::new(rhs)),
             _ => unreachable!(),
         };
@@ -1538,11 +1569,11 @@ mod tests {
                         expr: expr!(Path(["c"])),
                         span: span("c ", 8)
                     },
-                    '^'
+                    Trivia::Mandatory //'^'
                 )),
                 span: span("b ^ c ", 4)
             },
-            '~'
+            Trivia::Optional
         ));
 
         let rhs = expr!(Seq(
@@ -1590,7 +1621,7 @@ mod tests {
                         expr: expr!(Path(["a"])),
                         span: span("a", 0)
                     },
-                    '~'
+                    Trivia::Optional
                 )),
                 span: span("a~", 0)
             },

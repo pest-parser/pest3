@@ -9,9 +9,9 @@
 
 //! Copied from pest/pest/src/position.rs (commit ac0aed3eecf435fd93ba575a39704aaa88a375b7)
 //! and modified.
-//! 
+//!
 //! Copied again from [pest-typed/position.rs].
-//! 
+//!
 //! [pest-typed/position.rs]: https://github.com/TheVeryDarkness/pest-typed/blob/0.12.1/main/src/position.rs
 
 use core::cmp::Ordering;
@@ -137,7 +137,7 @@ impl<'i> Position<'i> {
     /// enum Rule {}
     ///
     /// let input = "\na";
-    /// let mut state: Box<pest::ParserState<'_, Rule>> = pest::ParserState::new(input);
+    /// let mut state: Box<pest2::ParserState<'_, Rule>> = pest2::ParserState::new(input);
     /// let mut result = state.match_string("\na");
     /// assert!(result.is_ok());
     /// assert_eq!(result.unwrap().position().line_col(), (2, 2));
@@ -197,7 +197,7 @@ impl<'i> Position<'i> {
     /// enum Rule {}
     ///
     /// let input = "\na";
-    /// let mut state: Box<pest::ParserState<'_, Rule>> = pest::ParserState::new(input);
+    /// let mut state: Box<pest2::ParserState<'_, Rule>> = pest2::ParserState::new(input);
     /// let mut result = state.match_string("\na");
     /// assert!(result.is_ok());
     /// assert_eq!(result.unwrap().position().line_of(), "a");
@@ -464,6 +464,12 @@ impl<'i> Position<'i> {
 impl<'i> fmt::Debug for Position<'i> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Position").field("pos", &self.pos).finish()
+    }
+}
+
+impl<'i> From<Position<'i>> for pest2::Position<'i> {
+    fn from(value: Position<'i>) -> Self {
+        Self::new(value.input, value.pos).unwrap()
     }
 }
 

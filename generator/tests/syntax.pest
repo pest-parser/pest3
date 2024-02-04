@@ -1,0 +1,40 @@
+/// Regular rule.
+Regular = ('0'..'9')+
+
+~ = " "*
+
+/// Atomic rule.
+Atomic = CharRange+ ~ "+" ~ CharRange+
+
+/// Silent rule.
+NonAtomic = "(" ^ ")"
+
+ExactString     =  "r#"
+CharRange       =  '0'..'9'
+Any             =  ANY
+Seq             =  "1" ~ '2'..'9' ~ "."
+Choice          =  "a" | "b"+ ~ RepAtLeastOnce | &"c" ~ Choice ~ Rep ~ Opt | Peek | PeekLeft | PeekRight | PeekLeftRight | Drop | PeekAll
+Rep             =  "b"*
+RepAtLeastOnce  =  '0'..'9'+
+Opt             =  "?"?
+RepExact        =  RepAtLeastOnce{3}
+RepLeft         =  RepExact{1..}
+RepRight        =  RepLeft{..2}
+RepLeftRight    =  RepRight{1..2}
+
+Pos = &(SOI ~ RepLeftRight{2..4})
+Neg = !(EOI ~ Pos)
+
+Push = PUSH(RepLeft* ~ Neg ~ ExactString+ ~ Push ~ Pop ~ Push ~ PopAll)
+
+Pop    = POP
+PopAll = POP_ALL
+
+Peek          = PEEK[..]
+PeekLeft      = PEEK[1..]
+PeekRight     = PEEK[..]
+PeekLeftRight = PEEK[1..2]
+
+Drop = DROP
+
+PeekAll = PEEK_ALL
