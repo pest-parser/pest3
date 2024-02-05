@@ -17,11 +17,11 @@ enum GeneratedExpr {
 impl ToTokens for GeneratedExpr {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         match self {
-            GeneratedExpr::Inline(inline) => tokens.append_all(inline.clone().into_iter()),
+            GeneratedExpr::Inline(inline) => tokens.append_all(inline.clone()),
             GeneratedExpr::State(id) => {
                 let state = Ident::new(&format!("state{}", id), Span::call_site());
 
-                tokens.append_all(quote!(return self.#state()).into_iter());
+                tokens.append_all(quote!(return self.#state()));
             }
         }
     }
@@ -226,7 +226,7 @@ where
         self
     }
 
-    fn gen(mut self, builder: &mut StateBuilder) -> TokenStream {
+    fn gen(self, builder: &mut StateBuilder) -> TokenStream {
         match (self.accept_state, self.reject_state) {
             (Some(accept), Some(reject)) => {
                 let name = Ident::new(&format!("state{}", self.id), Span::call_site());

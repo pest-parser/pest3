@@ -16,7 +16,7 @@ use core::{
     ops::{Deref, DerefMut, Range},
 };
 pub use repetition::{Rep, RepMin, RepMinMax, RepOnce};
-use std::eprintln;
+
 
 /// Match given string case sensitively.
 ///
