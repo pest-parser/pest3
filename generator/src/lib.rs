@@ -1,3 +1,4 @@
+#![warn(rust_2021_compatibility, rust_2018_idioms)]
 mod common;
 mod config;
 mod expr;

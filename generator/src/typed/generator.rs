@@ -22,6 +22,7 @@ use std::{
 };
 use syn::{DeriveInput, Generics};
 
+/// `rule_id` should be a valid identifier.
 struct RuleConfig<'g> {
     pub rule_id: Ident,
     pub rule_name: &'g str,
@@ -193,7 +194,7 @@ fn generate_graph_node<'g>(
                 trivia.clone().unwrap_or(Trivia::None),
             );
             let mut types = Vec::with_capacity(vec.len());
-            for (i, (trivia, expr)) in vec.into_iter().enumerate() {
+            for (trivia, expr) in vec.into_iter() {
                 let child = generate_graph_node(expr, rule_config, output, config, root);
                 types.push((child, trivia));
             }
@@ -210,9 +211,9 @@ fn generate_graph_node<'g>(
             Intermediate { typename }
         }
         ParseExpr::Choice(left, right) => {
-            let mut vec = collect_choices(&left.expr, &right.expr);
+            let vec = collect_choices(&left.expr, &right.expr);
             let mut types = vec![];
-            for (i, expr) in vec.into_iter().enumerate() {
+            for expr in vec.into_iter() {
                 let child = generate_graph_node(expr, rule_config, output, config, root);
                 types.push(child);
             }
@@ -281,6 +282,7 @@ fn generate_graph<'g: 'f, 'f>(
     let mut res = Output::new();
     for rule in rules.iter() {
         if matches!(rule.name.as_str(), "~" | "^") {
+            todo!()
         } else {
             let rule_config = RuleConfig::from(rule, not_boxed);
             let inter = generate_graph_node(
@@ -328,10 +330,10 @@ fn collect_used_rule<'g>(
             | ParseExpr::RepOnce(node)
             | ParseExpr::RepRange(node, _) => nodes.push(node),
             ParseExpr::Path(path, args) => {
-                res.insert(RuleRef::new(&path, &args));
+                res.insert(RuleRef::new(path, args));
             }
             ParseExpr::Separated(node, trivia) => {
-                nodes.push(&node);
+                nodes.push(node);
                 if let Trivia::Mandatory | Trivia::Optional = trivia {
                     let rule_trivia = rule_trivia.expect(&expect_trivia);
                     nodes.push(&rule_trivia.node);
@@ -374,8 +376,7 @@ fn generate_typed_pair_from_rule(rules: &[ParseRule], config: Config) -> TokenSt
     let defined_rules: BTreeSet<&str> = rules.iter().map(|rule| rule.name.as_str()).collect();
     let not_boxed = collect_reachability(rules).keys().cloned().collect();
     let graph = generate_graph(rules, &defined_rules, &not_boxed, config);
-    let res = graph.collect();
-    res
+    graph.collect()
 }
 
 /// Generate codes for Parser.

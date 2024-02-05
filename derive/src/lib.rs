@@ -1,4 +1,3 @@
-use pest_generator;
 use proc_macro::TokenStream;
 
 #[proc_macro_derive(
