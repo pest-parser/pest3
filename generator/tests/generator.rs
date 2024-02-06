@@ -8,8 +8,8 @@ use quote::quote;
 /// ```
 #[test]
 fn generated_rules() {
-    let path_generated = "tests/generated.txt";
-    let path_expected = "tests/expected.txt";
+    let path_generated = "tests/generated.rs";
+    let path_expected = "tests/expected.rs";
     let actual = derive_typed_parser(
         quote! {
             #[grammar = "tests/syntax.pest"]
