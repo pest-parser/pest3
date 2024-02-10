@@ -21,8 +21,8 @@ struct Parser;
 macro_rules! test {
     ($name:ident, $input:literal, $($fields:tt)*) => {
         mod $name {
-            use super::{rules, Rule};
-            use pest::{error::Error, typed::TypedNode};
+            use super::rules;
+            use pest::typed::TypedNode;
 
             #[test]
             fn matched() -> anyhow::Result<()> {
