@@ -12,3 +12,8 @@ extern crate alloc;
 pub use pest2::{error, RuleType, Stack};
 pub use position::Position;
 pub use span::Span;
+
+pub mod std {
+    pub use std::boxed::Box;
+    pub use std::option::{Option, Option::None, Option::Some};
+}
