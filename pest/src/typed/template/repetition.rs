@@ -102,6 +102,8 @@ impl<T: Clone + PartialEq, const MIN: usize, const MAX: usize> BoundWrapper
 
 /// Repeat at least one times.
 pub type RepMin<T, const MIN: usize> = RepMinMax<T, MIN, { usize::MAX }>;
+/// Repeat at least one times.
+pub type RepMax<T, const MAX: usize> = RepMinMax<T, 0, MAX>;
 /// Repeat arbitrary times.
 pub type Rep<T> = RepMin<T, 0>;
 /// Repeat at least one times.

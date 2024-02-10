@@ -15,8 +15,7 @@ use core::{
     marker::PhantomData,
     ops::{Deref, DerefMut, Range},
 };
-pub use repetition::{Rep, RepMin, RepMinMax, RepOnce};
-
+pub use repetition::{Rep, RepMax, RepMin, RepMinMax, RepOnce};
 
 /// Match given string case sensitively.
 ///
