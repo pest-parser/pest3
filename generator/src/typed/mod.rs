@@ -8,6 +8,7 @@
 mod attr;
 mod config;
 mod generator;
+mod module;
 mod output;
 
 pub use generator::derive_typed_parser;

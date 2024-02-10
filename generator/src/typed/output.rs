@@ -1,21 +1,14 @@
-use crate::types::_str;
+use crate::types::{_str, pest};
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::collections::{BTreeMap, BTreeSet};
 use syn::Index;
-
-pub fn pest() -> TokenStream {
-    quote! {
-        ::pest
-    }
-}
 
 pub fn generics() -> TokenStream {
     quote! {
         generics
     }
 }
-
 pub fn rules_mod() -> TokenStream {
     quote! {rules}
 }
@@ -164,8 +157,20 @@ impl<'g> Output<'g> {
             quote! {
                 #[doc = "Used generics."]
                 pub mod generics {
-                    use #pest::typed::{template, TypedNode};
-                    pub use template::{Str, Insens, PeekSlice1, PeekSlice2, Push, CharRange, Positive, Negative, Rep, RepOnce};
+                    pub use #pest::typed::template::{
+                        Positive, Negative,
+                        CharRange, Str,
+                        Rep, RepOnce, RepMin, RepMax, RepMinMax,
+                        SOI as SOI,
+                        EOI as EOI,
+                        ANY as any,
+                        PEEK as peek,
+                        PEEK_ALL as peek_all,
+                        DROP as drop,
+                        PUSH as push,
+                        POP as pop,
+                        POP_ALL as pop_all,
+                    };
                     #(#seq)*
                     #(#chs)*
                 }
@@ -174,7 +179,10 @@ impl<'g> Output<'g> {
         quote! {
             impl #pest::typed::RuleType for Rule {
                 const EOI: Self = Rule::EOI;
-                type Trivia<'i> = #trivia;
+                type Trivia<'i> = trivia::Trivia<'i>;
+            }
+            mod trivia {
+                pub type Trivia<'i> = #trivia;
             }
             mod #wrapper_mod {
                 #(#wrappers)*
