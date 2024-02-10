@@ -1,39 +1,53 @@
 use super::{
     attr::parse_derive,
     config::Config,
+    module::ModuleSystem,
     output::{generics, Output},
 };
 use crate::{
     common::{generate_include, generate_rule_enum},
     config::collect_data,
-    typed::output::pest,
     types::option_type,
+    types::pest,
 };
 use pest_meta::{
     doc::DocComment,
     error::rename_meta_rule,
-    parser::{self, ParseExpr, ParseRule, PathArgs, Trivia},
+    parser::{self, fmt_sep, ParseExpr, ParseNode, ParseRule, PathArgs, Range, Trivia},
 };
 use proc_macro2::{Ident, TokenStream};
-use quote::{format_ident, quote};
+use quote::{format_ident, quote, ToTokens};
 use std::{
     collections::{BTreeMap, BTreeSet},
+    fmt::Display,
     path::PathBuf,
 };
 use syn::{DeriveInput, Generics};
 
-/// `rule_id` should be a valid identifier.
+/// Configuration that controls inner content.
 struct RuleConfig<'g> {
+    grammar: &'g (),
+}
+impl<'g> RuleConfig<'g> {
+    fn from(rule: &'g ParseRule) -> Self {
+        let _rule = rule;
+        Self { grammar: &() }
+    }
+}
+
+/// Information about the output of this rule.
+///
+/// `rule_id` should be a valid identifier.
+struct RuleInfo<'g> {
     pub rule_id: Ident,
     pub rule_name: &'g str,
     pub boxed: bool,
 }
-impl<'g> RuleConfig<'g> {
-    fn from(rule: &'g ParseRule, not_boxed: &BTreeSet<RuleRef<'g>>) -> Self {
+impl<'g> RuleInfo<'g> {
+    fn from(rule: &'g ParseRule) -> Self {
         let rule_name = rule.name.as_str();
-        let path = vec![];
-        let rule_ref = RuleRef::from_current(rule_name, path);
-        let boxed = !not_boxed.contains(&rule_ref);
+        let rule_ref = RuleRef::from_top_level(rule_name);
+        let boxed = true;
         let rule_id = format_ident!("r#{}", rule_name);
         Self {
             rule_id,
@@ -43,82 +57,130 @@ impl<'g> RuleConfig<'g> {
     }
 }
 
+#[derive(Clone, Debug)]
+pub enum ProcessedPathArgs {
+    Call(Vec<Intermediate>),
+    Slice(Range<isize>),
+}
+
+impl Display for ProcessedPathArgs {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Call(args) => {
+                write!(f, "(")?;
+                fmt_sep(args, ", ", f)?;
+                write!(f, ")")
+            }
+            Self::Slice(range) => write!(f, "{}", range),
+        }
+    }
+}
+
+impl ProcessedPathArgs {
+    fn process<'g>(
+        args: &'g PathArgs,
+        rule_config: &RuleConfig<'g>,
+        output: &mut Output<'g>,
+        config: Config,
+        mod_sys: &ModuleSystem<'g>,
+        root: &TokenStream,
+    ) -> Self {
+        match args {
+            PathArgs::Call(args) => {
+                let args = args
+                    .iter()
+                    .map(|arg| process_expr(&arg.expr, rule_config, output, config, mod_sys, root))
+                    .collect();
+                Self::Call(args)
+            }
+            PathArgs::Slice(range) => Self::Slice(range.clone()),
+        }
+    }
+}
+
+/// Reference to a rule.
+///
 /// `'g` refers to grammar.
-#[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-struct RuleRef<'g> {
-    path: Vec<&'g str>,
-    name: &'g str,
-    args: Option<&'g PathArgs>,
+#[derive(Clone, Debug)]
+pub struct RuleRef<'g> {
+    pub path: Vec<&'g str>,
+    pub args: Option<ProcessedPathArgs>,
 }
 impl<'g> RuleRef<'g> {
     /// Create from a [Path](ParseExpr::Path).
-    fn new(path: &'g Vec<String>, args: &'g Option<PathArgs>) -> Self {
-        let mut path = path.iter().map(String::as_str).collect::<Vec<_>>();
-        let name = path.pop().expect("Null path found.");
-        let args = args.as_ref();
-        Self { path, name, args }
+    fn new(path: &'g Vec<String>, args: Option<ProcessedPathArgs>) -> Self {
+        let path = path.iter().map(String::as_str).collect::<Vec<_>>();
+        Self { path, args }
     }
     /// Create from a name of a rule defined in current module.
-    fn from_current(name: &'g str, path: Vec<&'g str>) -> Self {
+    pub fn from_current(path: Vec<&'g str>) -> Self {
         let args = None;
-        Self { path, name, args }
+        Self { path, args }
     }
-    /// Get name if it's inside given module.
-    fn get_name_if_in(&self, path: Vec<&'g str>) -> Option<&'g str> {
-        if path != self.path {
-            None
-        } else {
-            Some(self.name)
+    /// Create from a name of a rule defined in current module.
+    fn from_top_level(name: &'g str) -> Self {
+        let path = vec![name];
+        let args = None;
+        Self { path, args }
+    }
+}
+impl<'g> Display for RuleRef<'g> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt_sep(&self.path, "::", f)?;
+        match &self.args {
+            Some(args) => write!(f, "{}", args)?,
+            None => (),
         }
+        Ok(())
     }
 }
 
 fn create_rule<'g>(
     rule_config: &RuleConfig<'g>,
-    type_name: TokenStream,
+    rule_info: &RuleInfo<'g>,
+    inner_type: TokenStream,
     root: TokenStream,
 ) -> TokenStream {
-    fn create<'g>(
-        rule_config: &RuleConfig<'g>,
-        inner_type: TokenStream,
-        root: TokenStream,
-    ) -> TokenStream {
-        let name = &rule_config.rule_id;
-        let this = pest();
-        quote! {
-            #[derive(Clone, Debug, Eq, PartialEq)]
-            pub struct #name {
-                content: #inner_type,
-            }
-            impl<'i> #this::typed::TypedNode<'i, #root::Rule> for #name {
-                fn try_parse_with_partial(
-                    input: #this::Position<'i>,
-                    stack: &mut #this::Stack<#this::Span<'i>>,
-                    tracker: &mut #this::typed::Tracker<'i, #root::Rule>,
-                ) -> ::core::option::Option<(#this::Position<'i>, Self)> {
-                    let (pos, content) = #inner_type::try_parse_with_partial(input, stack, tracker)?;
-                    let res = Self{ content};
-                    ::core::option::Option::Some((pos, res))
-                }
+    let name = &rule_info.rule_id;
+    let this = pest();
+    quote! {
+        #[derive(Clone, Debug, Eq, PartialEq)]
+        pub struct #name<'i> {
+            content: #this::std::Box<#inner_type>,
+            span: #this::Span<'i>,
+        }
+        impl<'i> #this::typed::TypedNode<'i, #root::Rule> for #name<'i> {
+            fn try_parse_with_partial(
+                input: #this::Position<'i>,
+                stack: &mut #this::Stack<#this::Span<'i>>,
+                tracker: &mut #this::typed::Tracker<'i, #root::Rule>,
+            ) -> #this::std::Option<(#this::Position<'i>, Self)> {
+                let (pos, content) = #inner_type::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                let res = Self{ content, span };
+                #this::std::Some((pos, res))
             }
         }
     }
-    create(rule_config, type_name, root)
 }
 
-struct Intermediate {
+#[derive(Clone, Debug)]
+pub struct Intermediate {
     typename: TokenStream,
 }
 
-impl Intermediate {
-    fn from_path(rule_ref: RuleRef<'_>) -> Self {
-        let prefix = rule_ref
-            .path
-            .iter()
-            .map(|module| format_ident!("{}", module));
-        let name = format_ident!("{}", rule_ref.name);
-        let typename = quote! { #(#prefix::)* #name };
-        Self { typename }
+impl Intermediate {}
+
+impl Display for Intermediate {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.typename.fmt(f)
+    }
+}
+
+impl ToTokens for Intermediate {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        tokens.extend(self.typename.clone())
     }
 }
 
@@ -131,7 +193,7 @@ fn collect_sequence<'p>(
     let mut node = right;
     while let ParseExpr::Seq(left, right, next_trivia) = node {
         res.push((trivia, &left.expr));
-        trivia = next_trivia.clone().unwrap_or(Trivia::None);
+        trivia = next_trivia.clone();
         node = &right.expr;
     }
     res.push((trivia, node));
@@ -150,11 +212,12 @@ fn collect_choices<'p>(left: &'p ParseExpr, right: &'p ParseExpr) -> Vec<&'p Par
 }
 
 /// Returns type name.
-fn generate_graph_node<'g>(
+pub fn process_expr<'g>(
     expr: &'g ParseExpr,
     rule_config: &RuleConfig<'g>,
     output: &mut Output<'g>,
     config: Config,
+    mod_sys: &ModuleSystem<'g>,
     root: &TokenStream,
 ) -> Intermediate {
     let generics = generics();
@@ -173,29 +236,35 @@ fn generate_graph_node<'g>(
             let typename = quote! {#root::#generics::CharRange::<#start, #end>};
             Intermediate { typename }
         }
-        ParseExpr::Path(prefix, args) => Intermediate::from_path(RuleRef::new(prefix, args)),
+        ParseExpr::Path(prefix, args) => {
+            let args = args.as_ref().map(|args| {
+                ProcessedPathArgs::process(args, rule_config, output, config, mod_sys, root)
+            });
+            let rule_ref = RuleRef::new(prefix, args);
+            let typename = mod_sys.resolve(&rule_ref, root).expect(&format!(
+                "`{rule_ref}` can't be resolved. Available rules are: {:?}",
+                mod_sys.keys()
+            ));
+            Intermediate { typename }
+        }
         ParseExpr::PosPred(node) => {
-            let inner = generate_graph_node(&node.expr, rule_config, output, config, root);
+            let inner = process_expr(&node.expr, rule_config, output, config, mod_sys, root);
             let inner_typename = &inner.typename;
             let typename = quote! {#root::#generics::Positive::<#inner_typename>};
             Intermediate { typename }
         }
         ParseExpr::NegPred(node) => {
             // Impossible to access inner tokens.
-            let inner = generate_graph_node(&node.expr, rule_config, output, config, root);
+            let inner = process_expr(&node.expr, rule_config, output, config, mod_sys, root);
             let inner_typename = &inner.typename;
             let typename = quote! {#root::#generics::Negative::<#inner_typename>};
             Intermediate { typename }
         }
         ParseExpr::Seq(left, right, trivia) => {
-            let vec = collect_sequence(
-                &left.expr,
-                &right.expr,
-                trivia.clone().unwrap_or(Trivia::None),
-            );
+            let vec = collect_sequence(&left.expr, &right.expr, trivia.clone());
             let mut types = Vec::with_capacity(vec.len());
             for (trivia, expr) in vec.into_iter() {
-                let child = generate_graph_node(expr, rule_config, output, config, root);
+                let child = process_expr(expr, rule_config, output, config, mod_sys, root);
                 types.push((child, trivia));
             }
             let typenames = types.iter().map(|(inter, trivia)| {
@@ -214,7 +283,7 @@ fn generate_graph_node<'g>(
             let vec = collect_choices(&left.expr, &right.expr);
             let mut types = vec![];
             for expr in vec.into_iter() {
-                let child = generate_graph_node(expr, rule_config, output, config, root);
+                let child = process_expr(expr, rule_config, output, config, mod_sys, root);
                 types.push(child);
             }
             let typenames = types.iter().map(|inter| &inter.typename);
@@ -226,74 +295,102 @@ fn generate_graph_node<'g>(
             Intermediate { typename }
         }
         ParseExpr::Opt(inner) => {
-            let inner = generate_graph_node(&inner.expr, rule_config, output, config, root);
+            let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
             let option = option_type();
             let inner_name = &inner.typename;
             let typename = quote! {#option::<#inner_name>};
             Intermediate { typename }
         }
         ParseExpr::Rep(inner) => {
-            let inner = generate_graph_node(&inner.expr, rule_config, output, config, root);
+            let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
             let inner_name = &inner.typename;
-            let typename = quote! { #root::#generics::Rep::<'i, #inner_name> };
+            let typename = quote! { #root::#generics::Rep::<#inner_name> };
             Intermediate { typename }
         }
         ParseExpr::RepOnce(inner) => {
-            let inner = generate_graph_node(&inner.expr, rule_config, output, config, root);
+            let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
             let inner_name = &inner.typename;
-            let typename = quote! { #root::#generics::RepOnce::<'i, #inner_name> };
+            let typename = quote! { #root::#generics::RepOnce::<#inner_name> };
             Intermediate { typename }
         }
         ParseExpr::RepRange(inner, range) => {
-            let inner = generate_graph_node(&inner.expr, rule_config, output, config, root);
+            let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
             let inner_name = &inner.typename;
             let parser::Range { start, end } = range;
             let typename = match (start, end) {
                 (Some(start), Some(end)) => {
-                    quote! { #root::#generics::RepRange::<'i, #inner_name, #start, #end> }
+                    quote! { #root::#generics::RepMinMax::<#inner_name, #start, #end> }
                 }
                 (Some(start), None) => {
-                    quote! { #root::#generics::RepMin::<'i, #inner_name, #start> }
+                    quote! { #root::#generics::RepMin::<#inner_name, #start> }
                 }
                 (None, Some(end)) => {
-                    quote! { #root::#generics::RepRange::<'i, #inner_name, 0, #end> }
+                    quote! { #root::#generics::RepMax::<#inner_name, #end> }
                 }
                 (None, None) => {
-                    quote! { #root::#generics::Rep::<'i, #inner_name> }
+                    quote! { #root::#generics::Rep::<#inner_name> }
                 }
             };
             Intermediate { typename }
         }
         ParseExpr::Separated(inner, trivia) => {
-            let inner = generate_graph_node(&inner.expr, rule_config, output, config, root);
+            let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
             let inner_name = &inner.typename;
-            let typename = quote! { #root::#generics::Rep::<'i, #inner_name> };
+            let typename = quote! { #root::#generics::Rep::<#inner_name> };
             Intermediate { typename }
         }
     }
 }
 
-fn generate_graph<'g: 'f, 'f>(
+fn process_rule<'g: 'f, 'f>(
+    rule: &'g ParseRule,
+    mod_sys: &ModuleSystem<'g>,
+    config: Config,
+    res: &mut Output<'g>,
+) {
+    let rule_config = RuleConfig::from(rule);
+    if matches!(rule.name.as_str(), "~" | "^") {
+        let inter = process_expr(
+            &rule.node.expr,
+            &rule_config,
+            res,
+            config,
+            &mod_sys,
+            &quote! {super},
+        );
+        res.add_trivia(inter.typename);
+    } else {
+        let rule_info = RuleInfo::from(rule);
+        let inter = process_expr(
+            &rule.node.expr,
+            &rule_config,
+            res,
+            config,
+            &mod_sys,
+            &quote! {super},
+        );
+        res.insert_rule_struct(create_rule(
+            &rule_config,
+            &rule_info,
+            inter.typename,
+            quote! {super},
+        ));
+    }
+}
+
+fn process_rules<'g: 'f, 'f>(
     rules: &'g [ParseRule],
-    defined: &'f BTreeSet<&'g str>,
-    not_boxed: &'f BTreeSet<RuleRef<'g>>,
+    mod_sys: &mut ModuleSystem<'g>,
     config: Config,
 ) -> Output<'g> {
     let mut res = Output::new();
     for rule in rules.iter() {
-        if matches!(rule.name.as_str(), "~" | "^") {
-            todo!()
-        } else {
-            let rule_config = RuleConfig::from(rule, not_boxed);
-            let inter = generate_graph_node(
-                &rule.node.expr,
-                &rule_config,
-                &mut res,
-                config,
-                &quote! {super},
-            );
-            res.insert_rule_struct(create_rule(&rule_config, inter.typename, quote! {super}));
+        if !matches!(rule.name.as_str(), "~" | "^") {
+            mod_sys.insert_rule(&rule.name);
         }
+    }
+    for rule in rules.iter() {
+        process_rule(rule, mod_sys, config, &mut res);
     }
     res
 }
@@ -302,60 +399,71 @@ fn generate_graph<'g: 'f, 'f>(
 fn collect_used_rule<'g>(
     rule: &'g ParseRule,
     rule_trivia: Option<&'g ParseRule>,
-    res: &mut BTreeSet<RuleRef<'g>>,
+    res: &mut BTreeSet<&'g str>,
 ) {
-    let mut nodes = vec![&rule.node];
+    let mut nodes: Vec<&'g ParseNode> = vec![];
     let expect_trivia = format!(
         "Please define trivia with `~ = \"...\"`. It's used in rule `{}`.",
         rule.name
     );
-    while let Some(expr) = nodes.pop() {
-        match &expr.expr {
-            ParseExpr::Str(_) | ParseExpr::Insens(_) | ParseExpr::Range(_, _) => (),
-            ParseExpr::PosPred(node) | ParseExpr::NegPred(node) => nodes.push(node),
-            ParseExpr::Seq(lhs, rhs, trivia) => {
-                nodes.push(lhs);
-                nodes.push(rhs);
-                if let Some(Trivia::Mandatory) | Some(Trivia::Optional) = trivia {
-                    let rule_trivia = rule_trivia.expect(&expect_trivia);
-                    nodes.push(&rule_trivia.node);
-                }
-            }
-            ParseExpr::Choice(lhs, rhs) => {
-                nodes.push(lhs);
-                nodes.push(rhs);
-            }
-            ParseExpr::Opt(node)
-            | ParseExpr::Rep(node)
-            | ParseExpr::RepOnce(node)
-            | ParseExpr::RepRange(node, _) => nodes.push(node),
-            ParseExpr::Path(path, args) => {
-                res.insert(RuleRef::new(path, args));
-            }
-            ParseExpr::Separated(node, trivia) => {
-                nodes.push(node);
-                if let Trivia::Mandatory | Trivia::Optional = trivia {
-                    let rule_trivia = rule_trivia.expect(&expect_trivia);
-                    nodes.push(&rule_trivia.node);
-                }
+    let mut f = |expr: &'g parser::ParseNode, nodes: &mut Vec<&'g ParseNode>| match &expr.expr {
+        ParseExpr::Str(_) | ParseExpr::Insens(_) | ParseExpr::Range(_, _) => (),
+        ParseExpr::PosPred(node) | ParseExpr::NegPred(node) => nodes.push(node),
+        ParseExpr::Seq(lhs, rhs, trivia) => {
+            nodes.push(lhs);
+            nodes.push(rhs);
+            if let Trivia::Mandatory | Trivia::Optional = trivia {
+                let rule_trivia = rule_trivia.expect(&expect_trivia);
+                nodes.push(&rule_trivia.node);
             }
         }
+        ParseExpr::Choice(lhs, rhs) => {
+            nodes.push(lhs);
+            nodes.push(rhs);
+        }
+        ParseExpr::Opt(node)
+        | ParseExpr::Rep(node)
+        | ParseExpr::RepOnce(node)
+        | ParseExpr::RepRange(node, _) => nodes.push(node),
+        ParseExpr::Path(path, args) => {
+            // res.insert(RuleRef::new(path, args));
+        }
+        ParseExpr::Separated(node, trivia) => {
+            nodes.push(node);
+            if let Trivia::Mandatory | Trivia::Optional = trivia {
+                let rule_trivia = rule_trivia.expect(&expect_trivia);
+                nodes.push(&rule_trivia.node);
+            }
+        }
+    };
+    f(&rule.node, &mut nodes);
+    while let Some(expr) = nodes.pop() {
+        if expr == &rule.node {
+            continue;
+        }
+        f(expr, &mut nodes);
     }
 }
 
-fn collect_reachability<'g>(rules: &'g [ParseRule]) -> BTreeMap<RuleRef, BTreeSet<RuleRef>> {
+fn collect_used_rules<'s>(rules: &'s [ParseRule]) -> BTreeSet<&'s str> {
+    let mut res = BTreeSet::new();
+    let rule_trivia = rules.iter().find(|rule| rule.name == "~");
+    for rule in rules {
+        collect_used_rule(rule, rule_trivia, &mut res);
+    }
+    res
+}
+
+fn collect_reachability(rules: &[ParseRule]) -> BTreeMap<&str, BTreeSet<&str>> {
     let mut res = BTreeMap::new();
     let rule_trivia = rules.iter().find(|rule| rule.name == "~");
-    let path = vec![];
     for rule in rules {
-        let entry = res
-            .entry(RuleRef::from_current(rule.name.as_str(), path.clone()))
-            .or_default();
+        let entry = res.entry(rule.name.as_str()).or_default();
         collect_used_rule(rule, rule_trivia, entry);
     }
     for _ in 0..rules.len() {
         for rule in rules {
-            let rule_ref = RuleRef::from_current(rule.name.as_str(), path.clone());
+            let rule_ref = rule.name.as_str();
             if let Some(cur) = res.remove(&rule_ref) {
                 let mut new = cur.clone();
                 for referenced in cur {
@@ -374,8 +482,8 @@ fn collect_reachability<'g>(rules: &'g [ParseRule]) -> BTreeMap<RuleRef, BTreeSe
 
 fn generate_typed_pair_from_rule(rules: &[ParseRule], config: Config) -> TokenStream {
     let defined_rules: BTreeSet<&str> = rules.iter().map(|rule| rule.name.as_str()).collect();
-    let not_boxed = collect_reachability(rules).keys().cloned().collect();
-    let graph = generate_graph(rules, &defined_rules, &not_boxed, config);
+    let mut mod_sys = ModuleSystem::new();
+    let graph = process_rules(rules, &mut mod_sys, config);
     graph.collect()
 }
 
