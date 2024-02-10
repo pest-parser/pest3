@@ -1,9 +1,40 @@
+// TODO: peek to decide matched choice when possible.
 #[macro_export]
 macro_rules! choice_type {
     ( $name:ident, $( ( $variant:ident, $type:ident ) ),* $(,)? ) => {
         #[derive(Clone, Debug, Eq, Hash, PartialEq)]
         pub enum $name<$( $type ),*> {
             $( $variant($type) ),*
+        }
+        impl<'i, R, $($type, )*>
+        $crate::typed::TypedNode<'i, R> for $name<$($type, )*>
+        where
+            R: $crate::typed::RuleType,
+            $(
+                $type: $crate::typed::TypedNode<'i, R>,
+            )*
+        {
+            #[inline]
+            fn try_parse_with_partial(
+                input: $crate::Position<'i>,
+                stack: &mut $crate::Stack<$crate::Span<'i>>,
+                tracker: &mut $crate::typed::Tracker<'i, R>,
+            ) -> ::core::option::Option<($crate::Position<'i>, Self)> {
+                $(
+                    stack.snapshot();
+                    match $type::try_parse_with_partial(input, stack, tracker) {
+                        ::core::option::Option::Some((input, choice)) => {
+                            stack.clear_snapshot();
+                            let res = Self::$variant(choice);
+                            return ::core::option::Option::Some((input, res))
+                        }
+                        ::core::option::Option::None => {
+                            stack.restore();
+                        }
+                    }
+                )*
+                ::core::option::Option::None
+            }
         }
     };
 }

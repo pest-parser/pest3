@@ -65,6 +65,26 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
     // const FIRST: &'static [char];
 }
 
+impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Option<T> {
+    fn try_parse_with_partial(
+        input: Position<'i>,
+        stack: &mut Stack<Span<'i>>,
+        tracker: &mut Tracker<'i, R>,
+    ) -> Option<(Position<'i>, Self)> {
+        stack.snapshot();
+        match T::try_parse_with_partial(input, stack, tracker) {
+            Some((pos, res)) => {
+                stack.clear_snapshot();
+                Some((pos, Some(res)))
+            }
+            None => {
+                stack.restore();
+                Some((input, None))
+            }
+        }
+    }
+}
+
 /// Node of concrete syntax tree that never fails.
 pub trait NeverFailedTypedNode<'i, R: RuleType>
 where
