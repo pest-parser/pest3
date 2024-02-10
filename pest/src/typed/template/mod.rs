@@ -556,16 +556,16 @@ impl<'i, R: RuleType> TypedNode<'i, R> for POP_ALL<'i> {
 
 /// Match an expression and push it to the [Stack].
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Push<T> {
+pub struct PUSH<T> {
     /// Matched content.
     pub content: T,
 }
-impl<T> From<T> for Push<T> {
+impl<T> From<T> for PUSH<T> {
     fn from(content: T) -> Self {
         Self { content }
     }
 }
-impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Push<T> {
+impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for PUSH<T> {
     #[inline]
     fn try_parse_with_partial(
         input: Position<'i>,
@@ -578,13 +578,13 @@ impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Push<T> {
         Some((input, Self::from(content)))
     }
 }
-impl<T> Deref for Push<T> {
+impl<T> Deref for PUSH<T> {
     type Target = T;
     fn deref(&self) -> &Self::Target {
         &self.content
     }
 }
-impl<T> DerefMut for Push<T> {
+impl<T> DerefMut for PUSH<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.content
     }
