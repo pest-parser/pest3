@@ -1,6 +1,7 @@
 #![allow(clippy::result_large_err)]
 use std::{
     char,
+    fmt::{write, Display},
     fs::File,
     io::Read,
     mem,
@@ -99,6 +100,19 @@ impl<T: Copy> Range<T> {
     }
 }
 
+impl<T: Display> Display for Range<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if let Some(start) = &self.start {
+            write!(f, "{}", start)?;
+        }
+        write!(f, "..")?;
+        if let Some(end) = &self.end {
+            write!(f, "{}", end)?;
+        }
+        Ok(())
+    }
+}
+
 #[derive(Clone, Debug, Hash, Eq, PartialEq)]
 pub struct ParseRule {
     pub name: String,
@@ -114,10 +128,45 @@ pub struct ParseNode {
     pub span: Span,
 }
 
+impl Display for ParseNode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.expr)
+    }
+}
+
 #[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub enum PathArgs {
     Call(Vec<ParseNode>),
     Slice(Range<isize>),
+}
+
+impl Display for PathArgs {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Call(args) => {
+                write!(f, "(")?;
+                fmt_sep(args, ", ", f)?;
+                write!(f, ")")
+            }
+            Self::Slice(range) => write!(f, "{}", range),
+        }
+    }
+}
+
+#[inline]
+pub fn fmt_sep<T: Display>(
+    vec: &[T],
+    sep: &str,
+    f: &mut std::fmt::Formatter<'_>,
+) -> std::fmt::Result {
+    let mut iter = vec.iter();
+    if let Some(first) = iter.next() {
+        write!(f, "{}", first)?;
+    }
+    for res in iter {
+        write!(f, "{}{}", sep, res)?;
+    }
+    Ok(())
 }
 
 #[derive(Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
@@ -131,6 +180,22 @@ pub enum Trivia {
     Mandatory,
 }
 
+impl Trivia {
+    fn get_repr(&self) -> &'static str {
+        match self {
+            Self::None => "-",
+            Self::Optional => "~",
+            Self::Mandatory => "^",
+        }
+    }
+}
+
+impl Display for Trivia {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.get_repr())
+    }
+}
+
 #[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub enum ParseExpr {
     Str(String),
@@ -139,13 +204,39 @@ pub enum ParseExpr {
     Path(Vec<String>, Option<PathArgs>),
     PosPred(Box<ParseNode>),
     NegPred(Box<ParseNode>),
-    Seq(Box<ParseNode>, Box<ParseNode>, Option<Trivia>),
+    Seq(Box<ParseNode>, Box<ParseNode>, Trivia),
     Choice(Box<ParseNode>, Box<ParseNode>),
     Opt(Box<ParseNode>),
     Rep(Box<ParseNode>),
     RepOnce(Box<ParseNode>),
     RepRange(Box<ParseNode>, Range<usize>),
     Separated(Box<ParseNode>, Trivia),
+}
+
+impl Display for ParseExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Str(str) => write!(f, "{:?}", str),
+            Self::Insens(str) => write!(f, "^{:?}", str),
+            Self::Range(start, end) => write!(f, "{:?}..{:?}", start, end),
+            Self::Path(path, args) => {
+                fmt_sep(path, "::", f)?;
+                if let Some(args) = args {
+                    write!(f, "{}", args)?;
+                }
+                Ok(())
+            }
+            Self::PosPred(inner) => write!(f, "&{}", inner),
+            Self::NegPred(inner) => write!(f, "!{}", inner),
+            Self::Seq(lhs, rhs, trivia) => write!(f, "({} {} {})", lhs, trivia, rhs),
+            Self::Choice(lhs, rhs) => write!(f, "({} | {})", lhs, rhs),
+            Self::Opt(inner) => write!(f, "{}?", inner),
+            Self::Rep(inner) => write!(f, "{}*", inner),
+            Self::RepOnce(inner) => write!(f, "{}+", inner),
+            Self::RepRange(inner, range) => write!(f, "{}[{}]", inner, range),
+            Self::Separated(inner, trivia) => write!(f, "{}{}*", inner, trivia),
+        }
+    }
 }
 
 fn skip(rule: Rule, pairs: &mut Pairs<Rule>) {
@@ -604,13 +695,9 @@ fn parse_node(
 
         let span = lhs.span.union(&rhs.span);
         let expr = match op.as_rule() {
-            Rule::sequence_operator => ParseExpr::Seq(Box::new(lhs), Box::new(rhs), None),
-            Rule::tilde_operator => {
-                ParseExpr::Seq(Box::new(lhs), Box::new(rhs), Some(Trivia::Optional))
-            }
-            Rule::caret_operator => {
-                ParseExpr::Seq(Box::new(lhs), Box::new(rhs), Some(Trivia::Mandatory))
-            }
+            Rule::sequence_operator => ParseExpr::Seq(Box::new(lhs), Box::new(rhs), Trivia::None),
+            Rule::tilde_operator => ParseExpr::Seq(Box::new(lhs), Box::new(rhs), Trivia::Optional),
+            Rule::caret_operator => ParseExpr::Seq(Box::new(lhs), Box::new(rhs), Trivia::Mandatory),
             Rule::choice_operator => ParseExpr::Choice(Box::new(lhs), Box::new(rhs)),
             _ => unreachable!(),
         };
@@ -1265,7 +1352,7 @@ mod tests {
             ParseExpr::Seq(
                 Box::new($lhs),
                 Box::new($rhs),
-                None
+                Trivia::None
             )
         };
 
@@ -1273,7 +1360,7 @@ mod tests {
             ParseExpr::Seq(
                 Box::new($lhs),
                 Box::new($rhs),
-                Some($op)
+                $op
             )
         };
 
