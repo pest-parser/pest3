@@ -11,7 +11,7 @@ NonAtomic = "(" ^ ")"
 
 ExactString     =  "r#"
 CharRange       =  '0'..'9'
-Any             =  ANY
+Any             =  pest::any
 Seq             =  "1" ~ '2'..'9' ~ "."
 Choice          =  "a" | "b"+ ~ RepAtLeastOnce | &"c" ~ Choice ~ Rep ~ Opt | Peek | PeekLeft | PeekRight | PeekLeftRight | Drop | PeekAll
 Rep             =  "b"*
@@ -22,19 +22,19 @@ RepLeft         =  RepExact{1..}
 RepRight        =  RepLeft{..2}
 RepLeftRight    =  RepRight{1..2}
 
-Pos = &(SOI ~ RepLeftRight{2..4})
-Neg = !(EOI ~ Pos)
+Pos = &(pest::SOI ~ RepLeftRight{2..4})
+Neg = !(pest::EOI ~ Pos)
 
-Push = PUSH(RepLeft* ~ Neg ~ ExactString+ ~ Push ~ Pop ~ Push ~ PopAll)
+Push = pest::push(RepLeft* ~ Neg ~ ExactString+ ~ Push ~ Pop ~ Push ~ PopAll)
 
-Pop    = POP
-PopAll = POP_ALL
+Pop    = pest::pop
+PopAll = pest::pop_all
 
-Peek          = PEEK[..]
-PeekLeft      = PEEK[1..]
-PeekRight     = PEEK[..]
-PeekLeftRight = PEEK[1..2]
+Peek          = pest::peek[..]
+PeekLeft      = pest::peek[1..]
+PeekRight     = pest::peek[..]
+PeekLeftRight = pest::peek[1..2]
 
-Drop = DROP
+Drop = pest::drop
 
-PeekAll = PEEK_ALL
+PeekAll = pest::peek_all

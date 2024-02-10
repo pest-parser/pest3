@@ -13,9 +13,6 @@ fn generated_rules() {
     let actual = derive_typed_parser(
         quote! {
             #[grammar = "tests/syntax.pest"]
-            #[emit_rule_reference]
-            #[emit_tagged_node_reference]
-            #[no_warnings]
             struct Parser;
         },
         false,
