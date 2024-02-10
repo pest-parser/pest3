@@ -527,3 +527,54 @@ pub fn derive_typed_parser(input: TokenStream, include_grammar: bool) -> TokenSt
 
     generate_typed(name, &generics, paths, rules, &doc, include_grammar, config)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use lazy_static::lazy_static;
+    use pest_meta::{
+        doc::DocComment,
+        parser::{self, ParseRule},
+    };
+    use std::string::String;
+
+    lazy_static! {
+        static ref SYNTAX: String =
+            String::from_utf8(std::fs::read("tests/syntax.pest").unwrap()).unwrap();
+        static ref PARSE_RESULT: (Vec<ParseRule>, DocComment) =
+            parser::parse_with_doc_comment(&SYNTAX, &"tests/syntax.pest").unwrap();
+    }
+
+    #[test]
+    fn inlined_used_rules() {
+        let rules = parser::parse(
+            r#"
+x = a - b
+a = "a"*
+b = "b"+
+"#,
+            &file!(),
+        )
+        .unwrap();
+        let used = collect_used_rules(&rules);
+        assert_eq!(used, BTreeSet::from(["a", "b"]));
+    }
+
+    #[test]
+    /// Check we can actually break the cycles.
+    fn inter_reference() {
+        let rules = parser::parse(
+            &r#"
+a = "a" - b*
+b = "b" - c?
+c = a+
+"#,
+            &file!(),
+        )
+        .unwrap();
+        let used = collect_used_rules(&rules);
+        assert_eq!(used, BTreeSet::from(["a", "b", "c"]));
+        let graph = collect_reachability(&rules);
+        assert_eq!(graph, BTreeMap::from([("b", BTreeSet::from(["a", "c"]))]));
+    }
+}
