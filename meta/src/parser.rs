@@ -32,31 +32,31 @@ use crate::doc::DocComment;
 
 #[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Span {
-    pub path: Rc<PathBuf>,
+    pub path: PathBuf,
     pub start: usize,
     pub end: usize,
 }
 
 impl Span {
     pub fn start(&self, start: usize) -> Self {
-        Span {
-            path: Rc::clone(&self.path),
+        Self {
+            path: self.path.clone(),
             start,
             end: self.end,
         }
     }
 
     pub fn end(&self, end: usize) -> Self {
-        Span {
-            path: Rc::clone(&self.path),
+        Self {
+            path: self.path.clone(),
             start: self.start,
             end,
         }
     }
 
     pub fn start_end(&self, start: usize, end: usize) -> Self {
-        Span {
-            path: Rc::clone(&self.path),
+        Self {
+            path: self.path.clone(),
             start,
             end,
         }
@@ -66,9 +66,9 @@ impl Span {
         self.start_end(span.start(), span.end())
     }
 
-    pub fn union(&self, other: &Span) -> Self {
-        Span {
-            path: Rc::clone(&self.path),
+    pub fn union(&self, other: &Self) -> Self {
+        Self {
+            path: self.path.clone(),
             start: self.start,
             end: other.end,
         }
@@ -263,7 +263,7 @@ pub fn parse_with_doc_comment<P: AsRef<Path>>(
 fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>> {
     let span = rule.as_span();
     let span = Span {
-        path: Rc::new(path),
+        path,
         start: span.start(),
         end: span.end(),
     };
@@ -1207,7 +1207,7 @@ mod tests {
         Span {
             start: offset,
             end: offset + input.len(),
-            path: Rc::new(PathBuf::from("span")),
+            path: PathBuf::from("span"),
         }
     }
 
