@@ -220,8 +220,15 @@ fn collect_choices<'p>(left: &'p ParseExpr, right: &'p ParseExpr) -> Vec<&'p Par
     res
 }
 
+fn get_trivia(expr: &ParseExpr) -> Trivia {
+    match expr {
+        ParseExpr::Separated(_, trivia) => trivia.clone(),
+        _ => Trivia::None,
+    }
+}
+
 /// Returns type name.
-pub fn process_expr<'g>(
+fn process_expr<'g>(
     expr: &'g ParseExpr,
     rule_config: &RuleConfig<'g>,
     output: &mut Output<'g>,
@@ -310,44 +317,43 @@ pub fn process_expr<'g>(
             let typename = quote! {#option::<#inner_name>};
             Intermediate { typename }
         }
-        ParseExpr::Rep(inner) => {
-            let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
+        ParseExpr::Rep(inner_node) => {
+            let inner = process_expr(&inner_node.expr, rule_config, output, config, mod_sys, root);
             let inner_name = &inner.typename;
-            let typename = quote! { #root::#generics::Rep::<#inner_name, 0> };
+            let trivia = get_trivia(&inner_node.expr).get_code();
+            let typename = quote! { #root::#generics::Rep::<#inner_name, #trivia> };
             Intermediate { typename }
         }
-        ParseExpr::RepOnce(inner) => {
-            let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
+        ParseExpr::RepOnce(inner_node) => {
+            let inner = process_expr(&inner_node.expr, rule_config, output, config, mod_sys, root);
             let inner_name = &inner.typename;
-            let typename = quote! { #root::#generics::RepOnce::<#inner_name, 0> };
+            let trivia = get_trivia(&inner_node.expr).get_code();
+            let typename = quote! { #root::#generics::RepOnce::<#inner_name, #trivia> };
             Intermediate { typename }
         }
-        ParseExpr::RepRange(inner, range) => {
-            let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
+        ParseExpr::RepRange(inner_node, range) => {
+            let inner = process_expr(&inner_node.expr, rule_config, output, config, mod_sys, root);
             let inner_name = &inner.typename;
             let parser::Range { start, end } = range;
+            let trivia = get_trivia(&inner_node.expr).get_code();
             let typename = match (start, end) {
                 (Some(start), Some(end)) => {
-                    quote! { #root::#generics::RepMinMax::<#inner_name, 0, #start, #end> }
+                    quote! { #root::#generics::RepMinMax::<#inner_name, #trivia, #start, #end> }
                 }
                 (Some(start), None) => {
-                    quote! { #root::#generics::RepMin::<#inner_name, 0, #start> }
+                    quote! { #root::#generics::RepMin::<#inner_name, #trivia, #start> }
                 }
                 (None, Some(end)) => {
-                    quote! { #root::#generics::RepMax::<#inner_name, 0, #end> }
+                    quote! { #root::#generics::RepMax::<#inner_name, #trivia, #end> }
                 }
                 (None, None) => {
-                    quote! { #root::#generics::Rep::<#inner_name, 0> }
+                    quote! { #root::#generics::Rep::<#inner_name, #trivia> }
                 }
             };
             Intermediate { typename }
         }
-        ParseExpr::Separated(inner, trivia) => {
-            let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
-            let inner_name = &inner.typename;
-            let trivia = trivia.get_code();
-            let typename = quote! { #root::#generics::Rep::<#inner_name, #trivia> };
-            Intermediate { typename }
+        ParseExpr::Separated(inner, _trivia) => {
+            process_expr(&inner.expr, rule_config, output, config, mod_sys, root)
         }
     }
 }
@@ -435,13 +441,15 @@ fn collect_used_rule<'g>(
         | ParseExpr::Rep(node)
         | ParseExpr::RepOnce(node)
         | ParseExpr::RepRange(node, _) => nodes.push(node),
-        ParseExpr::Path(_path, args) => {
+        ParseExpr::Path(path, args) => {
             match args {
                 // Normally nodes are linked derectly.
                 Some(PathArgs::Call(args)) => nodes.extend(args),
                 _ => (),
             }
-            // res.insert(RuleRef::new(path, args));
+            if path.len() == 1 {
+                res.insert(&path[0]);
+            }
         }
         ParseExpr::Separated(node, trivia) => {
             nodes.push(node);
