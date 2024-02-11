@@ -495,6 +495,7 @@ fn generate_typed(
     rules: Vec<ParseRule>,
     doc_comment: &DocComment,
     include_grammar: bool,
+    impl_parser: bool,
     config: Config,
 ) -> TokenStream {
     let include_fix = if include_grammar {
@@ -505,16 +506,30 @@ fn generate_typed(
     let rule_enum = generate_rule_enum(&rules, doc_comment);
     let definition = generate_typed_pair_from_rule(&rules, config);
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+    let pest = pest();
+
+    let impl_parser = match impl_parser {
+        true => quote! {
+            #[allow(clippy::all)]
+            impl #impl_generics #pest::typed::TypedParser<Rule> for #name #ty_generics #where_clause {}
+        },
+        false => quote! {},
+    };
 
     let res = quote! {
         #include_fix
         #rule_enum
+        #impl_parser
         #definition
     };
     res
 }
 
-pub fn derive_typed_parser(input: TokenStream, include_grammar: bool) -> TokenStream {
+pub fn derive_typed_parser(
+    input: TokenStream,
+    include_grammar: bool,
+    impl_parser: bool,
+) -> TokenStream {
     let ast: DeriveInput = syn::parse2(input).unwrap();
     let (name, generics, contents, config) = parse_derive(ast);
 
@@ -525,7 +540,16 @@ pub fn derive_typed_parser(input: TokenStream, include_grammar: bool) -> TokenSt
         Err(error) => panic!("error parsing \n{}", error.renamed_rules(rename_meta_rule)),
     };
 
-    generate_typed(name, &generics, paths, rules, &doc, include_grammar, config)
+    generate_typed(
+        name,
+        &generics,
+        paths,
+        rules,
+        &doc,
+        include_grammar,
+        impl_parser,
+        config,
+    )
 }
 
 #[cfg(test)]
