@@ -16,6 +16,7 @@ fn generated_rules() {
             struct Parser;
         },
         false,
+        false,
     );
     let actual = actual.to_string();
     std::fs::write(path_generated, &actual).unwrap();
