@@ -26,12 +26,11 @@ use syn::{DeriveInput, Generics};
 
 /// Configuration that controls inner content.
 struct RuleConfig<'g> {
-    grammar: &'g (),
+    grammar: &'g ParseRule,
 }
 impl<'g> RuleConfig<'g> {
     fn from(rule: &'g ParseRule) -> Self {
-        let _rule = rule;
-        Self { grammar: &() }
+        Self { grammar: rule }
     }
 }
 
@@ -143,11 +142,20 @@ fn create_rule<'g>(
 ) -> TokenStream {
     let name = &rule_info.rule_id;
     let this = pest();
+    let doc = format!(
+        "Generated for rule `{}`. Grammar: `{}`.",
+        rule_info.rule_name, rule_config.grammar.node,
+    );
     quote! {
+        #[doc = #doc]
         #[derive(Clone, Debug, Eq, PartialEq)]
         pub struct #name<'i> {
             content: #this::std::Box<#inner_type>,
             span: #this::Span<'i>,
+        }
+        impl<'i> #this::typed::wrapper::Rule<#root::Rule> for #name<'i> {
+            type Rule = #root::Rule;
+            const RULE: #root::Rule = #root::Rule::#name;
         }
         impl<'i> #this::typed::TypedNode<'i, #root::Rule> for #name<'i> {
             fn try_parse_with_partial(
@@ -155,11 +163,12 @@ fn create_rule<'g>(
                 stack: &mut #this::Stack<#this::Span<'i>>,
                 tracker: &mut #this::typed::Tracker<'i, #root::Rule>,
             ) -> #this::std::Option<(#this::Position<'i>, Self)> {
-                let (pos, content) = #inner_type::try_parse_with_partial(input, stack, tracker)?;
-                let content = content.into();
-                let span = input.span(&pos);
-                let res = Self{ content, span };
-                #this::std::Some((pos, res))
+                tracker.record_option_during(input, |tracker| {
+                    let (pos, content) = #inner_type::try_parse_with_partial(input, stack, tracker)?;
+                    let content = content.into();
+                    let span = input.span(&pos);
+                    #this::std::Some((pos, Self{ content, span }))
+                })
             }
         }
     }
@@ -269,7 +278,7 @@ pub fn process_expr<'g>(
             }
             let typenames = types.iter().map(|(inter, trivia)| {
                 let typename = &inter.typename;
-                let trivia = matches!(trivia, Trivia::Mandatory | Trivia::Optional);
+                let trivia = trivia.get_code();
                 quote! {#typename, #trivia}
             });
 
@@ -304,13 +313,13 @@ pub fn process_expr<'g>(
         ParseExpr::Rep(inner) => {
             let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
             let inner_name = &inner.typename;
-            let typename = quote! { #root::#generics::Rep::<#inner_name> };
+            let typename = quote! { #root::#generics::Rep::<#inner_name, 0> };
             Intermediate { typename }
         }
         ParseExpr::RepOnce(inner) => {
             let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
             let inner_name = &inner.typename;
-            let typename = quote! { #root::#generics::RepOnce::<#inner_name> };
+            let typename = quote! { #root::#generics::RepOnce::<#inner_name, 0> };
             Intermediate { typename }
         }
         ParseExpr::RepRange(inner, range) => {
@@ -319,16 +328,16 @@ pub fn process_expr<'g>(
             let parser::Range { start, end } = range;
             let typename = match (start, end) {
                 (Some(start), Some(end)) => {
-                    quote! { #root::#generics::RepMinMax::<#inner_name, #start, #end> }
+                    quote! { #root::#generics::RepMinMax::<#inner_name, 0, #start, #end> }
                 }
                 (Some(start), None) => {
-                    quote! { #root::#generics::RepMin::<#inner_name, #start> }
+                    quote! { #root::#generics::RepMin::<#inner_name, 0, #start> }
                 }
                 (None, Some(end)) => {
-                    quote! { #root::#generics::RepMax::<#inner_name, #end> }
+                    quote! { #root::#generics::RepMax::<#inner_name, 0, #end> }
                 }
                 (None, None) => {
-                    quote! { #root::#generics::Rep::<#inner_name> }
+                    quote! { #root::#generics::Rep::<#inner_name, 0> }
                 }
             };
             Intermediate { typename }
@@ -336,7 +345,8 @@ pub fn process_expr<'g>(
         ParseExpr::Separated(inner, trivia) => {
             let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
             let inner_name = &inner.typename;
-            let typename = quote! { #root::#generics::Rep::<#inner_name> };
+            let trivia = trivia.get_code();
+            let typename = quote! { #root::#generics::Rep::<#inner_name, #trivia> };
             Intermediate { typename }
         }
     }
@@ -425,7 +435,12 @@ fn collect_used_rule<'g>(
         | ParseExpr::Rep(node)
         | ParseExpr::RepOnce(node)
         | ParseExpr::RepRange(node, _) => nodes.push(node),
-        ParseExpr::Path(path, args) => {
+        ParseExpr::Path(_path, args) => {
+            match args {
+                // Normally nodes are linked derectly.
+                Some(PathArgs::Call(args)) => nodes.extend(args),
+                _ => (),
+            }
             // res.insert(RuleRef::new(path, args));
         }
         ParseExpr::Separated(node, trivia) => {

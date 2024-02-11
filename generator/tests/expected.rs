@@ -1,4 +1,4 @@
-#[allow(dead_code, non_camel_case_types, clippy::upper_case_acronyms)]
+#[allow(dead_code, missing_docs, non_camel_case_types, clippy::upper_case_acronyms)]
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum Rule {
     EOI,
@@ -34,7 +34,7 @@ impl ::pest::typed::RuleType for Rule {
     type Trivia<'i> = trivia::Trivia<'i>;
 }
 mod trivia {
-    pub type Trivia<'i> = super::generics::Rep<super::generics::Str<super::wrapper::W0>>;
+    pub type Trivia<'i> = super::generics::Rep<super::generics::Str<super::wrapper::W0>, 0>;
 }
 mod wrapper {
     #[doc = "A wrapper for `\" \"`."]
@@ -108,44 +108,59 @@ mod wrapper {
 pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Regular<'i> {
-        content: ::pest::std::Box<super::generics::RepOnce<super::generics::CharRange<'0', '9'>>>,
+        content: ::pest::std::Box<super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Regular<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Regular;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Regular<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::RepOnce::<super::generics::CharRange<'0', '9'>>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::RepOnce::<super::generics::CharRange<'0', '9'>, 0>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Atomic<'i> {
-        content: ::pest::std::Box<super::generics::Sequence3<super::generics::RepOnce<super::rules::CharRange<'i>>, false, super::generics::Str<super::wrapper::W1>, true, super::generics::RepOnce<super::rules::CharRange<'i>>, true>>,
+        content: ::pest::std::Box<super::generics::Sequence3<super::generics::RepOnce<super::rules::CharRange<'i>, 0>, 0u8, super::generics::Str<super::wrapper::W1>, 1u8, super::generics::RepOnce<super::rules::CharRange<'i>, 0>, 1u8>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Atomic<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Atomic;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Atomic<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::Sequence3::<super::generics::RepOnce<super::rules::CharRange<'i>>, false, super::generics::Str<super::wrapper::W1>, true, super::generics::RepOnce<super::rules::CharRange<'i>>, true>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::Sequence3::<super::generics::RepOnce<super::rules::CharRange<'i>, 0>, 0u8, super::generics::Str<super::wrapper::W1>, 1u8, super::generics::RepOnce<super::rules::CharRange<'i>, 0>, 1u8>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#NonAtomic<'i> {
-        content: ::pest::std::Box<super::generics::Sequence2<super::generics::Str<super::wrapper::W2>, false, super::generics::Str<super::wrapper::W3>, true>>,
+        content: ::pest::std::Box<super::generics::Sequence2<super::generics::Str<super::wrapper::W2>, 0u8, super::generics::Str<super::wrapper::W3>, 2u8>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#NonAtomic<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#NonAtomic;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#NonAtomic<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::Sequence2::<super::generics::Str<super::wrapper::W2>, false, super::generics::Str<super::wrapper::W3>, true>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::Sequence2::<super::generics::Str<super::wrapper::W2>, 0u8, super::generics::Str<super::wrapper::W3>, 2u8>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -153,13 +168,18 @@ pub mod rules {
         content: ::pest::std::Box<super::generics::Str<super::wrapper::W4>>,
         span: ::pest::Span<'i>,
     }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#ExactString<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#ExactString;
+    }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#ExactString<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::Str::<super::wrapper::W4>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::Str::<super::wrapper::W4>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -167,13 +187,18 @@ pub mod rules {
         content: ::pest::std::Box<super::generics::CharRange<'0', '9'>>,
         span: ::pest::Span<'i>,
     }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#CharRange<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#CharRange;
+    }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#CharRange<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::CharRange::<'0', '9'>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::CharRange::<'0', '9'>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -181,69 +206,94 @@ pub mod rules {
         content: ::pest::std::Box<super::generics::r#any>,
         span: ::pest::Span<'i>,
     }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Any<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Any;
+    }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Any<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::r#any::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::r#any::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Seq<'i> {
-        content: ::pest::std::Box<super::generics::Sequence3<super::generics::Str<super::wrapper::W5>, false, super::generics::CharRange<'2', '9'>, true, super::generics::Str<super::wrapper::W6>, true>>,
+        content: ::pest::std::Box<super::generics::Sequence3<super::generics::Str<super::wrapper::W5>, 0u8, super::generics::CharRange<'2', '9'>, 1u8, super::generics::Str<super::wrapper::W6>, 1u8>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Seq<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Seq;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Seq<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::Sequence3::<super::generics::Str<super::wrapper::W5>, false, super::generics::CharRange<'2', '9'>, true, super::generics::Str<super::wrapper::W6>, true>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::Sequence3::<super::generics::Str<super::wrapper::W5>, 0u8, super::generics::CharRange<'2', '9'>, 1u8, super::generics::Str<super::wrapper::W6>, 1u8>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Choice<'i> {
-        content: ::pest::std::Box<super::generics::Choice9<super::generics::Str<super::wrapper::W7>, super::generics::Sequence2<super::generics::RepOnce<super::generics::Str<super::wrapper::W8>>, false, super::rules::RepAtLeastOnce<'i>, true>, super::generics::Sequence4<super::generics::Positive<super::generics::Str<super::wrapper::W9>>, false, super::rules::Choice<'i>, true, super::rules::Rep<'i>, true, super::rules::Opt<'i>, true>, super::rules::Peek<'i>, super::rules::PeekLeft<'i>, super::rules::PeekRight<'i>, super::rules::PeekLeftRight<'i>, super::rules::Drop<'i>, super::rules::PeekAll<'i>>>,
+        content: ::pest::std::Box<super::generics::Choice9<super::generics::Str<super::wrapper::W7>, super::generics::Sequence2<super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0>, 0u8, super::rules::RepAtLeastOnce<'i>, 1u8>, super::generics::Sequence4<super::generics::Positive<super::generics::Str<super::wrapper::W9>>, 0u8, super::rules::Choice<'i>, 1u8, super::rules::Rep<'i>, 1u8, super::rules::Opt<'i>, 1u8>, super::rules::Peek<'i>, super::rules::PeekLeft<'i>, super::rules::PeekRight<'i>, super::rules::PeekLeftRight<'i>, super::rules::Drop<'i>, super::rules::PeekAll<'i>>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Choice<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Choice;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Choice<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::Choice9::<super::generics::Str<super::wrapper::W7>, super::generics::Sequence2<super::generics::RepOnce<super::generics::Str<super::wrapper::W8>>, false, super::rules::RepAtLeastOnce<'i>, true>, super::generics::Sequence4<super::generics::Positive<super::generics::Str<super::wrapper::W9>>, false, super::rules::Choice<'i>, true, super::rules::Rep<'i>, true, super::rules::Opt<'i>, true>, super::rules::Peek<'i>, super::rules::PeekLeft<'i>, super::rules::PeekRight<'i>, super::rules::PeekLeftRight<'i>, super::rules::Drop<'i>, super::rules::PeekAll<'i>>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::Choice9::<super::generics::Str<super::wrapper::W7>, super::generics::Sequence2<super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0>, 0u8, super::rules::RepAtLeastOnce<'i>, 1u8>, super::generics::Sequence4<super::generics::Positive<super::generics::Str<super::wrapper::W9>>, 0u8, super::rules::Choice<'i>, 1u8, super::rules::Rep<'i>, 1u8, super::rules::Opt<'i>, 1u8>, super::rules::Peek<'i>, super::rules::PeekLeft<'i>, super::rules::PeekRight<'i>, super::rules::PeekLeftRight<'i>, super::rules::Drop<'i>, super::rules::PeekAll<'i>>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Rep<'i> {
-        content: ::pest::std::Box<super::generics::Rep<super::generics::Str<super::wrapper::W8>>>,
+        content: ::pest::std::Box<super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Rep<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Rep;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Rep<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::Rep::<super::generics::Str<super::wrapper::W8>>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::Rep::<super::generics::Str<super::wrapper::W8>, 0>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepAtLeastOnce<'i> {
-        content: ::pest::std::Box<super::generics::RepOnce<super::generics::CharRange<'0', '9'>>>,
+        content: ::pest::std::Box<super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#RepAtLeastOnce<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#RepAtLeastOnce;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#RepAtLeastOnce<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::RepOnce::<super::generics::CharRange<'0', '9'>>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::RepOnce::<super::generics::CharRange<'0', '9'>, 0>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -251,111 +301,151 @@ pub mod rules {
         content: ::pest::std::Box<::pest::std::Option<super::generics::Str<super::wrapper::W10>>>,
         span: ::pest::Span<'i>,
     }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Opt<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Opt;
+    }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Opt<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = ::pest::std::Option::<super::generics::Str<super::wrapper::W10>>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = ::pest::std::Option::<super::generics::Str<super::wrapper::W10>>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepExact<'i> {
-        content: ::pest::std::Box<super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 3usize, 3usize>>,
+        content: ::pest::std::Box<super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 0, 3usize, 3usize>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#RepExact<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#RepExact;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#RepExact<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::RepMinMax::<super::rules::RepAtLeastOnce<'i>, 3usize, 3usize>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::RepMinMax::<super::rules::RepAtLeastOnce<'i>, 0, 3usize, 3usize>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepLeft<'i> {
-        content: ::pest::std::Box<super::generics::RepMin<super::rules::RepExact<'i>, 1usize>>,
+        content: ::pest::std::Box<super::generics::RepMin<super::rules::RepExact<'i>, 0, 1usize>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#RepLeft<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#RepLeft;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#RepLeft<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::RepMin::<super::rules::RepExact<'i>, 1usize>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::RepMin::<super::rules::RepExact<'i>, 0, 1usize>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepRight<'i> {
-        content: ::pest::std::Box<super::generics::RepMax<super::rules::RepLeft<'i>, 2usize>>,
+        content: ::pest::std::Box<super::generics::RepMax<super::rules::RepLeft<'i>, 0, 2usize>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#RepRight<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#RepRight;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#RepRight<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::RepMax::<super::rules::RepLeft<'i>, 2usize>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::RepMax::<super::rules::RepLeft<'i>, 0, 2usize>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepLeftRight<'i> {
-        content: ::pest::std::Box<super::generics::RepMinMax<super::rules::RepRight<'i>, 1usize, 2usize>>,
+        content: ::pest::std::Box<super::generics::RepMinMax<super::rules::RepRight<'i>, 0, 1usize, 2usize>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#RepLeftRight<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#RepLeftRight;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#RepLeftRight<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::RepMinMax::<super::rules::RepRight<'i>, 1usize, 2usize>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::RepMinMax::<super::rules::RepRight<'i>, 0, 1usize, 2usize>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Pos<'i> {
-        content: ::pest::std::Box<super::generics::Positive<super::generics::Sequence2<super::generics::r#SOI, false, super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 2usize, 4usize>, true>>>,
+        content: ::pest::std::Box<super::generics::Positive<super::generics::Sequence2<super::generics::r#SOI, 0u8, super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0, 2usize, 4usize>, 1u8>>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Pos<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Pos;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Pos<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::Positive::<super::generics::Sequence2<super::generics::r#SOI, false, super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 2usize, 4usize>, true>>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::Positive::<super::generics::Sequence2<super::generics::r#SOI, 0u8, super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0, 2usize, 4usize>, 1u8>>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Neg<'i> {
-        content: ::pest::std::Box<super::generics::Negative<super::generics::Sequence2<super::generics::r#EOI, false, super::rules::Pos<'i>, true>>>,
+        content: ::pest::std::Box<super::generics::Negative<super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Neg<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Neg;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Neg<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::Negative::<super::generics::Sequence2<super::generics::r#EOI, false, super::rules::Pos<'i>, true>>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::Negative::<super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Push<'i> {
-        content: ::pest::std::Box<super::generics::r#push<super::generics::Sequence7<super::generics::Rep<super::rules::RepLeft<'i>>, false, super::rules::Neg<'i>, true, super::generics::RepOnce<super::rules::ExactString<'i>>, true, super::rules::Push<'i>, true, super::rules::Pop<'i>, true, super::rules::Push<'i>, true, super::rules::PopAll<'i>, true>>>,
+        content: ::pest::std::Box<super::generics::r#push<super::generics::Sequence7<super::generics::Rep<super::rules::RepLeft<'i>, 0>, 0u8, super::rules::Neg<'i>, 1u8, super::generics::RepOnce<super::rules::ExactString<'i>, 0>, 1u8, super::rules::Push<'i>, 1u8, super::rules::Pop<'i>, 1u8, super::rules::Push<'i>, 1u8, super::rules::PopAll<'i>, 1u8>>>,
         span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Push<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Push;
     }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Push<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::r#push::<super::generics::Sequence7<super::generics::Rep<super::rules::RepLeft<'i>>, false, super::rules::Neg<'i>, true, super::generics::RepOnce<super::rules::ExactString<'i>>, true, super::rules::Push<'i>, true, super::rules::Pop<'i>, true, super::rules::Push<'i>, true, super::rules::PopAll<'i>, true>>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::r#push::<super::generics::Sequence7<super::generics::Rep<super::rules::RepLeft<'i>, 0>, 0u8, super::rules::Neg<'i>, 1u8, super::generics::RepOnce<super::rules::ExactString<'i>, 0>, 1u8, super::rules::Push<'i>, 1u8, super::rules::Pop<'i>, 1u8, super::rules::Push<'i>, 1u8, super::rules::PopAll<'i>, 1u8>>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -363,13 +453,18 @@ pub mod rules {
         content: ::pest::std::Box<super::generics::r#pop<'i>>,
         span: ::pest::Span<'i>,
     }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Pop<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Pop;
+    }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Pop<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::r#pop::<'i>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::r#pop::<'i>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -377,13 +472,18 @@ pub mod rules {
         content: ::pest::std::Box<super::generics::r#pop_all<'i>>,
         span: ::pest::Span<'i>,
     }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PopAll<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#PopAll;
+    }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#PopAll<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::r#pop_all::<'i>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::r#pop_all::<'i>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -391,13 +491,18 @@ pub mod rules {
         content: ::pest::std::Box<super::generics::r#peek<'i>>,
         span: ::pest::Span<'i>,
     }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Peek<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Peek;
+    }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Peek<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::r#peek::<'i>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::r#peek::<'i>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -405,13 +510,18 @@ pub mod rules {
         content: ::pest::std::Box<super::generics::r#peek<'i>>,
         span: ::pest::Span<'i>,
     }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekLeft<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#PeekLeft;
+    }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#PeekLeft<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::r#peek::<'i>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::r#peek::<'i>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -419,13 +529,18 @@ pub mod rules {
         content: ::pest::std::Box<super::generics::r#peek<'i>>,
         span: ::pest::Span<'i>,
     }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekRight<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#PeekRight;
+    }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#PeekRight<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::r#peek::<'i>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::r#peek::<'i>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -433,13 +548,18 @@ pub mod rules {
         content: ::pest::std::Box<super::generics::r#peek<'i>>,
         span: ::pest::Span<'i>,
     }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekLeftRight<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#PeekLeftRight;
+    }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#PeekLeftRight<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::r#peek::<'i>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::r#peek::<'i>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -447,13 +567,18 @@ pub mod rules {
         content: ::pest::std::Box<super::generics::r#drop>,
         span: ::pest::Span<'i>,
     }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Drop<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#Drop;
+    }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#Drop<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::r#drop::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::r#drop::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -461,13 +586,18 @@ pub mod rules {
         content: ::pest::std::Box<super::generics::r#peek_all<'i>>,
         span: ::pest::Span<'i>,
     }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekAll<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#PeekAll;
+    }
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#PeekAll<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
-            let (pos, content) = super::generics::r#peek_all::<'i>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            let res = Self { content, span };
-            ::pest::std::Some((pos, res))
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::r#peek_all::<'i>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
         }
     }
 }
