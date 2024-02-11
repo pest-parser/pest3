@@ -24,7 +24,7 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
             Some((input, res)) => (input, res),
             None => return None,
         };
-        let (_input, _eoi) = match tracker.record_during_with_option(
+        let (_input, _eoi) = match tracker.record_option_during_with(
             input,
             |tracker| EOI::try_parse_with_partial(input, stack, tracker),
             <R as RuleType>::EOI,
@@ -82,6 +82,35 @@ impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Option<T> {
                 Some((input, None))
             }
         }
+    }
+}
+
+pub trait TypedParser<R: RuleType> {
+    #[inline]
+    fn try_parse_with<'i, T: TypedNode<'i, R>>(
+        input: Position<'i>,
+        stack: &mut Stack<Span<'i>>,
+        tracker: &mut Tracker<'i, R>,
+    ) -> Option<T> {
+        T::try_parse_with(input, stack, tracker)
+    }
+    #[inline]
+    fn try_parse_with_partial<'i, T: TypedNode<'i, R>>(
+        input: Position<'i>,
+        stack: &mut Stack<Span<'i>>,
+        tracker: &mut Tracker<'i, R>,
+    ) -> Option<(Position<'i>, T)> {
+        T::try_parse_with_partial(input, stack, tracker)
+    }
+    #[inline]
+    fn try_parse<'i, T: TypedNode<'i, R>>(input: &'i str) -> Result<T, Error<R>> {
+        T::try_parse(input)
+    }
+    #[inline]
+    fn try_parse_partial<'i, T: TypedNode<'i, R>>(
+        input: &'i str,
+    ) -> Result<(Position<'i>, T), Error<R>> {
+        T::try_parse_partial(input)
     }
 }
 

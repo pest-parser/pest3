@@ -4,4 +4,4 @@ mod traits;
 pub mod wrapper;
 
 pub use tracker::Tracker;
-pub use traits::{NeverFailedTypedNode, RuleType, TypedNode};
+pub use traits::{NeverFailedTypedNode, RuleType, TypedNode, TypedParser};

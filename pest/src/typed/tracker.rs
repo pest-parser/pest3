@@ -166,7 +166,7 @@ impl<'i, R: RuleType> Tracker<'i, R> {
     }
     /// Record if the result doesn't match the state during calling `f`.
     #[inline]
-    pub(crate) fn record_during_with_option<T>(
+    pub(crate) fn record_option_during_with<T>(
         &mut self,
         pos: Position<'i>,
         f: impl FnOnce(&mut Self) -> Option<(Position<'i>, T)>,
@@ -192,6 +192,15 @@ impl<'i, R: RuleType> Tracker<'i, R> {
         f: impl FnOnce(&mut Self) -> Result<(Position<'i>, T), E>,
     ) -> Result<(Position<'i>, T), E> {
         self.record_during_with(pos, f, T::RULE)
+    }
+    /// Record if the result doesn't match the state during calling `f`.
+    #[inline]
+    pub fn record_option_during<T: RuleWrapper<R>>(
+        &mut self,
+        pos: Position<'i>,
+        f: impl FnOnce(&mut Self) -> Option<(Position<'i>, T)>,
+    ) -> Option<(Position<'i>, T)> {
+        self.record_option_during_with(pos, f, T::RULE)
     }
     fn collect_to_message(self) -> String {
         let (pos, attempts) = self.finish();

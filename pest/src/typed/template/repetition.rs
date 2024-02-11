@@ -11,25 +11,27 @@ use alloc::vec::Vec;
 use core::{fmt::Debug, usize};
 
 /// Repeatably match `T` at least `MIN` times and at most `MAX` times.
-#[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct RepMinMax<T, const MIN: usize, const MAX: usize> {
+#[derive(Clone, Hash, PartialEq, Eq)]
+pub struct RepMinMax<T, const TRIVIA: u8, const MIN: usize, const MAX: usize> {
     /// Skipped and Matched expressions.
     pub content: Vec<T>,
 }
 
-impl<T, const MAX: usize> Default for RepMinMax<T, 0, MAX> {
+impl<T, const TRIVIA: u8, const MAX: usize> Default for RepMinMax<T, TRIVIA, 0, MAX> {
     fn default() -> Self {
         Self {
             content: Vec::new(),
         }
     }
 }
+
 impl<
         'i,
         R: RuleType,
         T: TypedNode<'i, R> + Debug + Clone + PartialEq + Default,
+        const TRIVIA: u8,
         const MAX: usize,
-    > NeverFailedTypedNode<'i, R> for RepMinMax<T, 0, MAX>
+    > NeverFailedTypedNode<'i, R> for RepMinMax<T, TRIVIA, 0, MAX>
 {
     #[inline]
     fn parse_with(mut input: Position<'i>, stack: &mut Stack<Span<'i>>) -> (Position<'i>, Self) {
@@ -38,7 +40,9 @@ impl<
         let mut tracker = Tracker::new(input);
 
         for i in 0..MAX {
-            match restore_on_none(stack, |stack| try_parse_unit(input, stack, &mut tracker, i)) {
+            match restore_on_none(stack, |stack| {
+                try_parse_unit::<R, T, TRIVIA>(input, stack, &mut tracker, i)
+            }) {
                 Some((next, matched)) => {
                     input = next;
                     vec.push(matched);
@@ -52,8 +56,14 @@ impl<
         (input, Self { content: vec })
     }
 }
-impl<'i, R: RuleType, T: TypedNode<'i, R>, const MIN: usize, const MAX: usize> TypedNode<'i, R>
-    for RepMinMax<T, MIN, MAX>
+impl<
+        'i,
+        R: RuleType,
+        T: TypedNode<'i, R>,
+        const TRIVIA: u8,
+        const MIN: usize,
+        const MAX: usize,
+    > TypedNode<'i, R> for RepMinMax<T, TRIVIA, MIN, MAX>
 {
     #[inline]
     fn try_parse_with_partial(
@@ -64,8 +74,13 @@ impl<'i, R: RuleType, T: TypedNode<'i, R>, const MIN: usize, const MAX: usize> T
         let mut vec = Vec::new();
 
         for i in 0..MAX {
-            match restore_on_none(stack, |stack| try_parse_unit(input, stack, tracker, i)) {
+            match restore_on_none(stack, |stack| {
+                try_parse_unit::<R, T, TRIVIA>(input, stack, tracker, i)
+            }) {
                 Some((next, matched)) => {
+                    if next == input {
+                        eprintln!("{input:?} {next:?}");
+                    }
                     input = next;
                     vec.push(matched);
                 }
@@ -82,7 +97,18 @@ impl<'i, R: RuleType, T: TypedNode<'i, R>, const MIN: usize, const MAX: usize> T
         Some((input, Self { content: vec }))
     }
 }
-impl<T, const MIN: usize, const MAX: usize> RepMinMax<T, MIN, MAX> {
+impl<T, const TRIVIA: u8, const MIN: usize, const MAX: usize> IntoIterator
+    for RepMinMax<T, TRIVIA, MIN, MAX>
+{
+    type Item = T;
+
+    type IntoIter = <Vec<T> as IntoIterator>::IntoIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.content.into_iter()
+    }
+}
+impl<T, const TRIVIA: u8, const MIN: usize, const MAX: usize> RepMinMax<T, TRIVIA, MIN, MAX> {
     /// Returns an iterator over all skipped or matched expressions by reference.
     #[allow(clippy::needless_lifetimes)]
     pub fn iter_all<'n>(&'n self) -> alloc::slice::Iter<'n, T> {
@@ -93,32 +119,56 @@ impl<T, const MIN: usize, const MAX: usize> RepMinMax<T, MIN, MAX> {
         self.content.into_iter()
     }
 }
-impl<T: Clone + PartialEq, const MIN: usize, const MAX: usize> BoundWrapper
-    for RepMinMax<T, MIN, MAX>
+impl<T: Clone + PartialEq, const TRIVIA: u8, const MIN: usize, const MAX: usize> BoundWrapper
+    for RepMinMax<T, TRIVIA, MIN, MAX>
 {
     const MIN: usize = MIN;
     const MAX: usize = MAX;
 }
+impl<T: Debug, const TRIVIA: u8, const MIN: usize, const MAX: usize> Debug
+    for RepMinMax<T, TRIVIA, MIN, MAX>
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_tuple("RepMinMax").field(&self.content).finish()
+    }
+}
 
 /// Repeat at least one times.
-pub type RepMin<T, const MIN: usize> = RepMinMax<T, MIN, { usize::MAX }>;
+pub type RepMin<T, const TRIVIA: u8, const MIN: usize> = RepMinMax<T, TRIVIA, MIN, { usize::MAX }>;
 /// Repeat at least one times.
-pub type RepMax<T, const MAX: usize> = RepMinMax<T, 0, MAX>;
+pub type RepMax<T, const TRIVIA: u8, const MAX: usize> = RepMinMax<T, TRIVIA, 0, MAX>;
 /// Repeat arbitrary times.
-pub type Rep<T> = RepMin<T, 0>;
+pub type Rep<T, const TRIVIA: u8> = RepMin<T, TRIVIA, 0>;
 /// Repeat at least one times.
-pub type RepOnce<T> = RepMin<T, 1>;
+pub type RepOnce<T, const TRIVIA: u8> = RepMin<T, TRIVIA, 1>;
 
 #[inline]
-fn try_parse_unit<'i, R: RuleType, T: TypedNode<'i, R>>(
+fn try_parse_unit<'i, R: RuleType, T: TypedNode<'i, R>, const TRIVIA: u8>(
     mut input: Position<'i>,
     stack: &mut Stack<Span<'i>>,
     tracker: &mut Tracker<'i, R>,
     i: usize,
 ) -> Option<(Position<'i>, T)> {
     if i > 0 {
-        while let Some((next, _trivia)) = R::Trivia::try_parse_with_partial(input, stack, tracker) {
-            input = next;
+        match TRIVIA {
+            0 => (),
+            1 => {
+                while let Some((next, _trivia)) =
+                    R::Trivia::try_parse_with_partial(input, stack, tracker)
+                {
+                    input = next;
+                }
+            }
+            2 => {
+                let (next, _trivia) = R::Trivia::try_parse_with_partial(input, stack, tracker)?;
+                input = next;
+                while let Some((next, _trivia)) =
+                    R::Trivia::try_parse_with_partial(input, stack, tracker)
+                {
+                    input = next;
+                }
+            }
+            _ => unreachable!(),
         }
     }
     let (next, matched) = T::try_parse_with_partial(input, stack, tracker)?;
