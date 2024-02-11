@@ -241,7 +241,7 @@ impl Display for ParseExpr {
             Self::Rep(inner) => write!(f, "{}*", inner),
             Self::RepOnce(inner) => write!(f, "{}+", inner),
             Self::RepRange(inner, range) => write!(f, "{}[{}]", inner, range),
-            Self::Separated(inner, trivia) => write!(f, "{}{}*", inner, trivia),
+            Self::Separated(inner, trivia) => write!(f, "{}{}", inner, trivia),
         }
     }
 }
