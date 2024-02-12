@@ -2,7 +2,7 @@
 //! The generator may use this for convenience.
 //! Normally you don't need to reference this module by yourself.
 
-use super::{restore_on_none, RuleType};
+use super::{restore_on_none, try_handle_trivia, RuleType};
 use crate::{
     typed::{
         tracker::Tracker, wrapper::Bound as BoundWrapper, NeverFailedTypedNode, PairContainer,
@@ -138,9 +138,9 @@ impl<T: Debug, const TRIVIA: u8, const MIN: usize, const MAX: usize> Debug
 impl<R: RuleType, T: PairContainer<R>, const TRIVIA: u8, const MIN: usize, const MAX: usize>
     PairContainer<R> for RepMinMax<T, TRIVIA, MIN, MAX>
 {
-    fn for_each_token(&self, f: &mut impl FnMut(crate::token::Pair<R>)) {
+    fn for_each_child_pair(&self, f: &mut impl FnMut(crate::token::Pair<R>)) {
         for item in &self.content {
-            item.for_each_token(f)
+            item.for_self_or_for_each_child_pair(f)
         }
     }
 }

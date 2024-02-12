@@ -46,9 +46,9 @@ macro_rules! sequence_type {
                 $type: $crate::typed::PairContainer<R>,
             )*
         {
-            fn for_each_token(&self, f: &mut impl $crate::std::FnMut($crate::token::Pair<R>)) {
+            fn for_each_child_pair(&self, f: &mut impl $crate::std::FnMut($crate::token::Pair<R>)) {
                 $(
-                    self.$variant.for_each_token(f);
+                    self.$variant.for_self_or_for_each_child_pair(f);
                 )*
             }
         }
