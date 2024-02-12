@@ -205,7 +205,7 @@ struct State<G> {
 
 impl<G> State<G>
 where
-    G: Fn(&mut StateBuilder, StateId, StateId) -> TokenStream,
+    G: Fn(&mut StateBuilder<'_>, StateId, StateId) -> TokenStream,
 {
     fn new(id: StateId, gen: G) -> Self {
         Self {
@@ -226,7 +226,7 @@ where
         self
     }
 
-    fn gen(self, builder: &mut StateBuilder) -> TokenStream {
+    fn gen(self, builder: &mut StateBuilder<'_>) -> TokenStream {
         match (self.accept_state, self.reject_state) {
             (Some(accept), Some(reject)) => {
                 let name = Ident::new(&format!("state{}", self.id), Span::call_site());
