@@ -22,7 +22,7 @@ use core::cmp::Ordering;
 /// Some special errors that are not matching failures.
 pub enum SpecialError {
     /// Peek slice out of bound.
-    SliceOutOfBound(i32, Option<i32>),
+    SliceOutOfBound(isize, Option<isize>),
     /// Repeat too many times.
     RepeatTooManyTimes,
     /// Accessing elements in empty stack, such as Drop or Pop.
@@ -114,7 +114,7 @@ impl<'i, R: RuleType> Tracker<'i, R> {
         }
     }
     /// Reports a stack slice operation that is out of bound.
-    pub fn out_of_bound(&mut self, pos: Position<'i>, start: i32, end: Option<i32>) {
+    pub fn out_of_bound(&mut self, pos: Position<'i>, start: isize, end: Option<isize>) {
         if self.prepare(pos) {
             self.get_entry(&pos)
                 .2
