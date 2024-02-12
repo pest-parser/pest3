@@ -453,10 +453,11 @@ fn collect_used_rule<'g>(
         | ParseExpr::RepRange(node, _) => nodes.push(node),
         ParseExpr::Path(path, args) => {
             match args {
-                // Normally nodes are linked derectly.
+                // Normally nodes are linked directly.
                 Some(PathArgs::Call(args)) => nodes.extend(args),
                 _ => (),
             }
+            // Generics from another module is ignored.
             if path.len() == 1 {
                 res.insert(&path[0]);
             }
