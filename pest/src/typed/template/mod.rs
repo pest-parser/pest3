@@ -310,14 +310,7 @@ impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Positive<T> {
         })
     }
 }
-impl<R: RuleType, T: PairContainer<R>> PairContainer<R> for Positive<T> {
-    fn for_each_token(&self, f: &mut impl FnMut(crate::token::Pair<R>)) {
-        self.content.for_each_token(f)
-    }
-    fn vec_tokens(&self) -> Vec<crate::token::Pair<R>> {
-        self.content.vec_tokens()
-    }
-}
+impl<T> EmptyPairContainer for Positive<T> {}
 
 /// Negative predicate.
 ///
