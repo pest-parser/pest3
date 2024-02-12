@@ -802,3 +802,35 @@ pub fn restore_on_none<'i, T>(
     }
     res
 }
+
+#[inline]
+pub fn try_handle_trivia<'i, R: RuleType, const TRIVIA: u8>(
+    mut input: Position<'i>,
+    stack: &mut Stack<Span<'i>>,
+    tracker: &mut Tracker<'i, R>,
+) -> Option<Position<'i>> {
+    match TRIVIA {
+        // None.
+        0 => (),
+        // Optional.
+        1 => {
+            while let Some((next, _trivia)) =
+                R::Trivia::try_parse_with_partial(input, stack, tracker)
+            {
+                input = next;
+            }
+        }
+        // Mandatory.
+        2 => {
+            let (next, _trivia) = R::Trivia::try_parse_with_partial(input, stack, tracker)?;
+            input = next;
+            while let Some((next, _trivia)) =
+                R::Trivia::try_parse_with_partial(input, stack, tracker)
+            {
+                input = next;
+            }
+        }
+        _ => unreachable!(),
+    }
+    Some(input)
+}

@@ -20,18 +20,14 @@ macro_rules! sequence_type {
         {
             #[inline]
             fn try_parse_with_partial(
-                input: $crate::Position<'i>,
+                mut input: $crate::Position<'i>,
                 stack: &mut $crate::Stack<$crate::Span<'i>>,
                 tracker: &mut $crate::typed::Tracker<'i, R>,
             ) -> ::core::option::Option<($crate::Position<'i>, Self)> {
                 $(
-                    let input = match $trivia {
-                        0 => input,
-                        1 => R::Trivia::try_parse_with_partial(input, stack, tracker).map(|e| e.0).unwrap_or(input),
-                        2 => R::Trivia::try_parse_with_partial(input, stack, tracker)?.0,
-                        _ => unreachable!(),
-                    };
-                    let (input, $variant) = $type::try_parse_with_partial(input, stack, tracker)?;
+                    input = $crate::typed::template::try_handle_trivia::<R, $trivia>(input, stack, tracker)?;
+                    let (next, $variant) = $type::try_parse_with_partial(input, stack, tracker)?;
+                    input = next;
                 )*
                 let res = Self {
                     $($variant, )*
