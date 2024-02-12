@@ -188,19 +188,19 @@ impl<const CHAR: char> Debug for Char<CHAR> {
     }
 }
 
-fn constrain_idx(index: i32, len: usize) -> Option<usize> {
-    if index > (len as i32) {
+fn constrain_idx(index: isize, len: usize) -> Option<usize> {
+    if index > (len as isize) {
         None
     } else if index >= 0 {
         Some(index as usize)
-    } else if index >= -(len as i32) {
+    } else if index >= -(len as isize) {
         Some(((index as isize) + (len as isize)) as usize)
     } else {
         None
     }
 }
 
-fn constrain_idxs(start: i32, end: Option<i32>, len: usize) -> Option<Range<usize>> {
+fn constrain_idxs(start: isize, end: Option<isize>, len: usize) -> Option<Range<usize>> {
     let start = constrain_idx(start, len);
     let end = match end {
         Some(end) => constrain_idx(end, len),
@@ -216,8 +216,8 @@ fn constrain_idxs(start: i32, end: Option<i32>, len: usize) -> Option<Range<usiz
 #[inline]
 fn stack_slice<'i, 's, R: RuleType>(
     input: Position<'i>,
-    start: i32,
-    end: Option<i32>,
+    start: isize,
+    end: Option<isize>,
     stack: &'s Stack<Span<'i>>,
     tracker: &mut Tracker<'i, R>,
 ) -> Option<core::slice::Iter<'s, Span<'i>>> {
@@ -662,8 +662,8 @@ impl<T: Debug> Debug for PUSH<T> {
 
 /// Match `[START..END]` in top-to-bottom order of the stack.
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-pub struct PeekSlice2<const START: i32, const END: i32>;
-impl<'i, R: RuleType, const START: i32, const END: i32> TypedNode<'i, R>
+pub struct PeekSlice2<const START: isize, const END: isize>;
+impl<'i, R: RuleType, const START: isize, const END: isize> TypedNode<'i, R>
     for PeekSlice2<START, END>
 {
     #[inline]
@@ -680,8 +680,8 @@ impl<'i, R: RuleType, const START: i32, const END: i32> TypedNode<'i, R>
 
 /// Match `[START..]` in top-to-bottom order of the stack.
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-pub struct PeekSlice1<const START: i32>;
-impl<'i, R: RuleType, const START: i32> TypedNode<'i, R> for PeekSlice1<START> {
+pub struct PeekSlice1<const START: isize>;
+impl<'i, R: RuleType, const START: isize> TypedNode<'i, R> for PeekSlice1<START> {
     #[inline]
     fn try_parse_with_partial(
         input: Position<'i>,
