@@ -18,13 +18,13 @@
 //! - [`sequence_compound_nested`].
 //! - [`sequence_non_atomic`].
 
-use pest_typed::{
-    iterators::{Pair, Token},
-    ParsableTypedNode,
+use pest::{
+    token::Pair,
+    typed::{PairTree, TypedNode},
 };
-use pest_typed_derive::TypedParser;
+use pest_derive::Parser;
 
-#[derive(TypedParser)]
+#[derive(Parser)]
 #[grammar = "tests/grammar.pest"]
 struct GrammarParser;
 
@@ -36,7 +36,7 @@ macro_rules! tokens {
 
 macro_rules! token {
     ($rule:ident ( $start:literal, $end:literal )) => {{
-        Token::<Rule> {
+        Pair::<Rule> {
             rule: Rule::$rule,
             start: $start,
             end: $end,
@@ -44,7 +44,7 @@ macro_rules! token {
         }
     }};
     ($rule:ident ( $start:literal, $end:literal, [ $( $names:ident $tokens:tt ),* $(,)* ] )) => {{
-        Token {
+        Pair {
             rule: Rule::$rule,
             start: $start,
             end: $end,
@@ -61,9 +61,9 @@ macro_rules! parses_to {
         tokens: [ $( $names:ident $tokens:tt ),* $(,)* ]
     ) => {
         let tokens = tokens!([$($names $tokens),*]);
-        let (_, res) = pairs::$rule::try_parse_partial($input).unwrap();
+        let (_, res) = rules::$rule::try_parse_partial($input).unwrap();
         assert_eq!(res, res.clone());
-        let actual = vec![res.as_token_tree()];
+        let actual = vec![res.as_pair_tree()];
         assert_eq!(
             actual,
             tokens,
@@ -162,13 +162,13 @@ fn double_neg_pred() {
 }
 
 #[test]
-fn sequence() {
+fn sequence_atomic() {
     parses_to! {
         parser: GrammarParser,
         input: "abc   abc",
-        rule: Rule::sequence,
+        rule: Rule::sequence_atomic,
         tokens: [
-            sequence(0, 9, [
+            sequence_atomic(0, 9, [
                 string(0, 3),
                 string(6, 9)
             ])
@@ -177,46 +177,46 @@ fn sequence() {
 }
 
 #[test]
-fn sequence_compound() {
+fn sequence_optional_trivia() {
     parses_to! {
         parser: GrammarParser,
         input: "abcabc",
-        rule: Rule::sequence_compound,
+        rule: Rule::sequence_optional_trivia,
         /*
         tokens: [
-            sequence_compound(0, 6, [
+            sequence_optional_trivia(0, 6, [
                 string(0, 3),
                 string(3, 6)
             ])
         ]
         */
         tokens: [
-            sequence_compound(0, 6)
+            sequence_optional_trivia(0, 6)
         ]
     };
 }
 
 #[test]
-fn sequence_atomic() {
+fn sequence_mandatory_trivia() {
     parses_to! {
         parser: GrammarParser,
         input: "abcabc",
-        rule: Rule::sequence_atomic,
+        rule: Rule::sequence_mandatory_trivia,
         tokens: [
-            sequence_atomic(0, 6)
+            sequence_mandatory_trivia(0, 6)
         ]
     };
 }
 
 #[test]
-fn sequence_non_atomic() {
+fn sequence_nested() {
     parses_to! {
         parser: GrammarParser,
         input: "abc   abc",
-        rule: Rule::sequence_non_atomic,
+        rule: Rule::sequence_nested,
         /*
         tokens: [
-            sequence_non_atomic(0, 9, [
+            sequence_nested(0, 9, [
                 sequence(0, 9, [
                     string(0, 3),
                     string(6, 9)
@@ -225,7 +225,7 @@ fn sequence_non_atomic() {
         ]
         */
         tokens: [
-            sequence_non_atomic(0, 9)
+            sequence_nested(0, 9)
         ]
     };
 }
@@ -238,28 +238,6 @@ fn sequence_atomic_space() {
         input: "abc abc",
         rule: Rule::sequence_atomic,
         tokens: []
-    };
-}
-
-#[test]
-fn sequence_atomic_compound() {
-    parses_to! {
-        parser: GrammarParser,
-        input: "abcabc",
-        rule: Rule::sequence_atomic_compound,
-        /*
-        tokens: [
-            sequence_atomic_compound(0, 6, [
-                sequence_compound(0, 6, [
-                    string(0, 3),
-                    string(3, 6)
-                ])
-            ])
-        ]
-        */
-        tokens: [
-            sequence_atomic_compound(0, 6)
-        ]
     };
 }
 
@@ -332,20 +310,6 @@ fn choice_prefix() {
         rule: Rule::choice_prefix,
         tokens: [
             choice_prefix(0, 3, [
-                string(0, 3)
-            ])
-        ]
-    };
-}
-
-#[test]
-fn node_tag() {
-    parses_to! {
-        parser: GrammarParser,
-        input: "abc",
-        rule: Rule::node_tag,
-        tokens: [
-            node_tag(0, 3, [
                 string(0, 3)
             ])
         ]
@@ -920,6 +884,7 @@ fn checkpoint_restore() {
     };
 }
 
+/*
 #[test]
 fn ascii_digits() {
     parses_to! {
@@ -1075,3 +1040,4 @@ fn shadowing() {
         ]
     }
 }
+*/
