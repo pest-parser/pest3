@@ -148,7 +148,7 @@ impl Display for PathArgs {
                 fmt_sep(args, ", ", f)?;
                 write!(f, ")")
             }
-            Self::Slice(range) => write!(f, "{}", range),
+            Self::Slice(range) => write!(f, "[{}]", range),
         }
     }
 }
