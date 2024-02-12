@@ -35,8 +35,8 @@ impl<T: StringWrapper> From<()> for Str<T> {
 impl<'i, R: RuleType, T: StringWrapper> TypedNode<'i, R> for Str<T> {
     fn try_parse_with_partial(
         mut input: Position<'i>,
-        stack: &mut Stack<Span<'i>>,
-        tracker: &mut Tracker<'i, R>,
+        _stack: &mut Stack<Span<'i>>,
+        _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
         if input.match_string(Self::CONTENT) {
             Some((input, Self::from(())))
@@ -79,8 +79,8 @@ impl<'i, T: StringWrapper> From<&'i str> for Insens<'i, T> {
 impl<'i, R: RuleType, T: StringWrapper> TypedNode<'i, R> for Insens<'i, T> {
     fn try_parse_with_partial(
         mut input: Position<'i>,
-        stack: &mut Stack<Span<'i>>,
-        tracker: &mut Tracker<'i, R>,
+        _stack: &mut Stack<Span<'i>>,
+        _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
         let start = input;
         if input.match_insensitive(Self::CONTENT) {
@@ -109,8 +109,8 @@ pub struct SkipChar<'i, const N: usize> {
 impl<'i, R: RuleType, const N: usize> TypedNode<'i, R> for SkipChar<'i, N> {
     fn try_parse_with_partial(
         mut input: Position<'i>,
-        stack: &mut Stack<Span<'i>>,
-        tracker: &mut Tracker<'i, R>,
+        _stack: &mut Stack<Span<'i>>,
+        _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
         let start = input;
         match input.skip(N) {
@@ -352,8 +352,8 @@ impl<'i, R: RuleType> TypedNode<'i, R> for ANY {
     #[inline]
     fn try_parse_with_partial(
         mut input: Position<'i>,
-        stack: &mut Stack<Span<'i>>,
-        tracker: &mut Tracker<'i, R>,
+        _stack: &mut Stack<Span<'i>>,
+        _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
         let mut c: char = ' ';
         match input.match_char_by(|ch| {
@@ -377,9 +377,9 @@ pub struct NONE;
 impl<'i, R: RuleType> TypedNode<'i, R> for NONE {
     #[inline]
     fn try_parse_with_partial(
-        mut input: Position<'i>,
-        stack: &mut Stack<Span<'i>>,
-        tracker: &mut Tracker<'i, R>,
+        _input: Position<'i>,
+        _stack: &mut Stack<Span<'i>>,
+        _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
         None
     }
@@ -392,8 +392,8 @@ impl<'i, R: RuleType> TypedNode<'i, R> for SOI {
     #[inline]
     fn try_parse_with_partial(
         input: Position<'i>,
-        stack: &mut Stack<Span<'i>>,
-        tracker: &mut Tracker<'i, R>,
+        _stack: &mut Stack<Span<'i>>,
+        _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
         if input.at_start() {
             Some((input, Self))
@@ -412,8 +412,8 @@ impl<'i, R: RuleType> TypedNode<'i, R> for EOI {
     #[inline]
     fn try_parse_with_partial(
         input: Position<'i>,
-        stack: &mut Stack<Span<'i>>,
-        tracker: &mut Tracker<'i, R>,
+        _stack: &mut Stack<Span<'i>>,
+        _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
         if input.at_end() {
             Some((input, Self))
@@ -445,8 +445,8 @@ impl<'i, R: RuleType> TypedNode<'i, R> for NEWLINE {
     #[inline]
     fn try_parse_with_partial(
         mut input: Position<'i>,
-        stack: &mut Stack<Span<'i>>,
-        tracker: &mut Tracker<'i, R>,
+        _stack: &mut Stack<Span<'i>>,
+        _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
         let (input, t) = if input.match_string("\r\n") {
             (input, NewLineType::CRLF)
