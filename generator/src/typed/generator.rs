@@ -171,6 +171,16 @@ fn create_rule<'g>(
                 })
             }
         }
+        impl<'i> #this::typed::PairContainer<#root::Rule> for #name<'i> {
+            fn for_each_token(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {
+                self.content.for_each_token(f)
+            }
+        }
+        impl<'i> #this::typed::PairTree<#root::Rule> for #name<'i> {
+            fn get_span(&self) -> (#this::std::usize, #this::std::usize) {
+                (self.span.start(), self.span.end())
+            }
+        }
     }
 }
 

@@ -8,7 +8,12 @@
 
 mod repetition;
 
-use super::{tracker::Tracker, wrapper::String as StringWrapper, RuleType, TypedNode};
+use super::{
+    tracker::Tracker,
+    traits::{EmptyPairContainer, PairContainer},
+    wrapper::String as StringWrapper,
+    RuleType, TypedNode,
+};
 use crate::{Position, Span, Stack};
 use core::{
     fmt::Debug,
@@ -50,6 +55,7 @@ impl<T: StringWrapper> Debug for Str<T> {
         f.debug_tuple("Str").field(&T::CONTENT).finish()
     }
 }
+impl<T: StringWrapper> EmptyPairContainer for Str<T> {}
 
 /// Match given string case insensitively.
 ///
@@ -99,6 +105,7 @@ impl<'i, T: StringWrapper> Debug for Insens<'i, T> {
             .finish()
     }
 }
+impl<'i, T: StringWrapper> EmptyPairContainer for Insens<'i, T> {}
 
 /// Skip `n` characters if there are.
 #[derive(Clone, Hash, PartialEq, Eq)]
@@ -130,6 +137,7 @@ impl<'i, const N: usize> Debug for SkipChar<'i, N> {
             .finish()
     }
 }
+impl<'i, const N: usize> EmptyPairContainer for SkipChar<'i, N> {}
 
 /// Match a character in the range `[MIN, MAX]`.
 /// Inclusively both below and above.
@@ -165,6 +173,7 @@ impl<const MIN: char, const MAX: char> Debug for CharRange<MIN, MAX> {
             .finish()
     }
 }
+impl<const MIN: char, const MAX: char> EmptyPairContainer for CharRange<MIN, MAX> {}
 
 /// Match exact character `CHAR`.
 #[derive(Clone, Hash, PartialEq, Eq)]
@@ -187,6 +196,7 @@ impl<const CHAR: char> Debug for Char<CHAR> {
         f.debug_tuple("Char").field(&CHAR).finish()
     }
 }
+impl<const CHAR: char> EmptyPairContainer for Char<CHAR> {}
 
 fn constrain_idx(index: isize, len: usize) -> Option<usize> {
     if index > (len as isize) {
@@ -300,6 +310,14 @@ impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Positive<T> {
         })
     }
 }
+impl<R: RuleType, T: PairContainer<R>> PairContainer<R> for Positive<T> {
+    fn for_each_token(&self, f: &mut impl FnMut(crate::token::Pair<R>)) {
+        self.content.for_each_token(f)
+    }
+    fn vec_tokens(&self) -> Vec<crate::token::Pair<R>> {
+        self.content.vec_tokens()
+    }
+}
 
 /// Negative predicate.
 ///
@@ -341,6 +359,7 @@ impl<T> Debug for Negative<T> {
         f.debug_tuple("Negative").finish()
     }
 }
+impl<N> EmptyPairContainer for Negative<N> {}
 
 /// Match any character.
 #[derive(Clone, Hash, PartialEq, Eq)]
@@ -370,6 +389,7 @@ impl Debug for ANY {
         f.debug_tuple("ANY").field(&self.content).finish()
     }
 }
+impl EmptyPairContainer for ANY {}
 
 /// Match any character.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
@@ -384,6 +404,7 @@ impl<'i, R: RuleType> TypedNode<'i, R> for NONE {
         None
     }
 }
+impl EmptyPairContainer for NONE {}
 
 /// Match the start of input.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
@@ -402,6 +423,7 @@ impl<'i, R: RuleType> TypedNode<'i, R> for SOI {
         }
     }
 }
+impl EmptyPairContainer for SOI {}
 
 /// Match the end of input.
 ///
@@ -422,6 +444,7 @@ impl<'i, R: RuleType> TypedNode<'i, R> for EOI {
         }
     }
 }
+impl EmptyPairContainer for EOI {}
 
 /// Type of eol.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
@@ -465,6 +488,7 @@ impl Debug for NEWLINE {
         f.debug_tuple("NEWLINE").field(&self.content).finish()
     }
 }
+impl EmptyPairContainer for NEWLINE {}
 
 /// Peek all spans in stack reversely.
 /// Will consume input.
@@ -491,6 +515,7 @@ impl<'i> Debug for PEEK_ALL<'i> {
         f.debug_tuple("PEEK_ALL").field(&self.span).finish()
     }
 }
+impl<'i> EmptyPairContainer for PEEK_ALL<'i> {}
 
 /// Peek top span in stack.
 /// Will consume input.
@@ -529,6 +554,7 @@ impl<'i> Debug for PEEK<'i> {
         f.debug_tuple("PEEK").field(&self.span).finish()
     }
 }
+impl<'i> EmptyPairContainer for PEEK<'i> {}
 
 /// Drop the top of the stack.
 ///
@@ -551,6 +577,7 @@ impl<'i, R: RuleType> TypedNode<'i, R> for DROP {
         }
     }
 }
+impl EmptyPairContainer for DROP {}
 
 /// Match and pop the top span of the stack.
 #[derive(Clone, Hash, PartialEq, Eq)]
@@ -588,6 +615,7 @@ impl<'i> Debug for POP<'i> {
         f.debug_tuple("POP").field(&self.span).finish()
     }
 }
+impl<'i> EmptyPairContainer for POP<'i> {}
 
 /// Match and pop all spans in the stack in top-to-bottom-order.
 #[allow(non_camel_case_types)]
@@ -618,6 +646,7 @@ impl<'i> Debug for POP_ALL<'i> {
         f.debug_tuple("POP_ALL").field(&self.span).finish()
     }
 }
+impl<'i> EmptyPairContainer for POP_ALL<'i> {}
 
 /// Match an expression and push it to the [Stack].
 #[derive(Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -659,6 +688,14 @@ impl<T: Debug> Debug for PUSH<T> {
         f.debug_tuple("PUSH").field(&self.content).finish()
     }
 }
+impl<R: RuleType, T: PairContainer<R>> PairContainer<R> for PUSH<T> {
+    fn for_each_token(&self, f: &mut impl FnMut(crate::token::Pair<R>)) {
+        self.content.for_each_token(f)
+    }
+    fn vec_tokens(&self) -> Vec<crate::token::Pair<R>> {
+        self.content.vec_tokens()
+    }
+}
 
 /// Match `[START..END]` in top-to-bottom order of the stack.
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -677,6 +714,7 @@ impl<'i, R: RuleType, const START: isize, const END: isize> TypedNode<'i, R>
         Some((input, Self))
     }
 }
+impl<const START: isize, const END: isize> EmptyPairContainer for PeekSlice2<START, END> {}
 
 /// Match `[START..]` in top-to-bottom order of the stack.
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -693,6 +731,7 @@ impl<'i, R: RuleType, const START: isize> TypedNode<'i, R> for PeekSlice1<START>
         Some((input, Self))
     }
 }
+impl<const START: isize> EmptyPairContainer for PeekSlice1<START> {}
 
 /// ASCII Digit. `'0'..'9'`
 #[allow(non_camel_case_types)]

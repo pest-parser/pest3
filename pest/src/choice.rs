@@ -36,6 +36,21 @@ macro_rules! choice_type {
                 ::core::option::Option::None
             }
         }
+        impl<R, $($type, )*>
+        $crate::typed::PairContainer<R> for $name<$($type, )*>
+        where
+            $(
+                $type: $crate::typed::PairContainer<R>,
+            )*
+        {
+            fn for_each_token(&self, f: &mut impl $crate::std::FnMut($crate::token::Pair<R>)) {
+                match self {
+                    $(
+                        Self::$variant(variant) => variant.for_each_token(f),
+                    )*
+                }
+            }
+        }
     };
 }
 
