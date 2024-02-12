@@ -689,11 +689,11 @@ impl<T: Debug> Debug for PUSH<T> {
     }
 }
 impl<R: RuleType, T: PairContainer<R>> PairContainer<R> for PUSH<T> {
-    fn for_each_token(&self, f: &mut impl FnMut(crate::token::Pair<R>)) {
-        self.content.for_each_token(f)
+    fn for_each_child_pair(&self, f: &mut impl FnMut(crate::token::Pair<R>)) {
+        self.content.for_self_or_for_each_child_pair(f)
     }
-    fn vec_tokens(&self) -> Vec<crate::token::Pair<R>> {
-        self.content.vec_tokens()
+    fn vec_children_pairs(&self) -> Vec<crate::token::Pair<R>> {
+        self.content.vec_children_pairs()
     }
 }
 

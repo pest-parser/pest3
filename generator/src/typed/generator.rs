@@ -40,6 +40,7 @@ impl<'g> RuleConfig<'g> {
 struct RuleInfo<'g> {
     pub rule_id: Ident,
     pub rule_name: &'g str,
+    pub silent: bool,
     pub boxed: bool,
 }
 impl<'g> RuleInfo<'g> {
@@ -48,10 +49,12 @@ impl<'g> RuleInfo<'g> {
         let rule_ref = RuleRef::from_top_level(rule_name);
         let boxed = true;
         let rule_id = format_ident!("r#{}", rule_name);
+        let silent = rule.silent;
         Self {
             rule_id,
             rule_name,
             boxed,
+            silent,
         }
     }
 }
@@ -146,6 +149,31 @@ fn create_rule<'g>(
         "Generated for rule `{}`. Grammar: `{}`.",
         rule_info.rule_name, rule_config.grammar.node,
     );
+    // Pairs inside silent rule will be ignored.
+    let pair_api = match rule_info.silent {
+        true => quote! {
+            impl<'i> #this::typed::PairContainer<#root::Rule> for #name<'i> {
+                fn for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {}
+                fn for_self_or_for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {}
+            }
+        },
+        false => quote! {
+            impl<'i> #this::typed::PairContainer<#root::Rule> for #name<'i> {
+                fn for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {
+                    self.content.for_self_or_for_each_child_pair(f)
+                }
+                fn for_self_or_for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {
+                    use #this::typed::PairTree;
+                    f(self.as_pair_tree())
+                }
+            }
+            impl<'i> #this::typed::PairTree<#root::Rule> for #name<'i> {
+                fn get_span(&self) -> (#this::std::usize, #this::std::usize) {
+                    (self.span.start(), self.span.end())
+                }
+            }
+        },
+    };
     quote! {
         #[doc = #doc]
         #[derive(Clone, Debug, Eq, PartialEq)]
@@ -171,16 +199,7 @@ fn create_rule<'g>(
                 })
             }
         }
-        impl<'i> #this::typed::PairContainer<#root::Rule> for #name<'i> {
-            fn for_each_token(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {
-                self.content.for_each_token(f)
-            }
-        }
-        impl<'i> #this::typed::PairTree<#root::Rule> for #name<'i> {
-            fn get_span(&self) -> (#this::std::usize, #this::std::usize) {
-                (self.span.start(), self.span.end())
-            }
-        }
+        #pair_api
     }
 }
 

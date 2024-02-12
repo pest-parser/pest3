@@ -66,18 +66,21 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
 }
 
 pub trait PairContainer<R> {
-    fn for_each_token(&self, f: &mut impl FnMut(Pair<R>));
-    fn vec_tokens(&self) -> Vec<Pair<R>> {
+    fn for_self_or_for_each_child_pair(&self, f: &mut impl FnMut(Pair<R>)) {
+        self.for_each_child_pair(f)
+    }
+    fn for_each_child_pair(&self, f: &mut impl FnMut(Pair<R>));
+    fn vec_children_pairs(&self) -> Vec<Pair<R>> {
         let mut vec = vec![];
-        self.for_each_token(&mut |token| vec.push(token));
+        self.for_each_child_pair(&mut |token| vec.push(token));
         vec
     }
 }
 
 impl<R, T: PairContainer<R>> PairContainer<R> for Option<T> {
-    fn for_each_token(&self, f: &mut impl FnMut(Pair<R>)) {
+    fn for_each_child_pair(&self, f: &mut impl FnMut(Pair<R>)) {
         match self {
-            Some(val) => val.for_each_token(f),
+            Some(val) => val.for_self_or_for_each_child_pair(f),
             None => (),
         }
     }
@@ -85,7 +88,7 @@ impl<R, T: PairContainer<R>> PairContainer<R> for Option<T> {
 
 pub(super) trait EmptyPairContainer {}
 impl<R, T: EmptyPairContainer> PairContainer<R> for T {
-    fn for_each_token(&self, _f: &mut impl FnMut(Pair<R>)) {}
+    fn for_each_child_pair(&self, _f: &mut impl FnMut(Pair<R>)) {}
 }
 
 pub trait PairTree<R: RuleType>: PairContainer<R> + wrapper::Rule<R> {
@@ -93,7 +96,7 @@ pub trait PairTree<R: RuleType>: PairContainer<R> + wrapper::Rule<R> {
     fn as_pair_tree(&self) -> Pair<R> {
         let rule = Self::RULE;
         let (start, end) = self.get_span();
-        let children = self.vec_tokens();
+        let children = self.vec_children_pairs();
         Pair {
             rule,
             start,
