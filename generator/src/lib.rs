@@ -43,8 +43,8 @@ impl<'i> State<'i> {
         }
     }
 
-    pub fn json(state: &mut State) {
-        const LUT: [fn(&mut State); 256] = [State::error; 256];
+    pub fn json(state: &mut Self) {
+        const LUT: [fn(&mut State<'_>); 256] = [State::error; 256];
 
         if peek!(state, Self::error) == b'c' {
             println!("hi");
@@ -55,7 +55,7 @@ impl<'i> State<'i> {
         }
     }
 
-    pub fn error(state: &mut State) {
+    pub fn error(state: &mut State<'_>) {
         state.result = false;
     }
 }

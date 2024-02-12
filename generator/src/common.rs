@@ -5,8 +5,6 @@ use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::path::PathBuf;
 
-use crate::types::pest;
-
 /// Generate Rust `include_str!` for grammar files, then Cargo will watch changes in grammars.
 pub(crate) fn generate_include(name: &Ident, paths: Vec<PathBuf>) -> TokenStream {
     let const_name = format_ident!("_PEST_GRAMMAR_{}", name);
