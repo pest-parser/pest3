@@ -1,30 +1,30 @@
 use super::{
-    generator::{
-        ProcessedPathArgs::{Call, Slice},
-        RuleRef,
-    },
+    generator::{ProcessedPathArgs, RuleRef},
     output::generics,
 };
-use proc_macro2::TokenStream;
+use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::collections::{btree_map::Keys, BTreeMap};
 
 #[derive(Clone, Debug)]
 pub enum RuleGenerics {
-    #[deprecated]
-    Absolute(TokenStream),
     /// Defined rule in current module.
     Rule,
-    /// Built-in rule that accepts nothing as argument.
-    ///
-    /// - Whether it requires lifetime specifier.
-    Direct(bool),
-    /// Built-in rule that accepts a range as argument.
-    Slice,
-    /// Built-in rule that accepts parsing expressions as arguments.
-    ///
-    /// - Argument count (optional).
-    Callable(Option<usize>),
+    BuiltIn {
+        /// Built-in rule that accepts nothing as argument.
+        ///
+        /// - Whether it requires lifetime specifier.
+        direct: Option<(bool,)>,
+        /// Built-in rule that accepts a range as argument.
+        ///
+        /// - Slice 1.
+        /// - Slice 2.
+        slice: Option<(Ident, Ident)>,
+        /// Built-in rule that accepts parsing expressions as arguments.
+        ///
+        /// - Argument count (optional).
+        callable: Option<(Option<usize>,)>,
+    },
 }
 impl RuleGenerics {
     pub fn call(&self, rule_ref: &RuleRef<'_>, root: &TokenStream) -> TokenStream {
@@ -41,14 +41,6 @@ impl RuleGenerics {
         };
         let generics = generics();
         match self {
-            Self::Absolute(tokens) => {
-                assert!(
-                    rule_ref.args.is_none(),
-                    "Unexpected arguments in `{}`.",
-                    rule_ref,
-                );
-                quote! {#root::#tokens}
-            }
             Self::Rule => {
                 assert!(
                     rule_ref.args.is_none(),
@@ -58,38 +50,42 @@ impl RuleGenerics {
                 let (path, name) = getter();
                 quote! { #root::rules::#( #path:: )* #name :: <'i> }
             }
-            Self::Direct(lifetime) => {
-                if false {
-                    assert!(
-                        rule_ref.args.is_none(),
-                        "Unexpected arguments in `{}`.",
-                        rule_ref,
-                    );
-                }
-                let name = builtin_getter();
-                match lifetime {
-                    true => quote! { #root::#generics::#name::<'i> },
-                    false => quote! { #root::#generics::#name },
-                }
-            }
-            Self::Slice => match &rule_ref.args {
-                Some(Call(_args)) => panic!("Unexpcted arguments in `{}`.", rule_ref,),
-                Some(Slice(_slice)) => {
+            Self::BuiltIn {
+                direct,
+                slice,
+                callable,
+            } => match &rule_ref.args {
+                None => {
                     let name = builtin_getter();
-                    quote! { #root::#generics::#name }
+                    let (lifetime,) = direct.expect(&format!(
+                        "Built-in rule {rule_ref} can't be called without arguments."
+                    ));
+                    match lifetime {
+                        true => quote! { #root::#generics::#name::<'i> },
+                        false => quote! { #root::#generics::#name },
+                    }
                 }
-                None => panic!("Missing arguments in `{}`.", rule_ref,),
-            },
-            Self::Callable(argc) => match &rule_ref.args {
-                Some(Call(args)) => {
+                Some(ProcessedPathArgs::Slice(range)) => {
+                    let (slice1, slice2) = slice.as_ref().expect(&format!(
+                        "Built-in rule {rule_ref} can't be called without arguments."
+                    ));
+                    let start = range.start.unwrap_or(0);
+                    let end = range.end;
+                    match end {
+                        Some(end) => quote! { #root::#generics::#slice2::<#start, #end> },
+                        None => quote! { #root::#generics::#slice1::<#start> },
+                    }
+                }
+                Some(ProcessedPathArgs::Call(args)) => {
+                    let (argc,) = callable.expect(&format!(
+                        "Built-in rule {rule_ref} can't be called without arguments."
+                    ));
                     if let Some(argc) = argc {
-                        assert_eq!(args.len(), *argc, "Argument count not matched.");
+                        assert_eq!(args.len(), argc, "Argument count not matched.");
                     }
                     let name = builtin_getter();
                     quote! { #root::#generics::#name::< #( #args, )* > }
                 }
-                Some(Slice(_slice)) => panic!("Unexpcted slice in `{}`.", rule_ref,),
-                None => panic!("Missing arguments in `{}`.", rule_ref,),
             },
         }
     }
@@ -107,46 +103,51 @@ pub struct ModuleSystem<'g> {
 impl<'g> ModuleSystem<'g> {
     pub fn new() -> Self {
         macro_rules! pest_direct {
-            ($name:ident) => {
-                (
-                    vec!["pest", core::stringify!($name)],
-                    RuleGenerics::Direct(false),
-                )
+            () => {
+                (false,)
             };
-            ($name:ident<'i>) => {
-                (
-                    vec!["pest", core::stringify!($name)],
-                    RuleGenerics::Direct(true),
-                )
+            ('i) => {
+                (true,)
+            };
+        }
+        macro_rules! pest_slice {
+            ($($T:ident),*) => {
+                ($( format_ident!("{}", core::stringify!($T)) ),*)
             };
         }
         macro_rules! pest_callable {
-            ($name:ident) => {
-                (vec!["pest", core::stringify!($name)], RuleGenerics::Callable(None))
+            ($($T:ident),*) => {
+                (Some([$(core::stringify!($T)),*].len()), )
             };
-            ($name:ident<$($T:ident),*>) => {
-                (vec!["pest", core::stringify!($name)], RuleGenerics::Callable(Some([$(core::stringify!($T)),*].len())))
+        }
+        macro_rules! pest_builtin {
+            ( $name:ident $( {$($direct:tt)*} )? $( [$($slice:tt)*] )? $( ($($callable:tt)*) )? ) => {
+                (
+                    vec!["pest", core::stringify!($name)],
+                    RuleGenerics::BuiltIn {
+                        direct: None $( .or(Some(pest_direct! { $($direct)* })) )?,
+                        slice: None $( .or(Some(pest_slice! { $( $slice )* })) )?,
+                        callable: None $( .or(Some(pest_callable! { $( $callable )* })) )?,
+                    },
+                )
             };
         }
         let tree = BTreeMap::from([
-            pest_direct!(SOI),
-            pest_direct!(EOI),
-            pest_direct!(any),
-            pest_direct!(peek<'i>),
-            pest_direct!(peek_all<'i>),
-            pest_direct!(drop),
-            pest_callable!(push<T>),
-            pest_direct!(pop<'i>),
-            pest_direct!(pop_all<'i>),
+            pest_builtin!(SOI {}),
+            pest_builtin!(EOI {}),
+            pest_builtin!(any {}),
+            pest_builtin!(peek {'i} [PeekSlice1, PeekSlice2]),
+            pest_builtin!(peek_all {'i}),
+            pest_builtin!(drop {}),
+            pest_builtin!(push(T)),
+            pest_builtin!(pop {'i}),
+            pest_builtin!(pop_all {'i}),
         ]);
         Self { tree }
     }
     pub fn insert_rule(&mut self, key: &'g str) {
         let value = RuleGenerics::Rule;
         self.tree.insert(vec![key], value);
-    }
-    pub fn get(&self, key: &[&'g str]) -> Option<RuleGenerics> {
-        self.tree.get(key).cloned()
     }
     pub fn resolve(&self, rule_ref: &RuleRef<'g>, root: &TokenStream) -> Option<TokenStream> {
         self.tree
@@ -155,12 +156,5 @@ impl<'g> ModuleSystem<'g> {
     }
     pub fn keys(&self) -> Keys<'_, Vec<&'g str>, RuleGenerics> {
         self.tree.keys()
-    }
-    pub fn contains_key(&self, key: &[&'g str]) -> bool {
-        self.tree.contains_key(key)
-    }
-    pub fn matches_ref(&self, rule_ref: &RuleRef<'g>) -> bool {
-        let mut vec = rule_ref.path.to_owned();
-        self.contains_key(&vec)
     }
 }

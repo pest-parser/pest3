@@ -159,12 +159,13 @@ impl<'g> Output<'g> {
                 pub mod generics {
                     pub use #pest::typed::template::{
                         Positive, Negative,
-                        CharRange, Str,
+                        CharRange, Str, Insens,
                         Rep, RepOnce, RepMin, RepMax, RepMinMax,
                         SOI as SOI,
                         EOI as EOI,
                         ANY as any,
                         PEEK as peek,
+                        PeekSlice1, PeekSlice2,
                         PEEK_ALL as peek_all,
                         DROP as drop,
                         PUSH as push,
