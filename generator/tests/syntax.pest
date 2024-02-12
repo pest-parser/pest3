@@ -30,7 +30,8 @@ Push = pest::push(RepLeft* ~ Neg ~ ExactString+ ~ Push ~ Pop ~ Push ~ PopAll)
 Pop    = pest::pop
 PopAll = pest::pop_all
 
-Peek          = pest::peek[..]
+Peek          = pest::peek
+PeekUnlimited = pest::peek[..]
 PeekLeft      = pest::peek[1..]
 PeekRight     = pest::peek[..]
 PeekLeftRight = pest::peek[1..2]

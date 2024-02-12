@@ -23,6 +23,7 @@ pub enum Rule {
     r#Pop,
     r#PopAll,
     r#Peek,
+    r#PeekUnlimited,
     r#PeekLeft,
     r#PeekRight,
     r#PeekLeftRight,
@@ -506,7 +507,7 @@ pub mod rules {
             })
         }
     }
-    #[doc = "Generated for rule `Peek`. Grammar: `pest::peek..`."]
+    #[doc = "Generated for rule `Peek`. Grammar: `pest::peek`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Peek<'i> {
         content: ::pest::std::Box<super::generics::r#peek<'i>>,
@@ -526,10 +527,30 @@ pub mod rules {
             })
         }
     }
-    #[doc = "Generated for rule `PeekLeft`. Grammar: `pest::peek1..`."]
+    #[doc = "Generated for rule `PeekUnlimited`. Grammar: `pest::peek[..]`."]
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    pub struct r#PeekUnlimited<'i> {
+        content: ::pest::std::Box<super::generics::PeekSlice1<0isize>>,
+        span: ::pest::Span<'i>,
+    }
+    impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekUnlimited<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#PeekUnlimited;
+    }
+    impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#PeekUnlimited<'i> {
+        fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
+            tracker.record_option_during(input, |tracker| {
+                let (pos, content) = super::generics::PeekSlice1::<0isize>::try_parse_with_partial(input, stack, tracker)?;
+                let content = content.into();
+                let span = input.span(&pos);
+                ::pest::std::Some((pos, Self { content, span }))
+            })
+        }
+    }
+    #[doc = "Generated for rule `PeekLeft`. Grammar: `pest::peek[1..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekLeft<'i> {
-        content: ::pest::std::Box<super::generics::r#peek<'i>>,
+        content: ::pest::std::Box<super::generics::PeekSlice1<1isize>>,
         span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekLeft<'i> {
@@ -539,17 +560,17 @@ pub mod rules {
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#PeekLeft<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
             tracker.record_option_during(input, |tracker| {
-                let (pos, content) = super::generics::r#peek::<'i>::try_parse_with_partial(input, stack, tracker)?;
+                let (pos, content) = super::generics::PeekSlice1::<1isize>::try_parse_with_partial(input, stack, tracker)?;
                 let content = content.into();
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
         }
     }
-    #[doc = "Generated for rule `PeekRight`. Grammar: `pest::peek..`."]
+    #[doc = "Generated for rule `PeekRight`. Grammar: `pest::peek[..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekRight<'i> {
-        content: ::pest::std::Box<super::generics::r#peek<'i>>,
+        content: ::pest::std::Box<super::generics::PeekSlice1<0isize>>,
         span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekRight<'i> {
@@ -559,17 +580,17 @@ pub mod rules {
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#PeekRight<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
             tracker.record_option_during(input, |tracker| {
-                let (pos, content) = super::generics::r#peek::<'i>::try_parse_with_partial(input, stack, tracker)?;
+                let (pos, content) = super::generics::PeekSlice1::<0isize>::try_parse_with_partial(input, stack, tracker)?;
                 let content = content.into();
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
         }
     }
-    #[doc = "Generated for rule `PeekLeftRight`. Grammar: `pest::peek1..2`."]
+    #[doc = "Generated for rule `PeekLeftRight`. Grammar: `pest::peek[1..2]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekLeftRight<'i> {
-        content: ::pest::std::Box<super::generics::r#peek<'i>>,
+        content: ::pest::std::Box<super::generics::PeekSlice2<1isize, 2isize>>,
         span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekLeftRight<'i> {
@@ -579,7 +600,7 @@ pub mod rules {
     impl<'i> ::pest::typed::TypedNode<'i, super::Rule> for r#PeekLeftRight<'i> {
         fn try_parse_with_partial(input: ::pest::Position<'i>, stack: &mut ::pest::Stack<::pest::Span<'i>>, tracker: &mut ::pest::typed::Tracker<'i, super::Rule>) -> ::pest::std::Option<(::pest::Position<'i>, Self)> {
             tracker.record_option_during(input, |tracker| {
-                let (pos, content) = super::generics::r#peek::<'i>::try_parse_with_partial(input, stack, tracker)?;
+                let (pos, content) = super::generics::PeekSlice2::<1isize, 2isize>::try_parse_with_partial(input, stack, tracker)?;
                 let content = content.into();
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
@@ -634,5 +655,5 @@ pub mod generics {
     pub use pest::sequence::Sequence3;
     pub use pest::sequence::Sequence4;
     pub use pest::sequence::Sequence7;
-    pub use pest::typed::template::{CharRange, Negative, Positive, Rep, RepMax, RepMin, RepMinMax, RepOnce, Str, ANY as any, DROP as drop, EOI, PEEK as peek, PEEK_ALL as peek_all, POP as pop, POP_ALL as pop_all, PUSH as push, SOI};
+    pub use pest::typed::template::{CharRange, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin, RepMinMax, RepOnce, Str, ANY as any, DROP as drop, EOI, PEEK as peek, PEEK_ALL as peek_all, POP as pop, POP_ALL as pop_all, PUSH as push, SOI};
 }
