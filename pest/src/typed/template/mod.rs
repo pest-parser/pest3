@@ -259,27 +259,27 @@ fn peek_spans<'s, 'i: 's, R: RuleType>(
 ///
 /// Peeked expressions will not occur in Pair/Pairs API.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct Positive<N> {
+pub struct Positive<T> {
     /// Peeked content.
-    pub content: N,
+    pub content: T,
 }
-impl<N> From<N> for Positive<N> {
-    fn from(content: N) -> Self {
+impl<T> From<T> for Positive<T> {
+    fn from(content: T) -> Self {
         Self { content }
     }
 }
-impl<N> Deref for Positive<N> {
-    type Target = N;
+impl<T> Deref for Positive<T> {
+    type Target = T;
     fn deref(&self) -> &Self::Target {
         &self.content
     }
 }
-impl<N> DerefMut for Positive<N> {
+impl<T> DerefMut for Positive<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.content
     }
 }
-impl<'i, R: RuleType, N: TypedNode<'i, R>> TypedNode<'i, R> for Positive<N> {
+impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Positive<T> {
     fn try_parse_with_partial(
         input: Position<'i>,
         stack: &mut Stack<Span<'i>>,
@@ -287,7 +287,7 @@ impl<'i, R: RuleType, N: TypedNode<'i, R>> TypedNode<'i, R> for Positive<N> {
     ) -> Option<(Position<'i>, Self)> {
         tracker.positive_during(|tracker| {
             stack.snapshot();
-            match N::try_parse_with_partial(input, stack, tracker) {
+            match T::try_parse_with_partial(input, stack, tracker) {
                 Some((_pos, content)) => {
                     stack.restore();
                     Some((input, Self::from(content)))
