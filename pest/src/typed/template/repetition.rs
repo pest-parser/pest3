@@ -162,26 +162,7 @@ fn try_parse_unit<'i, R: RuleType, T: TypedNode<'i, R>, const TRIVIA: u8>(
     i: usize,
 ) -> Option<(Position<'i>, T)> {
     if i > 0 {
-        match TRIVIA {
-            0 => (),
-            1 => {
-                while let Some((next, _trivia)) =
-                    R::Trivia::try_parse_with_partial(input, stack, tracker)
-                {
-                    input = next;
-                }
-            }
-            2 => {
-                let (next, _trivia) = R::Trivia::try_parse_with_partial(input, stack, tracker)?;
-                input = next;
-                while let Some((next, _trivia)) =
-                    R::Trivia::try_parse_with_partial(input, stack, tracker)
-                {
-                    input = next;
-                }
-            }
-            _ => unreachable!(),
-        }
+        input = try_handle_trivia::<R, TRIVIA>(input, stack, tracker)?;
     }
     let (next, matched) = T::try_parse_with_partial(input, stack, tracker)?;
     input = next;
