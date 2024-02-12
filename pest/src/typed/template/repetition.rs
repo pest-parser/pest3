@@ -4,7 +4,10 @@
 
 use super::{restore_on_none, RuleType};
 use crate::{
-    typed::{tracker::Tracker, wrapper::Bound as BoundWrapper, NeverFailedTypedNode, TypedNode},
+    typed::{
+        tracker::Tracker, wrapper::Bound as BoundWrapper, NeverFailedTypedNode, PairContainer,
+        TypedNode,
+    },
     Position, Span, Stack,
 };
 use alloc::vec::Vec;
@@ -130,6 +133,15 @@ impl<T: Debug, const TRIVIA: u8, const MIN: usize, const MAX: usize> Debug
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("RepMinMax").field(&self.content).finish()
+    }
+}
+impl<R: RuleType, T: PairContainer<R>, const TRIVIA: u8, const MIN: usize, const MAX: usize>
+    PairContainer<R> for RepMinMax<T, TRIVIA, MIN, MAX>
+{
+    fn for_each_token(&self, f: &mut impl FnMut(crate::token::Pair<R>)) {
+        for item in &self.content {
+            item.for_each_token(f)
+        }
     }
 }
 

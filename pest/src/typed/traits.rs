@@ -1,5 +1,5 @@
-use super::template::EOI;
-use crate::{typed::tracker::Tracker, Position, Span};
+use super::{template::EOI, wrapper};
+use crate::{token::Pair, typed::tracker::Tracker, Position, Span};
 use core::{fmt::Debug, hash::Hash};
 use pest2::{error::Error, Stack};
 
@@ -63,6 +63,44 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
     // const NULLABLE: bool;
     // /// Leading characters that this node accepts.
     // const FIRST: &'static [char];
+}
+
+pub trait PairContainer<R> {
+    fn for_each_token(&self, f: &mut impl FnMut(Pair<R>));
+    fn vec_tokens(&self) -> Vec<Pair<R>> {
+        let mut vec = vec![];
+        self.for_each_token(&mut |token| vec.push(token));
+        vec
+    }
+}
+
+impl<R, T: PairContainer<R>> PairContainer<R> for Option<T> {
+    fn for_each_token(&self, f: &mut impl FnMut(Pair<R>)) {
+        match self {
+            Some(val) => val.for_each_token(f),
+            None => (),
+        }
+    }
+}
+
+pub(super) trait EmptyPairContainer {}
+impl<R, T: EmptyPairContainer> PairContainer<R> for T {
+    fn for_each_token(&self, _f: &mut impl FnMut(Pair<R>)) {}
+}
+
+pub trait PairTree<R: RuleType>: PairContainer<R> + wrapper::Rule<R> {
+    fn get_span(&self) -> (usize, usize);
+    fn as_pair_tree(&self) -> Pair<R> {
+        let rule = Self::RULE;
+        let (start, end) = self.get_span();
+        let children = self.vec_tokens();
+        Pair {
+            rule,
+            start,
+            end,
+            children,
+        }
+    }
 }
 
 impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Option<T> {

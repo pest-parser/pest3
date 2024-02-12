@@ -39,6 +39,19 @@ macro_rules! sequence_type {
                 ::core::option::Option::Some((input, res))
             }
         }
+        impl<R, $($type, const $trivia: ::core::primitive::u8, )*>
+        $crate::typed::PairContainer<R> for $name<$($type, $trivia, )*>
+        where
+            $(
+                $type: $crate::typed::PairContainer<R>,
+            )*
+        {
+            fn for_each_token(&self, f: &mut impl $crate::std::FnMut($crate::token::Pair<R>)) {
+                $(
+                    self.$variant.for_each_token(f);
+                )*
+            }
+        }
     };
 }
 
