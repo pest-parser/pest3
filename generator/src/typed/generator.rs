@@ -46,7 +46,6 @@ struct RuleInfo<'g> {
 impl<'g> RuleInfo<'g> {
     fn from(rule: &'g ParseRule) -> Self {
         let rule_name = rule.name.as_str();
-        let rule_ref = RuleRef::from_top_level(rule_name);
         let boxed = true;
         let rule_id = format_ident!("r#{}", rule_name);
         let silent = rule.silent;
