@@ -1,5 +1,6 @@
 #![allow(unused_variables)]
-use pest::{error::Error, typed::TypedNode as _};
+use anyhow::Result;
+use pest::typed::TypedNode as _;
 use pest_derive::Parser;
 
 #[derive(Parser)]
@@ -11,7 +12,7 @@ program    = pest::SOI ~ main ~ pest::EOI
 struct Parser;
 
 #[test]
-fn comment() -> Result<(), Error<Rule>> {
+fn comment() -> Result<()> {
     let vec = rules::main::try_parse_partial("x x x /*x*/")?;
     Ok(())
 }
@@ -23,13 +24,13 @@ fn skip_on_two_end() {
 }
 
 #[test]
-fn post_skip() -> Result<(), Error<Rule>> {
+fn post_skip() -> Result<()> {
     let program = rules::program::try_parse("x x /*x*/")?;
     Ok(())
 }
 
 #[test]
-fn pre_skip() -> Result<(), Error<Rule>> {
+fn pre_skip() -> Result<()> {
     let program = rules::program::try_parse("/* x x */ x x")?;
     Ok(())
 }

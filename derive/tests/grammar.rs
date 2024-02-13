@@ -9,14 +9,7 @@
 
 //! Copied from **pest/derive/tests/grammar.rs** (commit ac0aed3eecf435fd93ba575a39704aaa88a375b7)
 //! and modified.
-//! Overrided the macro [`parses_to`].
-//!
-//! Some tests has been modified (tokens under atomic rules have been removed):
-//! - [`checkpoint_restore`]. (This failure is weird)
-//! - [`sequence_atomic_compound`].
-//! - [`sequence_compound`].
-//! - [`sequence_compound_nested`].
-//! - [`sequence_non_atomic`].
+//! Overridden the macro [`parses_to`].
 
 use pest::{
     token::Pair,
@@ -61,7 +54,7 @@ macro_rules! parses_to {
         tokens: [ $( $names:ident $tokens:tt ),* $(,)* ]
     ) => {
         let tokens = tokens!([$($names $tokens),*]);
-        let (_, res) = rules::$rule::try_parse_partial($input).unwrap();
+        let (_, res) = rules::$rule::try_parse_partial($input).unwrap_or_else(|e| panic!("{e}"));
         assert_eq!(res, res.clone());
         let actual = vec![res.as_pair_tree()];
         assert_eq!(
@@ -165,12 +158,12 @@ fn double_neg_pred() {
 fn sequence_atomic() {
     parses_to! {
         parser: GrammarParser,
-        input: "abc   abc",
+        input: "abcabc",
         rule: Rule::sequence_atomic,
         tokens: [
-            sequence_atomic(0, 9, [
+            sequence_atomic(0, 6, [
                 string(0, 3),
-                string(6, 9)
+                string(3, 6)
             ])
         ]
     };
@@ -182,17 +175,17 @@ fn sequence_optional_trivia() {
         parser: GrammarParser,
         input: "abcabc",
         rule: Rule::sequence_optional_trivia,
-        /*
         tokens: [
             sequence_optional_trivia(0, 6, [
                 string(0, 3),
                 string(3, 6)
             ])
         ]
-        */
+        /*
         tokens: [
             sequence_optional_trivia(0, 6)
         ]
+        */
     };
 }
 
@@ -200,10 +193,13 @@ fn sequence_optional_trivia() {
 fn sequence_mandatory_trivia() {
     parses_to! {
         parser: GrammarParser,
-        input: "abcabc",
+        input: "abc   abc",
         rule: Rule::sequence_mandatory_trivia,
         tokens: [
-            sequence_mandatory_trivia(0, 6)
+            sequence_mandatory_trivia(0, 9, [
+                string(0, 3),
+                string(6, 9),
+            ])
         ]
     };
 }
@@ -217,7 +213,7 @@ fn sequence_nested() {
         /*
         tokens: [
             sequence_nested(0, 9, [
-                sequence(0, 9, [
+                sequence_optional_trivia(0, 9, [
                     string(0, 3),
                     string(6, 9)
                 ])
@@ -225,7 +221,10 @@ fn sequence_nested() {
         ]
         */
         tokens: [
-            sequence_nested(0, 9)
+            sequence_nested(0, 9, [
+                string(0, 3),
+                string(6, 9)
+            ])
         ]
     };
 }
@@ -247,7 +246,6 @@ fn sequence_compound_nested() {
         parser: GrammarParser,
         input: "abcabc",
         rule: Rule::sequence_compound_nested,
-        /*
         tokens: [
             sequence_compound_nested(0, 6, [
                 sequence_nested(0, 6, [
@@ -256,10 +254,11 @@ fn sequence_compound_nested() {
                 ])
             ])
         ]
-        */
+        /*
         tokens: [
             sequence_compound_nested(0, 6)
         ]
+        */
     };
 }
 
@@ -388,7 +387,10 @@ fn repeat_atomic_strings() {
         input: "abcabc",
         rule: Rule::repeat_atomic,
         tokens: [
-            repeat_atomic(0, 6)
+            repeat_atomic(0, 6, [
+                string(0, 3),
+                string(3, 6),
+            ])
         ]
     };
 }
@@ -448,7 +450,10 @@ fn repeat_once_atomic_strings() {
         input: "abcabc",
         rule: Rule::repeat_once_atomic,
         tokens: [
-            repeat_once_atomic(0, 6)
+            repeat_once_atomic(0, 6, [
+                string(0, 3),
+                string(3, 6),
+            ])
         ]
     };
 }
@@ -502,7 +507,10 @@ fn repeat_min_max_atomic_twice() {
         input: "abcabc",
         rule: Rule::repeat_min_max_atomic,
         tokens: [
-            repeat_min_max_atomic(0, 6)
+            repeat_min_max_atomic(0, 6, [
+                string(0, 3),
+                string(3, 6),
+            ])
         ]
     };
 }
@@ -514,7 +522,11 @@ fn repeat_min_max_atomic_thrice() {
         input: "abcabcabc",
         rule: Rule::repeat_min_max_atomic,
         tokens: [
-            repeat_min_max_atomic(0, 9)
+            repeat_min_max_atomic(0, 9, [
+                string(0, 3),
+                string(3, 6),
+                string(6, 9),
+            ])
         ]
     };
 }
@@ -605,7 +617,10 @@ fn repeat_min_atomic_twice() {
         input: "abcabc",
         rule: Rule::repeat_min_atomic,
         tokens: [
-            repeat_min_atomic(0, 6)
+            repeat_min_atomic(0, 6, [
+                string(0, 3),
+                string(3, 6),
+            ])
         ]
     };
 }
@@ -617,7 +632,11 @@ fn repeat_min_atomic_thrice() {
         input: "abcabcabc",
         rule: Rule::repeat_min_atomic,
         tokens: [
-            repeat_min_atomic(0, 9)
+            repeat_min_atomic(0, 9, [
+                string(0, 3),
+                string(3, 6),
+                string(6, 9),
+            ])
         ]
     };
 }
@@ -680,7 +699,9 @@ fn repeat_max_atomic_once() {
         input: "abc",
         rule: Rule::repeat_max_atomic,
         tokens: [
-            repeat_max_atomic(0, 3)
+            repeat_max_atomic(0, 3, [
+                string(0, 3)
+            ])
         ]
     };
 }
@@ -692,7 +713,10 @@ fn repeat_max_atomic_twice() {
         input: "abcabc",
         rule: Rule::repeat_max_atomic,
         tokens: [
-            repeat_max_atomic(0, 6)
+            repeat_max_atomic(0, 6, [
+                string(0, 3),
+                string(3, 6),
+            ])
         ]
     };
 }
