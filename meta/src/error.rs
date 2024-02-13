@@ -23,7 +23,7 @@ pub fn rename_meta_rule(rule: &Rule) -> String {
         Rule::comma => "`,`".to_owned(),
         Rule::closing_paren => "`)`".to_owned(),
         Rule::quote => "`\"`".to_owned(),
-        Rule::insensitive_string => "`^`".to_owned(),
+        Rule::insensitive_string => "`i`".to_owned(),
         Rule::range_operator => "`..`".to_owned(),
         Rule::single_quote => "`'`".to_owned(),
         other_rule => format!("{:?}", other_rule),
