@@ -334,7 +334,7 @@ impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Negative<T> {
     ) -> Option<(Position<'i>, Self)> {
         tracker.negative_during(|tracker| {
             stack.snapshot();
-            match T::try_parse_with(input, stack, tracker) {
+            match T::try_parse_with_partial(input, stack, tracker) {
                 Some(_) => {
                     stack.restore();
                     None
