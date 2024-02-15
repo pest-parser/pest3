@@ -81,9 +81,6 @@ impl<
                 try_parse_unit::<R, T, TRIVIA>(input, stack, tracker, i)
             }) {
                 Some((next, matched)) => {
-                    if next == input {
-                        eprintln!("{input:?} {next:?}");
-                    }
                     input = next;
                     vec.push(matched);
                 }
