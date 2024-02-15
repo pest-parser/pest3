@@ -127,6 +127,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Regular<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Regular<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `Atomic`. Grammar: `(CharRange+ ~ (\"+\" ~ CharRange+))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Atomic<'i> {
@@ -145,6 +159,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Atomic<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Atomic<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `NonAtomic`. Grammar: `(\"(\" ^ \")\")`."]
@@ -167,6 +195,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#NonAtomic<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#NonAtomic<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `ExactString`. Grammar: `\"r#\"`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#ExactString<'i> {
@@ -185,6 +227,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#ExactString<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#ExactString<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `CharRange`. Grammar: `'0'..'9'`."]
@@ -207,6 +263,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#CharRange<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#CharRange<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `Any`. Grammar: `pest::any`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Any<'i> {
@@ -225,6 +295,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Any<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Any<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `Seq`. Grammar: `(\"1\" ~ ('2'..'9' ~ \".\"))`."]
@@ -247,6 +331,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Seq<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Seq<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `Choice`. Grammar: `(\"a\" | ((\"b\"+ ~ RepAtLeastOnce) | ((&\"c\" ~ (Choice ~ (Rep ~ Opt))) | (Peek | (PeekLeft | (PeekRight | (PeekLeftRight | (Drop | PeekAll))))))))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Choice<'i> {
@@ -265,6 +363,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Choice<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Choice<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `Rep`. Grammar: `\"b\"*`."]
@@ -287,6 +399,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Rep<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Rep<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `RepAtLeastOnce`. Grammar: `'0'..'9'+`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepAtLeastOnce<'i> {
@@ -305,6 +431,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepAtLeastOnce<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#RepAtLeastOnce<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `Opt`. Grammar: `\"?\"?`."]
@@ -327,6 +467,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Opt<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Opt<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `RepExact`. Grammar: `RepAtLeastOnce[3..3]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepExact<'i> {
@@ -345,6 +499,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepExact<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#RepExact<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `RepLeft`. Grammar: `RepExact[1..]`."]
@@ -367,6 +535,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepLeft<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#RepLeft<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `RepRight`. Grammar: `RepLeft[..2]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepRight<'i> {
@@ -385,6 +567,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepRight<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#RepRight<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `RepLeftRight`. Grammar: `RepRight[1..2]`."]
@@ -407,6 +603,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepLeftRight<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#RepLeftRight<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `Pos`. Grammar: `&(pest::SOI ~ RepLeftRight[2..4])`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Pos<'i> {
@@ -425,6 +635,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Pos<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Pos<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `Neg`. Grammar: `!(pest::EOI ~ Pos)`."]
@@ -447,6 +671,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Neg<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Neg<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `Push`. Grammar: `pest::push((RepLeft* ~ (Neg ~ (ExactString+ ~ (Push ~ (Pop ~ (Push ~ PopAll)))))))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Push<'i> {
@@ -465,6 +703,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Push<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Push<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `Pop`. Grammar: `pest::pop`."]
@@ -487,6 +739,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Pop<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Pop<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `PopAll`. Grammar: `pest::pop_all`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PopAll<'i> {
@@ -505,6 +771,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PopAll<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#PopAll<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `Peek`. Grammar: `pest::peek`."]
@@ -527,6 +807,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Peek<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Peek<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `PeekUnlimited`. Grammar: `pest::peek[..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekUnlimited<'i> {
@@ -545,6 +839,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekUnlimited<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#PeekUnlimited<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `PeekLeft`. Grammar: `pest::peek[1..]`."]
@@ -567,6 +875,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekLeft<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#PeekLeft<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `PeekRight`. Grammar: `pest::peek[..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekRight<'i> {
@@ -585,6 +907,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekRight<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#PeekRight<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `PeekLeftRight`. Grammar: `pest::peek[1..2]`."]
@@ -607,6 +943,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekLeftRight<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#PeekLeftRight<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
     #[doc = "Generated for rule `Drop`. Grammar: `pest::drop`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Drop<'i> {
@@ -625,6 +975,20 @@ pub mod rules {
                 let span = input.span(&pos);
                 ::pest::std::Some((pos, Self { content, span }))
             })
+        }
+    }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Drop<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Drop<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
         }
     }
     #[doc = "Generated for rule `PeekAll`. Grammar: `pest::peek_all`."]
@@ -647,6 +1011,20 @@ pub mod rules {
             })
         }
     }
+    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekAll<'i> {
+        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+            use pest::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    impl<'i> ::pest::typed::PairTree<super::Rule> for r#PeekAll<'i> {
+        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
 }
 #[doc = "Used generics."]
 pub mod generics {
@@ -655,5 +1033,5 @@ pub mod generics {
     pub use pest::sequence::Sequence3;
     pub use pest::sequence::Sequence4;
     pub use pest::sequence::Sequence7;
-    pub use pest::typed::template::{CharRange, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin, RepMinMax, RepOnce, Str, ANY as any, DROP as drop, EOI, PEEK as peek, PEEK_ALL as peek_all, POP as pop, POP_ALL as pop_all, PUSH as push, SOI};
+    pub use pest::typed::template::{CharRange, Insens, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin, RepMinMax, RepOnce, Str, ANY as any, DROP as drop, EOI, PEEK as peek, PEEK_ALL as peek_all, POP as pop, POP_ALL as pop_all, PUSH as push, SOI};
 }
