@@ -1,4 +1,5 @@
 // #![no_std]
+#![warn(rust_2018_idioms, rust_2021_compatibility, missing_docs)]
 
 pub mod choice;
 pub mod formatter;

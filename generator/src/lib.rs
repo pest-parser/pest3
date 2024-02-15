@@ -1,4 +1,5 @@
-#![warn(rust_2021_compatibility, rust_2018_idioms)]
+#![warn(rust_2018_idioms, rust_2021_compatibility, missing_docs)]
+
 mod common;
 mod config;
 mod expr;
