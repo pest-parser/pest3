@@ -24,8 +24,12 @@ macro_rules! sequence_type {
                 stack: &mut $crate::Stack<$crate::Span<'i>>,
                 tracker: &mut $crate::typed::Tracker<'i, R>,
             ) -> ::core::option::Option<($crate::Position<'i>, Self)> {
+                let mut i = 0usize;
                 $(
-                    input = $crate::typed::template::try_handle_trivia::<R, $trivia>(input, stack, tracker)?;
+                    i += 1;
+                    if i > 1 {
+                        input = $crate::typed::template::try_handle_trivia::<R, $trivia>(input, stack, tracker)?;
+                    }
                     let (next, $variant) = $type::try_parse_with_partial(input, stack, tracker)?;
                     input = next;
                 )*
