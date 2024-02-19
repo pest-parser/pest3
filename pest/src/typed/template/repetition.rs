@@ -109,14 +109,9 @@ impl<T, const TRIVIA: u8, const MIN: usize, const MAX: usize> IntoIterator
     }
 }
 impl<T, const TRIVIA: u8, const MIN: usize, const MAX: usize> RepMinMax<T, TRIVIA, MIN, MAX> {
-    /// Returns an iterator over all skipped or matched expressions by reference.
-    #[allow(clippy::needless_lifetimes)]
-    pub fn iter_all<'n>(&'n self) -> alloc::slice::Iter<'n, T> {
+    /// Returns an iterator over all smatched expressions by reference.
+    pub fn iter(&self) -> alloc::slice::Iter<'_, T> {
         self.content.iter()
-    }
-    /// Returns an iterator over all skipped or matched expressions by value.
-    pub fn into_iter_all(self) -> alloc::vec::IntoIter<T> {
-        self.content.into_iter()
     }
 }
 impl<T: Clone + PartialEq, const TRIVIA: u8, const MIN: usize, const MAX: usize> BoundWrapper
