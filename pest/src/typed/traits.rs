@@ -15,7 +15,9 @@ pub trait RuleType: Copy + Debug + Eq + Hash + Ord {
     type MandatoryTrivia<'i>: TypedNode<'i, Self>;
 }
 
+/// Node of a typed syntax tree.
 pub trait TypedNode<'i, R: RuleType>: Sized {
+    /// Try parse remained string into a node.
     #[inline]
     fn try_parse_with(
         input: Position<'i>,
@@ -36,11 +38,13 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
         };
         Some(res)
     }
+    /// Try parse a part of or all of remained string into a node.
     fn try_parse_with_partial(
         input: Position<'i>,
         stack: &mut Stack<Span<'i>>,
         tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)>;
+    /// Try parse given string into a node.
     #[inline]
     fn try_parse(input: &'i str) -> Result<Self, Error<R>> {
         let mut stack = Stack::new();
@@ -51,6 +55,7 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
             None => Err(tracker.collect()),
         }
     }
+    /// Try parse leading part of string into a node.
     #[inline]
     fn try_parse_partial(input: &'i str) -> Result<(Position<'i>, Self), Error<R>> {
         let mut stack = Stack::new();
