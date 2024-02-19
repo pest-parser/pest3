@@ -23,7 +23,8 @@ pub(crate) struct Output<'g> {
     wrapper_counter: BTreeMap<&'g str, usize>,
     sequences: BTreeSet<usize>,
     choices: BTreeSet<usize>,
-    trivia: Option<TokenStream>,
+    optional_trivia: Option<TokenStream>,
+    mandatory_trivia: Option<TokenStream>,
 }
 impl<'g> Output<'g> {
     pub fn new() -> Self {
@@ -33,7 +34,8 @@ impl<'g> Output<'g> {
             wrapper_counter: BTreeMap::new(),
             sequences: BTreeSet::new(),
             choices: BTreeSet::new(),
-            trivia: None,
+            optional_trivia: None,
+            mandatory_trivia: None,
         }
     }
     /// Record usage of Seq* generics.
@@ -82,13 +84,11 @@ impl<'g> Output<'g> {
             quote! {#wrapper_mod::#s}
         }
     }
-    /// Record rule for traivia
-    pub fn add_trivia(&mut self, type_name: TokenStream) {
-        let previous = self.trivia.replace(type_name);
-        assert!(
-            previous.is_none(),
-            "Trivia can't be defined multiple times."
-        );
+    pub fn add_option_trivia(&mut self, tokens: TokenStream) {
+        self.optional_trivia = Some(tokens);
+    }
+    pub fn add_mandatory_trivia(&mut self, tokens: TokenStream) {
+        self.mandatory_trivia = Some(tokens);
     }
     /// Collect to final [TokenStream].
     pub fn collect(&self) -> TokenStream {
@@ -97,10 +97,14 @@ impl<'g> Output<'g> {
         let wrappers = &self.wrappers;
         let wrapper_mod = constant_wrappers();
         let rules = rules_mod();
-        let trivia = self
-            .trivia
+        let optional_trivia = self
+            .optional_trivia
             .clone()
-            .unwrap_or(quote! {#pest::typed::template::NONE});
+            .unwrap_or(quote! {#pest::typed::template::Empty});
+        let mandatory_trivia = self
+            .mandatory_trivia
+            .clone()
+            .unwrap_or(quote! {#pest::typed::template::Empty});
         let generics = {
             let fill = |set: &BTreeSet<usize>,
                         target: &mut Vec<TokenStream>,
@@ -180,10 +184,12 @@ impl<'g> Output<'g> {
         quote! {
             impl #pest::typed::RuleType for Rule {
                 const EOI: Self = Rule::EOI;
-                type Trivia<'i> = trivia::Trivia<'i>;
+                type OptionalTrivia<'i> = trivia::OptionalTrivia<'i>;
+                type MandatoryTrivia<'i> = trivia::MandatoryTrivia<'i>;
             }
             mod trivia {
-                pub type Trivia<'i> = #trivia;
+                pub type OptionalTrivia<'i> = #optional_trivia;
+                pub type MandatoryTrivia<'i> = #mandatory_trivia;
             }
             mod #wrapper_mod {
                 #(#wrappers)*

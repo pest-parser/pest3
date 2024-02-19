@@ -2,6 +2,7 @@
 Regular = ('0'..'9')+
 
 ~ = " "*
+^ = " "+
 
 /// Atomic rule.
 Atomic = CharRange+ ~ "+" ~ CharRange+

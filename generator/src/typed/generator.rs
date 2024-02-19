@@ -393,32 +393,26 @@ fn process_rule<'g: 'f, 'f>(
     res: &mut Output<'g>,
 ) {
     let rule_config = RuleConfig::from(rule);
-    if matches!(rule.name.as_str(), "~" | "^") {
-        let inter = process_expr(
-            &rule.node.expr,
-            &rule_config,
-            res,
-            config,
-            &mod_sys,
-            &quote! {super},
-        );
-        res.add_trivia(inter.typename);
-    } else {
-        let rule_info = RuleInfo::from(rule);
-        let inter = process_expr(
-            &rule.node.expr,
-            &rule_config,
-            res,
-            config,
-            &mod_sys,
-            &quote! {super},
-        );
-        res.insert_rule_struct(create_rule(
-            &rule_config,
-            &rule_info,
-            inter.typename,
-            quote! {super},
-        ));
+    let inter = process_expr(
+        &rule.node.expr,
+        &rule_config,
+        res,
+        config,
+        &mod_sys,
+        &quote! {super},
+    );
+    match rule.name.as_str() {
+        "~" => res.add_option_trivia(inter.typename),
+        "^" => res.add_mandatory_trivia(inter.typename),
+        _ => {
+            let rule_info = RuleInfo::from(rule);
+            res.insert_rule_struct(create_rule(
+                &rule_config,
+                &rule_info,
+                inter.typename,
+                quote! {super},
+            ));
+        }
     }
 }
 
@@ -427,12 +421,13 @@ fn process_rules<'g: 'f, 'f>(
     mod_sys: &mut ModuleSystem<'g>,
     config: Config,
 ) -> Output<'g> {
-    let mut res = Output::new();
     for rule in rules.iter() {
-        if !matches!(rule.name.as_str(), "~" | "^") {
-            mod_sys.insert_rule(&rule.name);
+        match rule.name.as_str() {
+            "~" | "^" => {}
+            _ => mod_sys.insert_rule(&rule.name),
         }
     }
+    let mut res = Output::new();
     for rule in rules.iter() {
         process_rule(rule, mod_sys, config, &mut res);
     }

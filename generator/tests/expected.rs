@@ -32,10 +32,12 @@ pub enum Rule {
 }
 impl ::pest::typed::RuleType for Rule {
     const EOI: Self = Rule::EOI;
-    type Trivia<'i> = trivia::Trivia<'i>;
+    type OptionalTrivia<'i> = trivia::OptionalTrivia<'i>;
+    type MandatoryTrivia<'i> = trivia::MandatoryTrivia<'i>;
 }
 mod trivia {
-    pub type Trivia<'i> = super::generics::Rep<super::generics::Str<super::wrapper::W0>, 0u8>;
+    pub type OptionalTrivia<'i> = super::generics::Rep<super::generics::Str<super::wrapper::W0>, 0u8>;
+    pub type MandatoryTrivia<'i> = super::generics::RepOnce<super::generics::Str<super::wrapper::W0>, 0u8>;
 }
 mod wrapper {
     #[doc = "A wrapper for `\" \"`."]

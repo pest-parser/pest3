@@ -24,7 +24,8 @@ mod tests {
 
     impl RuleType for Rule {
         const EOI: Self = Self::EOI;
-        type Trivia<'i> = Choice2<Char<' '>, Char<'\t'>>;
+        type OptionalTrivia<'i> = Rep<Choice2<Char<' '>, Char<'\t'>>, 0>;
+        type MandatoryTrivia<'i> = Empty;
     }
 
     struct Parser;
@@ -63,7 +64,7 @@ mod tests {
 
     #[test]
     fn ignore() {
-        type Trivia<'i> = Rep<<Rule as RuleType>::Trivia<'i>, 0>;
+        type Trivia<'i> = <Rule as RuleType>::OptionalTrivia<'i>;
         let trivia = <Trivia as TypedNode<'static, Rule>>::try_parse(" \t  \t\t").unwrap();
         assert_eq!(
             format!("{:?}", trivia),
