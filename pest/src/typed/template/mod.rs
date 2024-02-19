@@ -384,7 +384,7 @@ impl Debug for ANY {
 }
 impl EmptyPairContainer for ANY {}
 
-/// Match any character.
+/// Never matches.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub struct NONE;
 impl<'i, R: RuleType> TypedNode<'i, R> for NONE {
@@ -398,6 +398,21 @@ impl<'i, R: RuleType> TypedNode<'i, R> for NONE {
     }
 }
 impl EmptyPairContainer for NONE {}
+
+/// Always accept and consume no input.
+#[derive(Clone, Debug, Hash, PartialEq, Eq)]
+pub struct Empty;
+impl<'i, R: RuleType> TypedNode<'i, R> for Empty {
+    #[inline]
+    fn try_parse_with_partial(
+        input: Position<'i>,
+        _stack: &mut Stack<Span<'i>>,
+        _tracker: &mut Tracker<'i, R>,
+    ) -> Option<(Position<'i>, Self)> {
+        Some((input, Self))
+    }
+}
+impl EmptyPairContainer for Empty {}
 
 /// Match the start of input.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
@@ -796,34 +811,21 @@ pub fn restore_on_none<'i, T>(
     res
 }
 
+/// Handle trivia rule defined in [RuleType].
 #[inline]
 pub fn try_handle_trivia<'i, R: RuleType, const TRIVIA: u8>(
-    mut input: Position<'i>,
+    input: Position<'i>,
     stack: &mut Stack<Span<'i>>,
     tracker: &mut Tracker<'i, R>,
 ) -> Option<Position<'i>> {
-    match TRIVIA {
+    let input = match TRIVIA {
         // None.
-        0 => (),
+        0 => input,
         // Optional.
-        1 => {
-            while let Some((next, _trivia)) =
-                R::Trivia::try_parse_with_partial(input, stack, tracker)
-            {
-                input = next;
-            }
-        }
+        1 => R::OptionalTrivia::try_parse_with_partial(input, stack, tracker)?.0,
         // Mandatory.
-        2 => {
-            let (next, _trivia) = R::Trivia::try_parse_with_partial(input, stack, tracker)?;
-            input = next;
-            while let Some((next, _trivia)) =
-                R::Trivia::try_parse_with_partial(input, stack, tracker)
-            {
-                input = next;
-            }
-        }
+        2 => R::MandatoryTrivia::try_parse_with_partial(input, stack, tracker)?.0,
         _ => unreachable!(),
-    }
+    };
     Some(input)
 }

@@ -70,7 +70,8 @@ arabic = ARABIC+
 emoji = EMOJI+
 */
 
-~ = " " | "$"
+~ = (" " | "$")*
+^ = (" " | "$")+
 
 // Line comment
 

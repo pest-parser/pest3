@@ -36,19 +36,22 @@ pub(crate) fn generate_include(name: &Ident, paths: Vec<PathBuf>) -> TokenStream
 }
 
 pub(crate) fn generate_rule_enum(rules: &[ParseRule], doc_comment: &DocComment) -> TokenStream {
-    let rules = rules.iter().filter(|rule| rule.name != "~").map(|rule| {
-        let rule_name = format_ident!("r#{}", rule.name);
+    let rules = rules
+        .iter()
+        .filter(|rule| rule.name != "~" && rule.name != "^")
+        .map(|rule| {
+            let rule_name = format_ident!("r#{}", rule.name);
 
-        match doc_comment.line_docs.get(&rule.name) {
-            Some(doc) => quote! {
-                #[doc = #doc]
-                #rule_name,
-            },
-            None => quote! {
-                #rule_name,
-            },
-        }
-    });
+            match doc_comment.line_docs.get(&rule.name) {
+                Some(doc) => quote! {
+                    #[doc = #doc]
+                    #rule_name,
+                },
+                None => quote! {
+                    #rule_name,
+                },
+            }
+        });
 
     let grammar_doc = &doc_comment.grammar_doc;
     let grammar_doc = if let Some(grammar_doc) = grammar_doc {

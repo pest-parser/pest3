@@ -5,7 +5,7 @@ use pest_derive::Parser;
 
 #[derive(Parser)]
 #[grammar_inline = r#"
-~          = " " | "/*" - (!"*/" - pest::any)* - "*/"
+~          = (" " | "/*" - (!"*/" - pest::any)* - "*/")*
 main       = "x"~*
 program    = pest::SOI ~ main ~ pest::EOI
 "#]
