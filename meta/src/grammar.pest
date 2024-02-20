@@ -8,12 +8,13 @@
 // modified, or distributed except according to those terms.
 
 grammar_rules = _{
-	SOI ~ import* ~ grammar_rule ~ (import | grammar_rule)* ~ EOI
+	SOI ~ grammar_doc* ~ import* ~ grammar_rule ~ (import | grammar_rule)* ~ EOI
 }
 
 import = { "use" ~ path ~ ("as" ~ identifier)? }
 
 grammar_rule = {
+    rule_doc* ~
     (identifier | overridable_operator) ~ arguments? ~
     assignment_operator ~ silent_modifier? ~
     (
@@ -106,4 +107,7 @@ newline    = _{ "\n" | "\r\n" }
 WHITESPACE = _{ " " | "\t" | newline }
 
 block_comment = _{ "/*" ~ (block_comment | !"*/" ~ ANY)* ~ "*/" }
-COMMENT       = _{ block_comment | ("//" ~ (!newline ~ ANY)*) }
+COMMENT       = _{ block_comment | ("//" ~ !("/" | "!") ~ (!newline ~ ANY)*) ~ &(newline | EOI) }
+doc_content   = ${ (!newline ~ ANY)* }
+rule_doc      = ${ "///" ~ " "? ~ doc_content }
+grammar_doc   = ${ "//!" ~ " "? ~ doc_content }
