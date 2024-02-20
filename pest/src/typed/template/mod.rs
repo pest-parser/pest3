@@ -12,7 +12,7 @@ use super::{
     tracker::Tracker,
     traits::{EmptyPairContainer, PairContainer},
     wrapper::String as StringWrapper,
-    RuleType, TypedNode,
+    NeverFailedTypedNode, RuleType, TypedNode,
 };
 use crate::{Position, Span, Stack};
 use core::{
@@ -410,6 +410,14 @@ impl<'i, R: RuleType> TypedNode<'i, R> for Empty {
         _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
         Some((input, Self))
+    }
+}
+impl<'i, R: RuleType> NeverFailedTypedNode<'i, R> for Empty {
+    fn parse_with_partial(
+        input: Position<'i>,
+        _stack: &mut Stack<Span<'i>>,
+    ) -> (Position<'i>, Self) {
+        (input, Self)
     }
 }
 impl EmptyPairContainer for Empty {}
