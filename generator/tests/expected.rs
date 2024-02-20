@@ -116,8 +116,10 @@ pub mod rules {
     #[doc = "Generated for rule `Regular`. Grammar: `'0'..'9'+`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Regular<'i> {
-        content: ::pest::std::Box<super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Regular<'i> {
         type Rule = super::Rule;
@@ -150,8 +152,10 @@ pub mod rules {
     #[doc = "Generated for rule `Atomic`. Grammar: `(CharRange+ ~ (\"+\" ~ CharRange+))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Atomic<'i> {
-        content: ::pest::std::Box<super::generics::Sequence3<super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>, 0u8, super::generics::Str<super::wrapper::W1>, 1u8, super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>, 1u8>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::Sequence3<super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>, 0u8, super::generics::Str<super::wrapper::W1>, 1u8, super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>, 1u8>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Atomic<'i> {
         type Rule = super::Rule;
@@ -184,8 +188,10 @@ pub mod rules {
     #[doc = "Generated for rule `NonAtomic`. Grammar: `(\"(\" ^ \")\")`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#NonAtomic<'i> {
-        content: ::pest::std::Box<super::generics::Sequence2<super::generics::Str<super::wrapper::W2>, 0u8, super::generics::Str<super::wrapper::W3>, 2u8>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::Sequence2<super::generics::Str<super::wrapper::W2>, 0u8, super::generics::Str<super::wrapper::W3>, 2u8>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#NonAtomic<'i> {
         type Rule = super::Rule;
@@ -218,8 +224,10 @@ pub mod rules {
     #[doc = "Generated for rule `ExactString`. Grammar: `\"r#\"`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#ExactString<'i> {
-        content: ::pest::std::Box<super::generics::Str<super::wrapper::W4>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::Str<super::wrapper::W4>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#ExactString<'i> {
         type Rule = super::Rule;
@@ -252,8 +260,10 @@ pub mod rules {
     #[doc = "Generated for rule `CharRange`. Grammar: `'0'..'9'`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#CharRange<'i> {
-        content: ::pest::std::Box<super::generics::CharRange<'0', '9'>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::CharRange<'0', '9'>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#CharRange<'i> {
         type Rule = super::Rule;
@@ -286,8 +296,10 @@ pub mod rules {
     #[doc = "Generated for rule `Any`. Grammar: `pest::any`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Any<'i> {
-        content: ::pest::std::Box<super::generics::r#any>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::r#any,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Any<'i> {
         type Rule = super::Rule;
@@ -320,8 +332,10 @@ pub mod rules {
     #[doc = "Generated for rule `Seq`. Grammar: `(\"1\" ~ ('2'..'9' ~ \".\"))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Seq<'i> {
-        content: ::pest::std::Box<super::generics::Sequence3<super::generics::Str<super::wrapper::W5>, 0u8, super::generics::CharRange<'2', '9'>, 1u8, super::generics::Str<super::wrapper::W6>, 1u8>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::Sequence3<super::generics::Str<super::wrapper::W5>, 0u8, super::generics::CharRange<'2', '9'>, 1u8, super::generics::Str<super::wrapper::W6>, 1u8>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Seq<'i> {
         type Rule = super::Rule;
@@ -354,8 +368,10 @@ pub mod rules {
     #[doc = "Generated for rule `Choice`. Grammar: `(\"a\" | ((\"b\"+ ~ RepAtLeastOnce) | ((&\"c\" ~ (Choice ~ (Rep ~ Opt))) | (Peek | (PeekLeft | (PeekRight | (PeekLeftRight | (Drop | PeekAll))))))))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Choice<'i> {
-        content: ::pest::std::Box<super::generics::Choice9<super::generics::Str<super::wrapper::W7>, super::generics::Sequence2<super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>, 0u8, super::rules::RepAtLeastOnce<'i>, 1u8>, super::generics::Sequence4<super::generics::Positive<super::generics::Str<super::wrapper::W9>>, 0u8, super::rules::Choice<'i>, 1u8, super::rules::Rep<'i>, 1u8, super::rules::Opt<'i>, 1u8>, super::rules::Peek<'i>, super::rules::PeekLeft<'i>, super::rules::PeekRight<'i>, super::rules::PeekLeftRight<'i>, super::rules::Drop<'i>, super::rules::PeekAll<'i>>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: ::pest::std::Box<super::generics::Choice9<super::generics::Str<super::wrapper::W7>, super::generics::Sequence2<super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>, 0u8, super::rules::RepAtLeastOnce<'i>, 1u8>, super::generics::Sequence4<super::generics::Positive<super::generics::Str<super::wrapper::W9>>, 0u8, super::rules::Choice<'i>, 1u8, super::rules::Rep<'i>, 1u8, super::rules::Opt<'i>, 1u8>, super::rules::Peek<'i>, super::rules::PeekLeft<'i>, super::rules::PeekRight<'i>, super::rules::PeekLeftRight<'i>, super::rules::Drop<'i>, super::rules::PeekAll<'i>>>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Choice<'i> {
         type Rule = super::Rule;
@@ -388,8 +404,10 @@ pub mod rules {
     #[doc = "Generated for rule `Rep`. Grammar: `\"b\"*`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Rep<'i> {
-        content: ::pest::std::Box<super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0u8>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0u8>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Rep<'i> {
         type Rule = super::Rule;
@@ -422,8 +440,10 @@ pub mod rules {
     #[doc = "Generated for rule `RepAtLeastOnce`. Grammar: `'0'..'9'+`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepAtLeastOnce<'i> {
-        content: ::pest::std::Box<super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#RepAtLeastOnce<'i> {
         type Rule = super::Rule;
@@ -456,8 +476,10 @@ pub mod rules {
     #[doc = "Generated for rule `Opt`. Grammar: `\"?\"?`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Opt<'i> {
-        content: ::pest::std::Box<::pest::std::Option<super::generics::Str<super::wrapper::W10>>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: ::pest::std::Option<super::generics::Str<super::wrapper::W10>>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Opt<'i> {
         type Rule = super::Rule;
@@ -490,8 +512,10 @@ pub mod rules {
     #[doc = "Generated for rule `RepExact`. Grammar: `RepAtLeastOnce[3..3]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepExact<'i> {
-        content: ::pest::std::Box<super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#RepExact<'i> {
         type Rule = super::Rule;
@@ -524,8 +548,10 @@ pub mod rules {
     #[doc = "Generated for rule `RepLeft`. Grammar: `RepExact[1..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepLeft<'i> {
-        content: ::pest::std::Box<super::generics::RepMin<super::rules::RepExact<'i>, 0u8, 1usize>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::RepMin<super::rules::RepExact<'i>, 0u8, 1usize>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#RepLeft<'i> {
         type Rule = super::Rule;
@@ -558,8 +584,10 @@ pub mod rules {
     #[doc = "Generated for rule `RepRight`. Grammar: `RepLeft[..2]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepRight<'i> {
-        content: ::pest::std::Box<super::generics::RepMax<super::rules::RepLeft<'i>, 0u8, 2usize>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::RepMax<super::rules::RepLeft<'i>, 0u8, 2usize>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#RepRight<'i> {
         type Rule = super::Rule;
@@ -592,8 +620,10 @@ pub mod rules {
     #[doc = "Generated for rule `RepLeftRight`. Grammar: `RepRight[1..2]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepLeftRight<'i> {
-        content: ::pest::std::Box<super::generics::RepMinMax<super::rules::RepRight<'i>, 0u8, 1usize, 2usize>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::RepMinMax<super::rules::RepRight<'i>, 0u8, 1usize, 2usize>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#RepLeftRight<'i> {
         type Rule = super::Rule;
@@ -626,8 +656,10 @@ pub mod rules {
     #[doc = "Generated for rule `Pos`. Grammar: `&(pest::SOI ~ RepLeftRight[2..4])`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Pos<'i> {
-        content: ::pest::std::Box<super::generics::Positive<super::generics::Sequence2<super::generics::r#SOI, 0u8, super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0u8, 2usize, 4usize>, 1u8>>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::Positive<super::generics::Sequence2<super::generics::r#SOI, 0u8, super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0u8, 2usize, 4usize>, 1u8>>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Pos<'i> {
         type Rule = super::Rule;
@@ -660,8 +692,10 @@ pub mod rules {
     #[doc = "Generated for rule `Neg`. Grammar: `!(pest::EOI ~ Pos)`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Neg<'i> {
-        content: ::pest::std::Box<super::generics::Negative<super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::Negative<super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Neg<'i> {
         type Rule = super::Rule;
@@ -694,8 +728,10 @@ pub mod rules {
     #[doc = "Generated for rule `Push`. Grammar: `pest::push((RepLeft* ~ (Neg ~ (ExactString+ ~ (Push ~ (Pop ~ (Push ~ PopAll)))))))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Push<'i> {
-        content: ::pest::std::Box<super::generics::r#push<super::generics::Sequence7<super::generics::Rep<super::rules::RepLeft<'i>, 0u8>, 0u8, super::rules::Neg<'i>, 1u8, super::generics::RepOnce<super::rules::ExactString<'i>, 0u8>, 1u8, super::rules::Push<'i>, 1u8, super::rules::Pop<'i>, 1u8, super::rules::Push<'i>, 1u8, super::rules::PopAll<'i>, 1u8>>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: ::pest::std::Box<super::generics::r#push<super::generics::Sequence7<super::generics::Rep<super::rules::RepLeft<'i>, 0u8>, 0u8, super::rules::Neg<'i>, 1u8, super::generics::RepOnce<super::rules::ExactString<'i>, 0u8>, 1u8, super::rules::Push<'i>, 1u8, super::rules::Pop<'i>, 1u8, super::rules::Push<'i>, 1u8, super::rules::PopAll<'i>, 1u8>>>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Push<'i> {
         type Rule = super::Rule;
@@ -728,8 +764,10 @@ pub mod rules {
     #[doc = "Generated for rule `Pop`. Grammar: `pest::pop`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Pop<'i> {
-        content: ::pest::std::Box<super::generics::r#pop<'i>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::r#pop<'i>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Pop<'i> {
         type Rule = super::Rule;
@@ -762,8 +800,10 @@ pub mod rules {
     #[doc = "Generated for rule `PopAll`. Grammar: `pest::pop_all`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PopAll<'i> {
-        content: ::pest::std::Box<super::generics::r#pop_all<'i>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::r#pop_all<'i>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PopAll<'i> {
         type Rule = super::Rule;
@@ -796,8 +836,10 @@ pub mod rules {
     #[doc = "Generated for rule `Peek`. Grammar: `pest::peek`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Peek<'i> {
-        content: ::pest::std::Box<super::generics::r#peek<'i>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::r#peek<'i>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Peek<'i> {
         type Rule = super::Rule;
@@ -830,8 +872,10 @@ pub mod rules {
     #[doc = "Generated for rule `PeekUnlimited`. Grammar: `pest::peek[..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekUnlimited<'i> {
-        content: ::pest::std::Box<super::generics::PeekSlice1<0isize>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::PeekSlice1<0isize>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekUnlimited<'i> {
         type Rule = super::Rule;
@@ -864,8 +908,10 @@ pub mod rules {
     #[doc = "Generated for rule `PeekLeft`. Grammar: `pest::peek[1..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekLeft<'i> {
-        content: ::pest::std::Box<super::generics::PeekSlice1<1isize>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::PeekSlice1<1isize>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekLeft<'i> {
         type Rule = super::Rule;
@@ -898,8 +944,10 @@ pub mod rules {
     #[doc = "Generated for rule `PeekRight`. Grammar: `pest::peek[..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekRight<'i> {
-        content: ::pest::std::Box<super::generics::PeekSlice1<0isize>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::PeekSlice1<0isize>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekRight<'i> {
         type Rule = super::Rule;
@@ -932,8 +980,10 @@ pub mod rules {
     #[doc = "Generated for rule `PeekLeftRight`. Grammar: `pest::peek[1..2]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekLeftRight<'i> {
-        content: ::pest::std::Box<super::generics::PeekSlice2<1isize, 2isize>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::PeekSlice2<1isize, 2isize>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekLeftRight<'i> {
         type Rule = super::Rule;
@@ -966,8 +1016,10 @@ pub mod rules {
     #[doc = "Generated for rule `Drop`. Grammar: `pest::drop`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Drop<'i> {
-        content: ::pest::std::Box<super::generics::r#drop>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::r#drop,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#Drop<'i> {
         type Rule = super::Rule;
@@ -1000,8 +1052,10 @@ pub mod rules {
     #[doc = "Generated for rule `PeekAll`. Grammar: `pest::peek_all`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekAll<'i> {
-        content: ::pest::std::Box<super::generics::r#peek_all<'i>>,
-        span: ::pest::Span<'i>,
+        #[doc = r" Matched structure."]
+        pub content: super::generics::r#peek_all<'i>,
+        #[doc = r" Matched span."]
+        pub span: ::pest::Span<'i>,
     }
     impl<'i> ::pest::typed::wrapper::Rule<super::Rule> for r#PeekAll<'i> {
         type Rule = super::Rule;

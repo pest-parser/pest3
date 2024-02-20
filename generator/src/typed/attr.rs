@@ -21,6 +21,10 @@ pub(crate) fn parse_derive(ast: DeriveInput) -> (Ident, Generics, Vec<GrammarSou
             config.do_not_emit_span = get_bool(attr, "do_not_emit_span");
         } else if path.is_ident("no_warnings") {
             config.no_warnings = get_bool(attr, "no_warnings");
+        } else if path.is_ident("box_all_rules") {
+            config.box_all_rules = get_bool(attr, "box_all_rules");
+        } else {
+            panic!("Unknown attribute.");
         }
     }
 
