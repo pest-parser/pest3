@@ -1,3 +1,4 @@
+//! This is a grammar test written by [Tomas Tauber](https://github.com/tomtau).
 string = "abc"
 insensitive = i"abc"
 range = '0'..'9'
@@ -79,7 +80,13 @@ emoji() = pest::unicode::emoji+
 
 whitespace = " "
 comment = "$"+
+/// Rule `~` has almost the same behaviour with `^`,
+/// except where they are used.
+/// For example,
+/// `a ~ b` and `a~*` uses rule `~`,
+/// while `a ^ b` and `a^*` uses rule `^`.
 ~ = (whitespace | comment)*
+/// See rule `~`.
 ^ = (whitespace | comment)*
 
 // Line comment

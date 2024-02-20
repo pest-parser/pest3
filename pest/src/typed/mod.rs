@@ -1,3 +1,5 @@
+//! Definitions related to typed syntax tree.
+
 pub mod template;
 mod tracker;
 mod traits;
