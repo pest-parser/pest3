@@ -167,7 +167,13 @@ pub trait NeverFailedTypedNode<'i, R: RuleType>
 where
     Self: Sized + Debug + Clone + PartialEq + Default,
 {
-    /// Create typed node.
-    /// `ATOMIC` refers to the external status, and it can be overriden by rule definition.
-    fn parse_with(input: Position<'i>, stack: &mut Stack<Span<'i>>) -> (Position<'i>, Self);
+    /// Parse leading part of given input into a typed node.
+    fn parse_with_partial(input: Position<'i>, stack: &mut Stack<Span<'i>>)
+        -> (Position<'i>, Self);
+    /// Parse leading part of given input into a typed node.
+    fn parse_partial(input: &'i str) -> (Position<'i>, Self) {
+        let input = Position::from_start(input);
+        let mut stack = Stack::new();
+        Self::parse_with_partial(input, &mut stack)
+    }
 }

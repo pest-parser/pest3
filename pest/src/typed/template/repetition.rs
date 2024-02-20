@@ -37,7 +37,7 @@ impl<
     > NeverFailedTypedNode<'i, R> for RepMinMax<T, TRIVIA, 0, MAX>
 {
     #[inline]
-    fn parse_with(mut input: Position<'i>, stack: &mut Stack<Span<'i>>) -> (Position<'i>, Self) {
+    fn parse_with_partial(mut input: Position<'i>, stack: &mut Stack<Span<'i>>) -> (Position<'i>, Self) {
         let mut vec = Vec::new();
 
         let mut tracker = Tracker::new(input);
