@@ -400,7 +400,7 @@ impl<'i, R: RuleType> TypedNode<'i, R> for NONE {
 impl EmptyPairContainer for NONE {}
 
 /// Always accept and consume no input.
-#[derive(Clone, Debug, Hash, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Hash, PartialEq, Eq)]
 pub struct Empty;
 impl<'i, R: RuleType> TypedNode<'i, R> for Empty {
     #[inline]
