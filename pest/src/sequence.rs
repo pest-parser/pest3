@@ -1,3 +1,13 @@
+//! A [macro](crate::sequence_type) to generate sequence type 
+//! and generated sequence types that has 2 to 15 fields.
+
+/// Generate choice type.
+///
+/// ## Example
+///
+/// ```rust
+/// pest::sequence_type!(Sequence2, (element_0, T0, TRIVIA_0), (element_1, T1, TRIVIA_1));
+/// ```
 #[macro_export]
 macro_rules! sequence_type {
     ( $name:ident, $( ( $variant:ident, $type:ident, $trivia:ident ) ),* $(,)? ) => {

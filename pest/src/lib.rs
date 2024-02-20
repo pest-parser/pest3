@@ -1,3 +1,5 @@
+//! Core part of pest3.
+
 // #![no_std]
 #![warn(rust_2018_idioms, rust_2021_compatibility, missing_docs)]
 
@@ -15,6 +17,7 @@ pub use pest2::{error, RuleType, Stack};
 pub use position::Position;
 pub use span::Span;
 
+/// Re-exported items from [std].
 pub mod std {
     pub use std::boxed::Box;
     pub use std::ops::FnMut;

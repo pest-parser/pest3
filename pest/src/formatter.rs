@@ -112,8 +112,11 @@ impl<'i> Partition<'i> {
 
 /// Formatter options for [Span](crate::Span).
 pub struct FormatOption<SpanFormatter, MarkerFormatter, NumberFormatter> {
+    /// Formatter for characters in span.
     pub span_formatter: SpanFormatter,
+    /// Formatter for position marker.
     pub marker_formatter: MarkerFormatter,
+    /// Formatter for line numbers and column numbers of start and end.
     pub number_formatter: NumberFormatter,
 }
 

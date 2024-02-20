@@ -72,11 +72,15 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
     // const FIRST: &'static [char];
 }
 
+/// A container of pairs.
 pub trait PairContainer<R> {
+    /// for `Self` as a pair if it is, otherwise for each child pair.
     fn for_self_or_for_each_child_pair(&self, f: &mut impl FnMut(Pair<R>)) {
         self.for_each_child_pair(f)
     }
+    /// For each child pair.
     fn for_each_child_pair(&self, f: &mut impl FnMut(Pair<R>));
+    /// Convert children pairs into a [Vec].
     fn vec_children_pairs(&self) -> Vec<Pair<R>> {
         let mut vec = vec![];
         self.for_each_child_pair(&mut |token| vec.push(token));
@@ -98,8 +102,11 @@ impl<R, T: EmptyPairContainer> PairContainer<R> for T {
     fn for_each_child_pair(&self, _f: &mut impl FnMut(Pair<R>)) {}
 }
 
+/// A pair that can be converted to a pair tree.
 pub trait PairTree<R: RuleType>: PairContainer<R> + wrapper::Rule<R> {
+    /// Get pair span.
     fn get_span(&self) -> (usize, usize);
+    /// Convert `Self` to a pair tree.
     fn as_pair_tree(&self) -> Pair<R> {
         let rule = Self::RULE;
         let (start, end) = self.get_span();
@@ -133,7 +140,9 @@ impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Option<T> {
     }
 }
 
+/// Parser that can produce typed syntax tree.
 pub trait TypedParser<R: RuleType> {
+    /// See [TypedNode::try_parse_with].
     #[inline]
     fn try_parse_with<'i, T: TypedNode<'i, R>>(
         input: Position<'i>,
@@ -142,6 +151,7 @@ pub trait TypedParser<R: RuleType> {
     ) -> Option<T> {
         T::try_parse_with(input, stack, tracker)
     }
+    /// See [TypedNode::try_parse_with_partial].
     #[inline]
     fn try_parse_with_partial<'i, T: TypedNode<'i, R>>(
         input: Position<'i>,
@@ -150,10 +160,12 @@ pub trait TypedParser<R: RuleType> {
     ) -> Option<(Position<'i>, T)> {
         T::try_parse_with_partial(input, stack, tracker)
     }
+    /// See [TypedNode::try_parse].
     #[inline]
     fn try_parse<'i, T: TypedNode<'i, R>>(input: &'i str) -> Result<T, Error<R>> {
         T::try_parse(input)
     }
+    /// See [TypedNode::try_parse_partial].
     #[inline]
     fn try_parse_partial<'i, T: TypedNode<'i, R>>(
         input: &'i str,

@@ -1,3 +1,5 @@
+//! For compatibility.
+
 /// Regular rule.
 Regular = ('0'..'9')+
 
