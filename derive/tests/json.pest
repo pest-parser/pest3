@@ -1,0 +1,40 @@
+//! A parser for JSON file.
+//!
+//! And this is a example for JSON parser.
+//!
+//! Created by [Tomas Tauber](https://github.com/tomtau).
+//! Modified by [Boyi Huang](https://github.com/TheVeryDarkness).
+
+json = pest::SOI ~ value ~ pest::EOI
+
+/// Matches object, e.g.: `{ "foo": "bar" }`
+/// Foobar
+object = "{" ~ pair ~ ("," ~ pair)* ~ "}" | "{" ~ "}"
+pair   = string ~ ":" ~ value
+
+array = "[" ~ value ~ ("," ~ value)* ~ "]" | "[" ~ "]"
+
+
+//////////////////////
+/// Matches value, e.g.: `"foo"`, `42`, `true`, `null`, `[]`, `{}`.
+//////////////////////
+value = string | number | object | array | bool | null
+
+string  = "\"" - inner - "\""
+inner   = (!("\"" | "\\") - pest::any)* - (escape ~ inner)?
+escape  = "\\" - ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t" | unicode)
+// FIXME: should be under pest::*
+ascii_hex_digit = ascii_digit | "A" | "B" | "C" | "D" | "E" | "F"
+ascii_digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+ascii_nonzero_digit = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+unicode = "u" - ascii_hex_digit{4}
+
+number = "-"? - int - ("." ~ ascii_digit+ ~ exp? | exp)?
+int    = "0" | ascii_nonzero_digit - ascii_digit*
+exp    = ("E" | "e") - ("+" | "-")? - ascii_digit+
+
+bool = "true" | "false"
+
+null = "null"
+
+~ = (" " | "\t" | "\r" | "\n")*
