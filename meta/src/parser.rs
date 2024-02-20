@@ -115,6 +115,7 @@ impl<T: Display> Display for Range<T> {
 
 #[derive(Clone, Debug, Hash, Eq, PartialEq)]
 pub struct ParseRule {
+    pub doc: Vec<String>,
     pub name: String,
     pub args: Vec<String>,
     pub span: Span,
@@ -330,6 +331,7 @@ fn _parse<P: AsRef<Path>>(
             Rule::grammar_rule => {
                 rules.push(parse_rule(pair, root.as_ref().to_path_buf())?);
             }
+            Rule::grammar_doc => doc.grammar_doc.push(parse_grammar_doc(pair)?),
             _ => (),
         }
     }
@@ -368,6 +370,19 @@ fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>>
 
     let mut pairs = rule.into_inner();
 
+    let mut doc = vec![];
+    while let Some(pair) = pairs.peek() {
+        if pair.as_rule() == Rule::rule_doc {
+            doc.push(parse_rule_doc(
+                pairs
+                    .next()
+                    .expect("Peek says there is still at least one more pair."),
+            )?);
+        } else {
+            break;
+        }
+    }
+
     let name = pairs
         .next()
         .expect("expected Rule::identifier")
@@ -398,6 +413,7 @@ fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>>
     let node = parse_node(pairs.next().unwrap(), &span, &pratt_parser)?;
 
     Ok(ParseRule {
+        doc,
         name,
         args,
         span,
@@ -457,6 +473,32 @@ fn parse_path(
     let expr = ParseExpr::Path(path, args);
 
     Ok(ParseNode { expr, span })
+}
+
+fn parse_grammar_doc(pair: Pair<Rule>) -> Result<String, Error<Rule>> {
+    let string = &pair.as_str()[3..];
+    let string = string.trim();
+    let content = Some(string).ok_or(Error::new_from_span(
+        ErrorVariant::CustomError {
+            message: "incorrect grammar doc comment".to_string(),
+        },
+        pair.as_span(),
+    ))?;
+
+    Ok(content.to_string())
+}
+
+fn parse_rule_doc(pair: Pair<Rule>) -> Result<String, Error<Rule>> {
+    let string = &pair.as_str()[3..];
+    let string = string.trim();
+    let content = Some(string).ok_or(Error::new_from_span(
+        ErrorVariant::CustomError {
+            message: "incorrect rule doc comment".to_string(),
+        },
+        pair.as_span(),
+    ))?;
+
+    Ok(content.to_string())
 }
 
 fn parse_string(pair: Pair<Rule>, span: &Span) -> Result<ParseNode, Error<Rule>> {
@@ -805,8 +847,13 @@ mod tests {
     #[test]
     fn grammar_test() {
         let input = include_str!("../tests/pest3sample.pest");
-        let parsed = parse(input, &Path::new("../tests/pest3sample.pest"));
-        assert!(parsed.is_ok())
+        let parsed = parse_with_doc_comment(input, &Path::new("../tests/pest3sample.pest"));
+        let (rules, doc_comment) = match parsed {
+            Ok(parsed) => parsed,
+            Err(err) => panic!("{err}"),
+        };
+        assert_ne!(rules.len(), 0);
+        assert_ne!(doc_comment.grammar_doc.len(), 0);
     }
 
     #[test]
@@ -1150,7 +1197,8 @@ mod tests {
             rule: Rule::grammar_rules,
             positives: vec![
                 Rule::import,
-                Rule::grammar_rule
+                Rule::grammar_rule,
+                Rule::grammar_doc
             ],
             negatives: vec![],
             pos: 0
@@ -1400,6 +1448,79 @@ mod tests {
                 $op
             )
         };
+    }
+
+    #[test]
+    fn parse_comment() {
+        let pair = PestParser::parse(Rule::COMMENT, r#"// A test for grammar with doc comments."#)
+            .unwrap();
+        assert_eq!(pair.into_iter().len(), 0);
+
+        PestParser::parse(
+            Rule::COMMENT,
+            r#"//! A test for grammar with doc comments."#,
+        )
+        .unwrap_err();
+
+        PestParser::parse(
+            Rule::COMMENT,
+            r#"/// A test for grammar with doc comments."#,
+        )
+        .unwrap_err();
+    }
+
+    #[test]
+    fn parse_grammar_doc_comment() {
+        let input = r#"//! A test for grammar with doc comments."#;
+
+        let pair = PestParser::parse(Rule::grammar_doc, input)
+            .unwrap_or_else(|e| panic!("{e}"))
+            .next()
+            .unwrap();
+
+        assert_eq!(
+            parse_grammar_doc(pair).unwrap(),
+            "A test for grammar with doc comments.",
+        );
+
+        let input =
+            "//! A test for grammar with doc comments.\n//! Second line should not be included.";
+
+        let pair = PestParser::parse(Rule::grammar_doc, input)
+            .unwrap_or_else(|e| panic!("{e}"))
+            .next()
+            .unwrap();
+
+        assert_eq!(
+            parse_grammar_doc(pair).unwrap(),
+            "A test for grammar with doc comments.",
+        );
+
+        let input = r#"
+//! A test for grammar with doc comments.
+x = " "+
+"#;
+        PestParser::parse(Rule::grammar_rules, input).unwrap_or_else(|e| panic!("{e}"));
+    }
+
+    #[test]
+    fn parse_rule_doc_comment() {
+        let input = r#"/// A test for rule with doc comments."#;
+
+        let pair = PestParser::parse(Rule::rule_doc, input)
+            .unwrap_or_else(|e| panic!("{e}"))
+            .next()
+            .unwrap();
+
+        assert_eq!(
+            parse_rule_doc(pair).unwrap(),
+            "A test for rule with doc comments.",
+        );
+
+        let input = "\
+/// A test for grammar with doc comments.
+x = pest::any+";
+        PestParser::parse(Rule::grammar_rule, input).unwrap_or_else(|e| panic!("{e}"));
     }
 
     #[test]

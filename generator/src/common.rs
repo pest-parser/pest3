@@ -42,23 +42,17 @@ pub(crate) fn generate_rule_enum(rules: &[ParseRule], doc_comment: &DocComment) 
         .map(|rule| {
             let rule_name = format_ident!("r#{}", rule.name);
 
-            match doc_comment.line_docs.get(&rule.name) {
-                Some(doc) => quote! {
+            let doc = &rule.doc;
+            quote! {
+                #(
                     #[doc = #doc]
-                    #rule_name,
-                },
-                None => quote! {
-                    #rule_name,
-                },
+                )*
+                #rule_name,
             }
         });
 
     let grammar_doc = &doc_comment.grammar_doc;
-    let grammar_doc = if let Some(grammar_doc) = grammar_doc {
-        quote! {#[doc = #grammar_doc]}
-    } else {
-        quote! {}
-    };
+    let grammar_doc = quote! {#(#[doc = #grammar_doc])*};
     quote! {
         #grammar_doc
         #[allow(dead_code, missing_docs, non_camel_case_types, clippy::upper_case_acronyms)]

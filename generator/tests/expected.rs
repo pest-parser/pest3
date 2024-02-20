@@ -1,9 +1,13 @@
+#[doc = "For compatibility."]
 #[allow(dead_code, missing_docs, non_camel_case_types, clippy::upper_case_acronyms)]
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum Rule {
     EOI,
+    #[doc = "Regular rule."]
     r#Regular,
+    #[doc = "Atomic rule."]
     r#Atomic,
+    #[doc = "Silent rule."]
     r#NonAtomic,
     r#ExactString,
     r#CharRange,
