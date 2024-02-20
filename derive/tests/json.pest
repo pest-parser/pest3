@@ -9,7 +9,7 @@ json = pest::SOI ~ value ~ pest::EOI
 
 /// Matches object, e.g.: `{ "foo": "bar" }`
 /// Foobar
-object = "{" ~ pair ~ ("," ~ pair)* ~ "}" | "{" ~ "}"
+object = "{" ~ pair^* ~ "}"
 pair   = string ~ ":" ~ value
 
 array = "[" ~ value ~ ("," ~ value)* ~ "]" | "[" ~ "]"
@@ -37,4 +37,6 @@ bool = "true" | "false"
 
 null = "null"
 
-~ = (" " | "\t" | "\r" | "\n")*
+space = " " | "\t" | "\r" | "\n"
+~ = space*
+^ = space* - "," - space*
