@@ -44,9 +44,16 @@ struct RuleInfo<'g> {
     pub boxed: bool,
 }
 impl<'g> RuleInfo<'g> {
-    fn from(rule: &'g ParseRule) -> Self {
+    fn new(
+        rule: &'g ParseRule,
+        config: Config,
+        reachability: &BTreeMap<&str, BTreeSet<&str>>,
+    ) -> Self {
         let rule_name = rule.name.as_str();
-        let boxed = true;
+        let boxed = match config.box_all_rules {
+            true => true,
+            false => !reachability.contains_key(rule_name),
+        };
         let rule_id = format_ident!("r#{}", rule_name);
         let silent = rule.silent;
         Self {
@@ -173,12 +180,19 @@ fn create_rule<'g>(
             }
         },
     };
+    let content_type = if rule_info.boxed {
+        quote! {#this::std::Box<#inner_type>}
+    } else {
+        inner_type.clone()
+    };
     quote! {
         #[doc = #doc]
         #[derive(Clone, Debug, Eq, PartialEq)]
         pub struct #name<'i> {
-            content: #this::std::Box<#inner_type>,
-            span: #this::Span<'i>,
+            /// Matched structure.
+            pub content: #content_type,
+            /// Matched span.
+            pub span: #this::Span<'i>,
         }
         impl<'i> #this::typed::wrapper::Rule<#root::Rule> for #name<'i> {
             type Rule = #root::Rule;
@@ -389,6 +403,7 @@ fn process_expr<'g>(
 fn process_rule<'g: 'f, 'f>(
     rule: &'g ParseRule,
     mod_sys: &ModuleSystem<'g>,
+    reachability: &BTreeMap<&str, BTreeSet<&str>>,
     config: Config,
     res: &mut Output<'g>,
 ) {
@@ -405,7 +420,7 @@ fn process_rule<'g: 'f, 'f>(
         "~" => res.add_option_trivia(inter.typename),
         "^" => res.add_mandatory_trivia(inter.typename),
         _ => {
-            let rule_info = RuleInfo::from(rule);
+            let rule_info = RuleInfo::new(rule, config, reachability);
             res.insert_rule_struct(create_rule(
                 &rule_config,
                 &rule_info,
@@ -421,6 +436,7 @@ fn process_rules<'g: 'f, 'f>(
     mod_sys: &mut ModuleSystem<'g>,
     config: Config,
 ) -> Output<'g> {
+    let reachability = collect_reachability(rules);
     for rule in rules.iter() {
         match rule.name.as_str() {
             "~" | "^" => {}
@@ -429,7 +445,7 @@ fn process_rules<'g: 'f, 'f>(
     }
     let mut res = Output::new();
     for rule in rules.iter() {
-        process_rule(rule, mod_sys, config, &mut res);
+        process_rule(rule, mod_sys, &reachability, config, &mut res);
     }
     res
 }
@@ -501,6 +517,13 @@ fn collect_used_rules<'s>(rules: &'s [ParseRule]) -> BTreeSet<&'s str> {
     res
 }
 
+/// Wrap some nodes in [std::boxed::Box] to avoid infinite size struct,
+/// which can break the edges in the reference graph,
+/// and then collect reachability.
+///
+/// Rules that are not in map keys are wrapped.
+///
+/// We won't promise anything on which nodes are boxed.
 fn collect_reachability(rules: &[ParseRule]) -> BTreeMap<&str, BTreeSet<&str>> {
     let mut res = BTreeMap::new();
     let rule_trivia = rules.iter().find(|rule| rule.name == "~");
@@ -508,7 +531,11 @@ fn collect_reachability(rules: &[ParseRule]) -> BTreeMap<&str, BTreeSet<&str>> {
         let entry = res.entry(rule.name.as_str()).or_default();
         collect_used_rule(rule, rule_trivia, entry);
     }
+    // Length of any path is no more than `rules.len()`.
     for _ in 0..rules.len() {
+        // Before the `i`-th iteration,
+        // `res[a]` contains all nodes that can be reached from `a`
+        // in no more than `i+1` steps.
         for rule in rules {
             let rule_ref = rule.name.as_str();
             if let Some(cur) = res.remove(&rule_ref) {
@@ -528,7 +555,6 @@ fn collect_reachability(rules: &[ParseRule]) -> BTreeMap<&str, BTreeSet<&str>> {
 }
 
 fn generate_typed_pair_from_rule(rules: &[ParseRule], config: Config) -> TokenStream {
-    let defined_rules: BTreeSet<&str> = rules.iter().map(|rule| rule.name.as_str()).collect();
     let mut mod_sys = ModuleSystem::new();
     let graph = process_rules(rules, &mut mod_sys, config);
     graph.collect()
