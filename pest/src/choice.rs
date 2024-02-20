@@ -1,5 +1,6 @@
 //! A [macro](crate::choice_type) to generate choice type 
-//! and generated choice types that has 2 to 15 variants.
+//! and generated choice types that has 2 to 15 variants,
+//! which are named `Choice{i}`.
 
 // TODO: peek to decide matched choice when possible.
 /// Generate choice type.
@@ -7,7 +8,7 @@
 /// ## Example
 ///
 /// ```rust
-/// pest::choice_type!(Choice2, (Variant0, T0), (Variant1, T1));
+/// pest::choice_type!(Choice2, (Choice0, T0), (Choice1, T1));
 /// ```
 #[macro_export]
 macro_rules! choice_type {
