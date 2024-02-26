@@ -136,7 +136,10 @@ pub mod rules {
         type Inner = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
         type Content = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -165,11 +168,11 @@ pub mod rules {
     pub struct r#Atomic<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::Sequence3<
-            super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>,
+            super::generics::RepOnce<super::rules::r#CharRange<'i>, 0u8>,
             0u8,
             super::generics::Str<super::wrapper::W1>,
             1u8,
-            super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>,
+            super::generics::RepOnce<super::rules::r#CharRange<'i>, 0u8>,
             1u8,
         >,
         #[doc = r" Matched span."]
@@ -181,23 +184,26 @@ pub mod rules {
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Atomic<'i> {
         type Inner = super::generics::Sequence3<
-            super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>,
+            super::generics::RepOnce<super::rules::r#CharRange<'i>, 0u8>,
             0u8,
             super::generics::Str<super::wrapper::W1>,
             1u8,
-            super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>,
+            super::generics::RepOnce<super::rules::r#CharRange<'i>, 0u8>,
             1u8,
         >;
         type Content = super::generics::Sequence3<
-            super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>,
+            super::generics::RepOnce<super::rules::r#CharRange<'i>, 0u8>,
             0u8,
             super::generics::Str<super::wrapper::W1>,
             1u8,
-            super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>,
+            super::generics::RepOnce<super::rules::r#CharRange<'i>, 0u8>,
             1u8,
         >;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -252,7 +258,10 @@ pub mod rules {
             2u8,
         >;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -292,7 +301,10 @@ pub mod rules {
         type Inner = super::generics::Str<super::wrapper::W4>;
         type Content = super::generics::Str<super::wrapper::W4>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -332,7 +344,10 @@ pub mod rules {
         type Inner = super::generics::CharRange<'0', '9'>;
         type Content = super::generics::CharRange<'0', '9'>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -372,7 +387,10 @@ pub mod rules {
         type Inner = super::generics::r#any;
         type Content = super::generics::r#any;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -433,7 +451,10 @@ pub mod rules {
             1u8,
         >;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -467,25 +488,25 @@ pub mod rules {
                 super::generics::Sequence2<
                     super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>,
                     0u8,
-                    super::rules::RepAtLeastOnce<'i>,
+                    super::rules::r#RepAtLeastOnce<'i>,
                     1u8,
                 >,
                 super::generics::Sequence4<
                     super::generics::Positive<super::generics::Str<super::wrapper::W9>>,
                     0u8,
-                    super::rules::Choice<'i>,
+                    super::rules::r#Choice<'i>,
                     1u8,
-                    super::rules::Rep<'i>,
+                    super::rules::r#Rep<'i>,
                     1u8,
-                    super::rules::Opt<'i>,
+                    super::rules::r#Opt<'i>,
                     1u8,
                 >,
-                super::rules::Peek<'i>,
-                super::rules::PeekLeft<'i>,
-                super::rules::PeekRight<'i>,
-                super::rules::PeekLeftRight<'i>,
-                super::rules::Drop<'i>,
-                super::rules::PeekAll<'i>,
+                super::rules::r#Peek<'i>,
+                super::rules::r#PeekLeft<'i>,
+                super::rules::r#PeekRight<'i>,
+                super::rules::r#PeekLeftRight<'i>,
+                super::rules::r#Drop<'i>,
+                super::rules::r#PeekAll<'i>,
             >,
         >,
         #[doc = r" Matched span."]
@@ -501,25 +522,25 @@ pub mod rules {
             super::generics::Sequence2<
                 super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>,
                 0u8,
-                super::rules::RepAtLeastOnce<'i>,
+                super::rules::r#RepAtLeastOnce<'i>,
                 1u8,
             >,
             super::generics::Sequence4<
                 super::generics::Positive<super::generics::Str<super::wrapper::W9>>,
                 0u8,
-                super::rules::Choice<'i>,
+                super::rules::r#Choice<'i>,
                 1u8,
-                super::rules::Rep<'i>,
+                super::rules::r#Rep<'i>,
                 1u8,
-                super::rules::Opt<'i>,
+                super::rules::r#Opt<'i>,
                 1u8,
             >,
-            super::rules::Peek<'i>,
-            super::rules::PeekLeft<'i>,
-            super::rules::PeekRight<'i>,
-            super::rules::PeekLeftRight<'i>,
-            super::rules::Drop<'i>,
-            super::rules::PeekAll<'i>,
+            super::rules::r#Peek<'i>,
+            super::rules::r#PeekLeft<'i>,
+            super::rules::r#PeekRight<'i>,
+            super::rules::r#PeekLeftRight<'i>,
+            super::rules::r#Drop<'i>,
+            super::rules::r#PeekAll<'i>,
         >;
         type Content = ::pest::std::Box<
             super::generics::Choice9<
@@ -527,29 +548,32 @@ pub mod rules {
                 super::generics::Sequence2<
                     super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>,
                     0u8,
-                    super::rules::RepAtLeastOnce<'i>,
+                    super::rules::r#RepAtLeastOnce<'i>,
                     1u8,
                 >,
                 super::generics::Sequence4<
                     super::generics::Positive<super::generics::Str<super::wrapper::W9>>,
                     0u8,
-                    super::rules::Choice<'i>,
+                    super::rules::r#Choice<'i>,
                     1u8,
-                    super::rules::Rep<'i>,
+                    super::rules::r#Rep<'i>,
                     1u8,
-                    super::rules::Opt<'i>,
+                    super::rules::r#Opt<'i>,
                     1u8,
                 >,
-                super::rules::Peek<'i>,
-                super::rules::PeekLeft<'i>,
-                super::rules::PeekRight<'i>,
-                super::rules::PeekLeftRight<'i>,
-                super::rules::Drop<'i>,
-                super::rules::PeekAll<'i>,
+                super::rules::r#Peek<'i>,
+                super::rules::r#PeekLeft<'i>,
+                super::rules::r#PeekRight<'i>,
+                super::rules::r#PeekLeftRight<'i>,
+                super::rules::r#Drop<'i>,
+                super::rules::r#PeekAll<'i>,
             >,
         >;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -589,7 +613,10 @@ pub mod rules {
         type Inner = super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0u8>;
         type Content = super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0u8>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -629,7 +656,10 @@ pub mod rules {
         type Inner = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
         type Content = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -669,7 +699,10 @@ pub mod rules {
         type Inner = ::pest::std::Option<super::generics::Str<super::wrapper::W10>>;
         type Content = ::pest::std::Option<super::generics::Str<super::wrapper::W10>>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -698,7 +731,7 @@ pub mod rules {
     pub struct r#RepExact<'i> {
         #[doc = r" Matched structure."]
         pub content:
-            super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>,
+            super::generics::RepMinMax<super::rules::r#RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
     }
@@ -708,11 +741,14 @@ pub mod rules {
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#RepExact<'i> {
         type Inner =
-            super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
+            super::generics::RepMinMax<super::rules::r#RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
         type Content =
-            super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
+            super::generics::RepMinMax<super::rules::r#RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -740,7 +776,7 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepLeft<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMin<super::rules::RepExact<'i>, 0u8, 1usize>,
+        pub content: super::generics::RepMin<super::rules::r#RepExact<'i>, 0u8, 1usize>,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
     }
@@ -749,10 +785,13 @@ pub mod rules {
         const RULE: super::Rule = super::Rule::r#RepLeft;
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#RepLeft<'i> {
-        type Inner = super::generics::RepMin<super::rules::RepExact<'i>, 0u8, 1usize>;
-        type Content = super::generics::RepMin<super::rules::RepExact<'i>, 0u8, 1usize>;
+        type Inner = super::generics::RepMin<super::rules::r#RepExact<'i>, 0u8, 1usize>;
+        type Content = super::generics::RepMin<super::rules::r#RepExact<'i>, 0u8, 1usize>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -780,7 +819,7 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepRight<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMax<super::rules::RepLeft<'i>, 0u8, 2usize>,
+        pub content: super::generics::RepMax<super::rules::r#RepLeft<'i>, 0u8, 2usize>,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
     }
@@ -789,10 +828,13 @@ pub mod rules {
         const RULE: super::Rule = super::Rule::r#RepRight;
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#RepRight<'i> {
-        type Inner = super::generics::RepMax<super::rules::RepLeft<'i>, 0u8, 2usize>;
-        type Content = super::generics::RepMax<super::rules::RepLeft<'i>, 0u8, 2usize>;
+        type Inner = super::generics::RepMax<super::rules::r#RepLeft<'i>, 0u8, 2usize>;
+        type Content = super::generics::RepMax<super::rules::r#RepLeft<'i>, 0u8, 2usize>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -820,7 +862,7 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepLeftRight<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMinMax<super::rules::RepRight<'i>, 0u8, 1usize, 2usize>,
+        pub content: super::generics::RepMinMax<super::rules::r#RepRight<'i>, 0u8, 1usize, 2usize>,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
     }
@@ -829,10 +871,14 @@ pub mod rules {
         const RULE: super::Rule = super::Rule::r#RepLeftRight;
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#RepLeftRight<'i> {
-        type Inner = super::generics::RepMinMax<super::rules::RepRight<'i>, 0u8, 1usize, 2usize>;
-        type Content = super::generics::RepMinMax<super::rules::RepRight<'i>, 0u8, 1usize, 2usize>;
+        type Inner = super::generics::RepMinMax<super::rules::r#RepRight<'i>, 0u8, 1usize, 2usize>;
+        type Content =
+            super::generics::RepMinMax<super::rules::r#RepRight<'i>, 0u8, 1usize, 2usize>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -864,7 +910,7 @@ pub mod rules {
             super::generics::Sequence2<
                 super::generics::r#SOI,
                 0u8,
-                super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0u8, 2usize, 4usize>,
+                super::generics::RepMinMax<super::rules::r#RepLeftRight<'i>, 0u8, 2usize, 4usize>,
                 1u8,
             >,
         >,
@@ -880,7 +926,7 @@ pub mod rules {
             super::generics::Sequence2<
                 super::generics::r#SOI,
                 0u8,
-                super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0u8, 2usize, 4usize>,
+                super::generics::RepMinMax<super::rules::r#RepLeftRight<'i>, 0u8, 2usize, 4usize>,
                 1u8,
             >,
         >;
@@ -888,12 +934,15 @@ pub mod rules {
             super::generics::Sequence2<
                 super::generics::r#SOI,
                 0u8,
-                super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0u8, 2usize, 4usize>,
+                super::generics::RepMinMax<super::rules::r#RepLeftRight<'i>, 0u8, 2usize, 4usize>,
                 1u8,
             >,
         >;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -922,7 +971,7 @@ pub mod rules {
     pub struct r#Neg<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::Negative<
-            super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>,
+            super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::r#Pos<'i>, 1u8>,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
@@ -933,13 +982,16 @@ pub mod rules {
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Neg<'i> {
         type Inner = super::generics::Negative<
-            super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>,
+            super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::r#Pos<'i>, 1u8>,
         >;
         type Content = super::generics::Negative<
-            super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>,
+            super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::r#Pos<'i>, 1u8>,
         >;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -963,26 +1015,26 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `Push`. Grammar: `pest::push((RepLeft* ~ (Neg ~ (ExactString+ ~ (Push ~ (Pop ~ (Push ~ PopAll)))))))`."]
+    #[doc = "Generated for rule `Push`. Grammar: `pest::stack::push((RepLeft* ~ (Neg ~ (ExactString+ ~ (Push ~ (Pop ~ (Push ~ PopAll)))))))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Push<'i> {
         #[doc = r" Matched structure."]
         pub content: ::pest::std::Box<
             super::generics::r#push<
                 super::generics::Sequence7<
-                    super::generics::Rep<super::rules::RepLeft<'i>, 0u8>,
+                    super::generics::Rep<super::rules::r#RepLeft<'i>, 0u8>,
                     0u8,
-                    super::rules::Neg<'i>,
+                    super::rules::r#Neg<'i>,
                     1u8,
-                    super::generics::RepOnce<super::rules::ExactString<'i>, 0u8>,
+                    super::generics::RepOnce<super::rules::r#ExactString<'i>, 0u8>,
                     1u8,
-                    super::rules::Push<'i>,
+                    super::rules::r#Push<'i>,
                     1u8,
-                    super::rules::Pop<'i>,
+                    super::rules::r#Pop<'i>,
                     1u8,
-                    super::rules::Push<'i>,
+                    super::rules::r#Push<'i>,
                     1u8,
-                    super::rules::PopAll<'i>,
+                    super::rules::r#PopAll<'i>,
                     1u8,
                 >,
             >,
@@ -997,44 +1049,47 @@ pub mod rules {
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Push<'i> {
         type Inner = super::generics::r#push<
             super::generics::Sequence7<
-                super::generics::Rep<super::rules::RepLeft<'i>, 0u8>,
+                super::generics::Rep<super::rules::r#RepLeft<'i>, 0u8>,
                 0u8,
-                super::rules::Neg<'i>,
+                super::rules::r#Neg<'i>,
                 1u8,
-                super::generics::RepOnce<super::rules::ExactString<'i>, 0u8>,
+                super::generics::RepOnce<super::rules::r#ExactString<'i>, 0u8>,
                 1u8,
-                super::rules::Push<'i>,
+                super::rules::r#Push<'i>,
                 1u8,
-                super::rules::Pop<'i>,
+                super::rules::r#Pop<'i>,
                 1u8,
-                super::rules::Push<'i>,
+                super::rules::r#Push<'i>,
                 1u8,
-                super::rules::PopAll<'i>,
+                super::rules::r#PopAll<'i>,
                 1u8,
             >,
         >;
         type Content = ::pest::std::Box<
             super::generics::r#push<
                 super::generics::Sequence7<
-                    super::generics::Rep<super::rules::RepLeft<'i>, 0u8>,
+                    super::generics::Rep<super::rules::r#RepLeft<'i>, 0u8>,
                     0u8,
-                    super::rules::Neg<'i>,
+                    super::rules::r#Neg<'i>,
                     1u8,
-                    super::generics::RepOnce<super::rules::ExactString<'i>, 0u8>,
+                    super::generics::RepOnce<super::rules::r#ExactString<'i>, 0u8>,
                     1u8,
-                    super::rules::Push<'i>,
+                    super::rules::r#Push<'i>,
                     1u8,
-                    super::rules::Pop<'i>,
+                    super::rules::r#Pop<'i>,
                     1u8,
-                    super::rules::Push<'i>,
+                    super::rules::r#Push<'i>,
                     1u8,
-                    super::rules::PopAll<'i>,
+                    super::rules::r#PopAll<'i>,
                     1u8,
                 >,
             >,
         >;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -1058,7 +1113,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `Pop`. Grammar: `pest::pop`."]
+    #[doc = "Generated for rule `Pop`. Grammar: `pest::stack::pop`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Pop<'i> {
         #[doc = r" Matched structure."]
@@ -1074,7 +1129,10 @@ pub mod rules {
         type Inner = super::generics::r#pop<'i>;
         type Content = super::generics::r#pop<'i>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -1098,7 +1156,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `PopAll`. Grammar: `pest::pop_all`."]
+    #[doc = "Generated for rule `PopAll`. Grammar: `pest::stack::pop_all`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PopAll<'i> {
         #[doc = r" Matched structure."]
@@ -1114,7 +1172,10 @@ pub mod rules {
         type Inner = super::generics::r#pop_all<'i>;
         type Content = super::generics::r#pop_all<'i>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -1138,7 +1199,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `Peek`. Grammar: `pest::peek`."]
+    #[doc = "Generated for rule `Peek`. Grammar: `pest::stack::peek`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Peek<'i> {
         #[doc = r" Matched structure."]
@@ -1154,7 +1215,10 @@ pub mod rules {
         type Inner = super::generics::r#peek<'i>;
         type Content = super::generics::r#peek<'i>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -1178,7 +1242,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `PeekUnlimited`. Grammar: `pest::peek[..]`."]
+    #[doc = "Generated for rule `PeekUnlimited`. Grammar: `pest::stack::peek[..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekUnlimited<'i> {
         #[doc = r" Matched structure."]
@@ -1194,7 +1258,10 @@ pub mod rules {
         type Inner = super::generics::PeekSlice1<0isize>;
         type Content = super::generics::PeekSlice1<0isize>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -1218,7 +1285,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `PeekLeft`. Grammar: `pest::peek[1..]`."]
+    #[doc = "Generated for rule `PeekLeft`. Grammar: `pest::stack::peek[1..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekLeft<'i> {
         #[doc = r" Matched structure."]
@@ -1234,7 +1301,10 @@ pub mod rules {
         type Inner = super::generics::PeekSlice1<1isize>;
         type Content = super::generics::PeekSlice1<1isize>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -1258,7 +1328,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `PeekRight`. Grammar: `pest::peek[..]`."]
+    #[doc = "Generated for rule `PeekRight`. Grammar: `pest::stack::peek[..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekRight<'i> {
         #[doc = r" Matched structure."]
@@ -1274,7 +1344,10 @@ pub mod rules {
         type Inner = super::generics::PeekSlice1<0isize>;
         type Content = super::generics::PeekSlice1<0isize>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -1298,7 +1371,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `PeekLeftRight`. Grammar: `pest::peek[1..2]`."]
+    #[doc = "Generated for rule `PeekLeftRight`. Grammar: `pest::stack::peek[1..2]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekLeftRight<'i> {
         #[doc = r" Matched structure."]
@@ -1314,7 +1387,10 @@ pub mod rules {
         type Inner = super::generics::PeekSlice2<1isize, 2isize>;
         type Content = super::generics::PeekSlice2<1isize, 2isize>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -1338,7 +1414,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `Drop`. Grammar: `pest::drop`."]
+    #[doc = "Generated for rule `Drop`. Grammar: `pest::stack::drop`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Drop<'i> {
         #[doc = r" Matched structure."]
@@ -1354,7 +1430,10 @@ pub mod rules {
         type Inner = super::generics::r#drop;
         type Content = super::generics::r#drop;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -1378,7 +1457,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `PeekAll`. Grammar: `pest::peek_all`."]
+    #[doc = "Generated for rule `PeekAll`. Grammar: `pest::stack::peek_all`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#PeekAll<'i> {
         #[doc = r" Matched structure."]
@@ -1394,7 +1473,10 @@ pub mod rules {
         type Inner = super::generics::r#peek_all<'i>;
         type Content = super::generics::r#peek_all<'i>;
         #[inline]
-        fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
+        fn new(
+            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest::Span<'i>,
+        ) -> Self {
             Self { content, span }
         }
     }
@@ -1428,7 +1510,7 @@ pub mod generics {
     pub use pest::sequence::Sequence7;
     pub use pest::typed::template::{
         CharRange, Insens, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin,
-        RepMinMax, RepOnce, Str, ANY as any, DROP as drop, EOI, PEEK as peek, PEEK_ALL as peek_all,
-        POP as pop, POP_ALL as pop_all, PUSH as push, SOI,
+        RepMinMax, RepOnce, Str, ANY as any, DROP as drop, EOI, EOI as eoi, PEEK as peek,
+        PEEK_ALL as peek_all, POP as pop, POP_ALL as pop_all, PUSH as push, SOI, SOI as soi,
     };
 }

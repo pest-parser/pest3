@@ -28,17 +28,17 @@ RepLeftRight    =  RepRight{1..2}
 Pos = &(pest::SOI ~ RepLeftRight{2..4})
 Neg = !(pest::EOI ~ Pos)
 
-Push = pest::push(RepLeft* ~ Neg ~ ExactString+ ~ Push ~ Pop ~ Push ~ PopAll)
+Push = pest::stack::push(RepLeft* ~ Neg ~ ExactString+ ~ Push ~ Pop ~ Push ~ PopAll)
 
-Pop    = pest::pop
-PopAll = pest::pop_all
+Pop    = pest::stack::pop
+PopAll = pest::stack::pop_all
 
-Peek          = pest::peek
-PeekUnlimited = pest::peek[..]
-PeekLeft      = pest::peek[1..]
-PeekRight     = pest::peek[..]
-PeekLeftRight = pest::peek[1..2]
+Peek          = pest::stack::peek
+PeekUnlimited = pest::stack::peek[..]
+PeekLeft      = pest::stack::peek[1..]
+PeekRight     = pest::stack::peek[..]
+PeekLeftRight = pest::stack::peek[1..2]
 
-Drop = pest::drop
+Drop = pest::stack::drop
 
-PeekAll = pest::peek_all
+PeekAll = pest::stack::peek_all
