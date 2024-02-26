@@ -1,6 +1,7 @@
 use super::config::Config;
 use crate::config::{get_bool, get_string, GrammarSource};
 use proc_macro2::Ident;
+use quote::ToTokens;
 use syn::{DeriveInput, Generics};
 
 pub(crate) fn parse_derive(ast: DeriveInput) -> (Ident, Generics, Vec<GrammarSource>, Config) {
@@ -23,8 +24,6 @@ pub(crate) fn parse_derive(ast: DeriveInput) -> (Ident, Generics, Vec<GrammarSou
             config.no_warnings = get_bool(attr, "no_warnings");
         } else if path.is_ident("box_all_rules") {
             config.box_all_rules = get_bool(attr, "box_all_rules");
-        } else {
-            panic!("Unknown attribute.");
         }
     }
 
