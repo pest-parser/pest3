@@ -1,5 +1,10 @@
 #[doc = "For compatibility."]
-#[allow(dead_code, missing_docs, non_camel_case_types, clippy::upper_case_acronyms)]
+#[allow(
+    dead_code,
+    missing_docs,
+    non_camel_case_types,
+    clippy::upper_case_acronyms
+)]
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum Rule {
     EOI,
@@ -40,8 +45,10 @@ impl ::pest::typed::RuleType for Rule {
     type MandatoryTrivia<'i> = trivia::MandatoryTrivia<'i>;
 }
 mod trivia {
-    pub type OptionalTrivia<'i> = super::generics::Rep<super::generics::Str<super::wrapper::W0>, 0u8>;
-    pub type MandatoryTrivia<'i> = super::generics::RepOnce<super::generics::Str<super::wrapper::W0>, 0u8>;
+    pub type OptionalTrivia<'i> =
+        super::generics::Rep<super::generics::Str<super::wrapper::W0>, 0u8>;
+    pub type MandatoryTrivia<'i> =
+        super::generics::RepOnce<super::generics::Str<super::wrapper::W0>, 0u8>;
 }
 mod wrapper {
     #[doc = "A wrapper for `\" \"`."]
@@ -134,10 +141,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Regular<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -151,7 +164,14 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Atomic<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence3<super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>, 0u8, super::generics::Str<super::wrapper::W1>, 1u8, super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>, 1u8>,
+        pub content: super::generics::Sequence3<
+            super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>,
+            0u8,
+            super::generics::Str<super::wrapper::W1>,
+            1u8,
+            super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>,
+            1u8,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
     }
@@ -160,18 +180,38 @@ pub mod rules {
         const RULE: super::Rule = super::Rule::r#Atomic;
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Atomic<'i> {
-        type Inner = super::generics::Sequence3<super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>, 0u8, super::generics::Str<super::wrapper::W1>, 1u8, super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>, 1u8>;
-        type Content = super::generics::Sequence3<super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>, 0u8, super::generics::Str<super::wrapper::W1>, 1u8, super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>, 1u8>;
+        type Inner = super::generics::Sequence3<
+            super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>,
+            0u8,
+            super::generics::Str<super::wrapper::W1>,
+            1u8,
+            super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>,
+            1u8,
+        >;
+        type Content = super::generics::Sequence3<
+            super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>,
+            0u8,
+            super::generics::Str<super::wrapper::W1>,
+            1u8,
+            super::generics::RepOnce<super::rules::CharRange<'i>, 0u8>,
+            1u8,
+        >;
         #[inline]
         fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
             Self { content, span }
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Atomic<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -185,7 +225,12 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#NonAtomic<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence2<super::generics::Str<super::wrapper::W2>, 0u8, super::generics::Str<super::wrapper::W3>, 2u8>,
+        pub content: super::generics::Sequence2<
+            super::generics::Str<super::wrapper::W2>,
+            0u8,
+            super::generics::Str<super::wrapper::W3>,
+            2u8,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
     }
@@ -194,18 +239,34 @@ pub mod rules {
         const RULE: super::Rule = super::Rule::r#NonAtomic;
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#NonAtomic<'i> {
-        type Inner = super::generics::Sequence2<super::generics::Str<super::wrapper::W2>, 0u8, super::generics::Str<super::wrapper::W3>, 2u8>;
-        type Content = super::generics::Sequence2<super::generics::Str<super::wrapper::W2>, 0u8, super::generics::Str<super::wrapper::W3>, 2u8>;
+        type Inner = super::generics::Sequence2<
+            super::generics::Str<super::wrapper::W2>,
+            0u8,
+            super::generics::Str<super::wrapper::W3>,
+            2u8,
+        >;
+        type Content = super::generics::Sequence2<
+            super::generics::Str<super::wrapper::W2>,
+            0u8,
+            super::generics::Str<super::wrapper::W3>,
+            2u8,
+        >;
         #[inline]
         fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
             Self { content, span }
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#NonAtomic<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -236,10 +297,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#ExactString<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -270,10 +337,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#CharRange<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -304,10 +377,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Any<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -321,7 +400,14 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Seq<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence3<super::generics::Str<super::wrapper::W5>, 0u8, super::generics::CharRange<'2', '9'>, 1u8, super::generics::Str<super::wrapper::W6>, 1u8>,
+        pub content: super::generics::Sequence3<
+            super::generics::Str<super::wrapper::W5>,
+            0u8,
+            super::generics::CharRange<'2', '9'>,
+            1u8,
+            super::generics::Str<super::wrapper::W6>,
+            1u8,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
     }
@@ -330,18 +416,38 @@ pub mod rules {
         const RULE: super::Rule = super::Rule::r#Seq;
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Seq<'i> {
-        type Inner = super::generics::Sequence3<super::generics::Str<super::wrapper::W5>, 0u8, super::generics::CharRange<'2', '9'>, 1u8, super::generics::Str<super::wrapper::W6>, 1u8>;
-        type Content = super::generics::Sequence3<super::generics::Str<super::wrapper::W5>, 0u8, super::generics::CharRange<'2', '9'>, 1u8, super::generics::Str<super::wrapper::W6>, 1u8>;
+        type Inner = super::generics::Sequence3<
+            super::generics::Str<super::wrapper::W5>,
+            0u8,
+            super::generics::CharRange<'2', '9'>,
+            1u8,
+            super::generics::Str<super::wrapper::W6>,
+            1u8,
+        >;
+        type Content = super::generics::Sequence3<
+            super::generics::Str<super::wrapper::W5>,
+            0u8,
+            super::generics::CharRange<'2', '9'>,
+            1u8,
+            super::generics::Str<super::wrapper::W6>,
+            1u8,
+        >;
         #[inline]
         fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
             Self { content, span }
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Seq<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -355,7 +461,33 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Choice<'i> {
         #[doc = r" Matched structure."]
-        pub content: ::pest::std::Box<super::generics::Choice9<super::generics::Str<super::wrapper::W7>, super::generics::Sequence2<super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>, 0u8, super::rules::RepAtLeastOnce<'i>, 1u8>, super::generics::Sequence4<super::generics::Positive<super::generics::Str<super::wrapper::W9>>, 0u8, super::rules::Choice<'i>, 1u8, super::rules::Rep<'i>, 1u8, super::rules::Opt<'i>, 1u8>, super::rules::Peek<'i>, super::rules::PeekLeft<'i>, super::rules::PeekRight<'i>, super::rules::PeekLeftRight<'i>, super::rules::Drop<'i>, super::rules::PeekAll<'i>>>,
+        pub content: ::pest::std::Box<
+            super::generics::Choice9<
+                super::generics::Str<super::wrapper::W7>,
+                super::generics::Sequence2<
+                    super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>,
+                    0u8,
+                    super::rules::RepAtLeastOnce<'i>,
+                    1u8,
+                >,
+                super::generics::Sequence4<
+                    super::generics::Positive<super::generics::Str<super::wrapper::W9>>,
+                    0u8,
+                    super::rules::Choice<'i>,
+                    1u8,
+                    super::rules::Rep<'i>,
+                    1u8,
+                    super::rules::Opt<'i>,
+                    1u8,
+                >,
+                super::rules::Peek<'i>,
+                super::rules::PeekLeft<'i>,
+                super::rules::PeekRight<'i>,
+                super::rules::PeekLeftRight<'i>,
+                super::rules::Drop<'i>,
+                super::rules::PeekAll<'i>,
+            >,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
     }
@@ -364,18 +496,74 @@ pub mod rules {
         const RULE: super::Rule = super::Rule::r#Choice;
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Choice<'i> {
-        type Inner = super::generics::Choice9<super::generics::Str<super::wrapper::W7>, super::generics::Sequence2<super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>, 0u8, super::rules::RepAtLeastOnce<'i>, 1u8>, super::generics::Sequence4<super::generics::Positive<super::generics::Str<super::wrapper::W9>>, 0u8, super::rules::Choice<'i>, 1u8, super::rules::Rep<'i>, 1u8, super::rules::Opt<'i>, 1u8>, super::rules::Peek<'i>, super::rules::PeekLeft<'i>, super::rules::PeekRight<'i>, super::rules::PeekLeftRight<'i>, super::rules::Drop<'i>, super::rules::PeekAll<'i>>;
-        type Content = ::pest::std::Box<super::generics::Choice9<super::generics::Str<super::wrapper::W7>, super::generics::Sequence2<super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>, 0u8, super::rules::RepAtLeastOnce<'i>, 1u8>, super::generics::Sequence4<super::generics::Positive<super::generics::Str<super::wrapper::W9>>, 0u8, super::rules::Choice<'i>, 1u8, super::rules::Rep<'i>, 1u8, super::rules::Opt<'i>, 1u8>, super::rules::Peek<'i>, super::rules::PeekLeft<'i>, super::rules::PeekRight<'i>, super::rules::PeekLeftRight<'i>, super::rules::Drop<'i>, super::rules::PeekAll<'i>>>;
+        type Inner = super::generics::Choice9<
+            super::generics::Str<super::wrapper::W7>,
+            super::generics::Sequence2<
+                super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>,
+                0u8,
+                super::rules::RepAtLeastOnce<'i>,
+                1u8,
+            >,
+            super::generics::Sequence4<
+                super::generics::Positive<super::generics::Str<super::wrapper::W9>>,
+                0u8,
+                super::rules::Choice<'i>,
+                1u8,
+                super::rules::Rep<'i>,
+                1u8,
+                super::rules::Opt<'i>,
+                1u8,
+            >,
+            super::rules::Peek<'i>,
+            super::rules::PeekLeft<'i>,
+            super::rules::PeekRight<'i>,
+            super::rules::PeekLeftRight<'i>,
+            super::rules::Drop<'i>,
+            super::rules::PeekAll<'i>,
+        >;
+        type Content = ::pest::std::Box<
+            super::generics::Choice9<
+                super::generics::Str<super::wrapper::W7>,
+                super::generics::Sequence2<
+                    super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>,
+                    0u8,
+                    super::rules::RepAtLeastOnce<'i>,
+                    1u8,
+                >,
+                super::generics::Sequence4<
+                    super::generics::Positive<super::generics::Str<super::wrapper::W9>>,
+                    0u8,
+                    super::rules::Choice<'i>,
+                    1u8,
+                    super::rules::Rep<'i>,
+                    1u8,
+                    super::rules::Opt<'i>,
+                    1u8,
+                >,
+                super::rules::Peek<'i>,
+                super::rules::PeekLeft<'i>,
+                super::rules::PeekRight<'i>,
+                super::rules::PeekLeftRight<'i>,
+                super::rules::Drop<'i>,
+                super::rules::PeekAll<'i>,
+            >,
+        >;
         #[inline]
         fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
             Self { content, span }
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Choice<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -406,10 +594,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Rep<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -440,10 +634,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepAtLeastOnce<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -474,10 +674,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Opt<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -491,7 +697,8 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#RepExact<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>,
+        pub content:
+            super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
     }
@@ -500,18 +707,26 @@ pub mod rules {
         const RULE: super::Rule = super::Rule::r#RepExact;
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#RepExact<'i> {
-        type Inner = super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
-        type Content = super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
+        type Inner =
+            super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
+        type Content =
+            super::generics::RepMinMax<super::rules::RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
         #[inline]
         fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
             Self { content, span }
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepExact<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -542,10 +757,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepLeft<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -576,10 +797,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepRight<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -610,10 +837,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepLeftRight<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -627,7 +860,14 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Pos<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Positive<super::generics::Sequence2<super::generics::r#SOI, 0u8, super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0u8, 2usize, 4usize>, 1u8>>,
+        pub content: super::generics::Positive<
+            super::generics::Sequence2<
+                super::generics::r#SOI,
+                0u8,
+                super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0u8, 2usize, 4usize>,
+                1u8,
+            >,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
     }
@@ -636,18 +876,38 @@ pub mod rules {
         const RULE: super::Rule = super::Rule::r#Pos;
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Pos<'i> {
-        type Inner = super::generics::Positive<super::generics::Sequence2<super::generics::r#SOI, 0u8, super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0u8, 2usize, 4usize>, 1u8>>;
-        type Content = super::generics::Positive<super::generics::Sequence2<super::generics::r#SOI, 0u8, super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0u8, 2usize, 4usize>, 1u8>>;
+        type Inner = super::generics::Positive<
+            super::generics::Sequence2<
+                super::generics::r#SOI,
+                0u8,
+                super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0u8, 2usize, 4usize>,
+                1u8,
+            >,
+        >;
+        type Content = super::generics::Positive<
+            super::generics::Sequence2<
+                super::generics::r#SOI,
+                0u8,
+                super::generics::RepMinMax<super::rules::RepLeftRight<'i>, 0u8, 2usize, 4usize>,
+                1u8,
+            >,
+        >;
         #[inline]
         fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
             Self { content, span }
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Pos<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -661,7 +921,9 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Neg<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Negative<super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>>,
+        pub content: super::generics::Negative<
+            super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
     }
@@ -670,18 +932,28 @@ pub mod rules {
         const RULE: super::Rule = super::Rule::r#Neg;
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Neg<'i> {
-        type Inner = super::generics::Negative<super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>>;
-        type Content = super::generics::Negative<super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>>;
+        type Inner = super::generics::Negative<
+            super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>,
+        >;
+        type Content = super::generics::Negative<
+            super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::Pos<'i>, 1u8>,
+        >;
         #[inline]
         fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
             Self { content, span }
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Neg<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -695,7 +967,26 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Push<'i> {
         #[doc = r" Matched structure."]
-        pub content: ::pest::std::Box<super::generics::r#push<super::generics::Sequence7<super::generics::Rep<super::rules::RepLeft<'i>, 0u8>, 0u8, super::rules::Neg<'i>, 1u8, super::generics::RepOnce<super::rules::ExactString<'i>, 0u8>, 1u8, super::rules::Push<'i>, 1u8, super::rules::Pop<'i>, 1u8, super::rules::Push<'i>, 1u8, super::rules::PopAll<'i>, 1u8>>>,
+        pub content: ::pest::std::Box<
+            super::generics::r#push<
+                super::generics::Sequence7<
+                    super::generics::Rep<super::rules::RepLeft<'i>, 0u8>,
+                    0u8,
+                    super::rules::Neg<'i>,
+                    1u8,
+                    super::generics::RepOnce<super::rules::ExactString<'i>, 0u8>,
+                    1u8,
+                    super::rules::Push<'i>,
+                    1u8,
+                    super::rules::Pop<'i>,
+                    1u8,
+                    super::rules::Push<'i>,
+                    1u8,
+                    super::rules::PopAll<'i>,
+                    1u8,
+                >,
+            >,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest::Span<'i>,
     }
@@ -704,18 +995,60 @@ pub mod rules {
         const RULE: super::Rule = super::Rule::r#Push;
     }
     impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Push<'i> {
-        type Inner = super::generics::r#push<super::generics::Sequence7<super::generics::Rep<super::rules::RepLeft<'i>, 0u8>, 0u8, super::rules::Neg<'i>, 1u8, super::generics::RepOnce<super::rules::ExactString<'i>, 0u8>, 1u8, super::rules::Push<'i>, 1u8, super::rules::Pop<'i>, 1u8, super::rules::Push<'i>, 1u8, super::rules::PopAll<'i>, 1u8>>;
-        type Content = ::pest::std::Box<super::generics::r#push<super::generics::Sequence7<super::generics::Rep<super::rules::RepLeft<'i>, 0u8>, 0u8, super::rules::Neg<'i>, 1u8, super::generics::RepOnce<super::rules::ExactString<'i>, 0u8>, 1u8, super::rules::Push<'i>, 1u8, super::rules::Pop<'i>, 1u8, super::rules::Push<'i>, 1u8, super::rules::PopAll<'i>, 1u8>>>;
+        type Inner = super::generics::r#push<
+            super::generics::Sequence7<
+                super::generics::Rep<super::rules::RepLeft<'i>, 0u8>,
+                0u8,
+                super::rules::Neg<'i>,
+                1u8,
+                super::generics::RepOnce<super::rules::ExactString<'i>, 0u8>,
+                1u8,
+                super::rules::Push<'i>,
+                1u8,
+                super::rules::Pop<'i>,
+                1u8,
+                super::rules::Push<'i>,
+                1u8,
+                super::rules::PopAll<'i>,
+                1u8,
+            >,
+        >;
+        type Content = ::pest::std::Box<
+            super::generics::r#push<
+                super::generics::Sequence7<
+                    super::generics::Rep<super::rules::RepLeft<'i>, 0u8>,
+                    0u8,
+                    super::rules::Neg<'i>,
+                    1u8,
+                    super::generics::RepOnce<super::rules::ExactString<'i>, 0u8>,
+                    1u8,
+                    super::rules::Push<'i>,
+                    1u8,
+                    super::rules::Pop<'i>,
+                    1u8,
+                    super::rules::Push<'i>,
+                    1u8,
+                    super::rules::PopAll<'i>,
+                    1u8,
+                >,
+            >,
+        >;
         #[inline]
         fn new(content: Self::Content, span: ::pest::Span<'i>) -> Self {
             Self { content, span }
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Push<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -746,10 +1079,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Pop<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -780,10 +1119,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PopAll<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -814,10 +1159,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Peek<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -848,10 +1199,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekUnlimited<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -882,10 +1239,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekLeft<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -916,10 +1279,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekRight<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -950,10 +1319,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekLeftRight<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -984,10 +1359,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Drop<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -1018,10 +1399,16 @@ pub mod rules {
         }
     }
     impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekAll<'i> {
-        fn for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
-        fn for_self_or_for_each_child_pair(&self, f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>)) {
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+        ) {
             use pest::typed::PairTree;
             f(self.as_pair_tree())
         }
@@ -1039,5 +1426,9 @@ pub mod generics {
     pub use pest::sequence::Sequence3;
     pub use pest::sequence::Sequence4;
     pub use pest::sequence::Sequence7;
-    pub use pest::typed::template::{CharRange, Insens, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin, RepMinMax, RepOnce, Str, ANY as any, DROP as drop, EOI, PEEK as peek, PEEK_ALL as peek_all, POP as pop, POP_ALL as pop_all, PUSH as push, SOI};
+    pub use pest::typed::template::{
+        CharRange, Insens, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin,
+        RepMinMax, RepOnce, Str, ANY as any, DROP as drop, EOI, PEEK as peek, PEEK_ALL as peek_all,
+        POP as pop, POP_ALL as pop_all, PUSH as push, SOI,
+    };
 }

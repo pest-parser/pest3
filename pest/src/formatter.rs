@@ -1,5 +1,5 @@
 //! Copied from [pest-typed/formatter.rs].
-//! 
+//!
 //! [pest-typed/formatter.rs]: https://github.com/TheVeryDarkness/pest-typed/blob/0.12.1/main/src/formatter.rs
 
 use crate::{Position, Span};

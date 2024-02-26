@@ -22,8 +22,6 @@ fn generated_rules() {
     std::fs::write(path_generated, &actual).unwrap();
     let output = std::process::Command::new("rustfmt")
         .arg(path_generated)
-        .arg("--config")
-        .arg("use_small_heuristics=Max,max_width=1000")
         .output()
         .unwrap();
     assert!(
