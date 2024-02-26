@@ -50,6 +50,26 @@ macro_rules! choice_type {
                 )*
                 ::core::option::Option::None
             }
+            #[inline]
+            fn check_with_partial(
+                input: $crate::Position<'i>,
+                stack: &mut $crate::Stack<$crate::Span<'i>>,
+                tracker: &mut $crate::typed::Tracker<'i, R>,
+            ) -> ::core::option::Option<$crate::Position<'i>> {
+                $(
+                    stack.snapshot();
+                    match $type::check_with_partial(input, stack, tracker) {
+                        ::core::option::Option::Some(input) => {
+                            stack.clear_snapshot();
+                            return ::core::option::Option::Some(input)
+                        }
+                        ::core::option::Option::None => {
+                            stack.restore();
+                        }
+                    }
+                )*
+                ::core::option::Option::None
+            }
         }
         impl<R, $($type, )*>
         $crate::typed::PairContainer<R> for $name<$($type, )*>

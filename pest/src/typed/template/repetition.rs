@@ -37,7 +37,10 @@ impl<
     > NeverFailedTypedNode<'i, R> for RepMinMax<T, TRIVIA, 0, MAX>
 {
     #[inline]
-    fn parse_with_partial(mut input: Position<'i>, stack: &mut Stack<Span<'i>>) -> (Position<'i>, Self) {
+    fn parse_with_partial(
+        mut input: Position<'i>,
+        stack: &mut Stack<Span<'i>>,
+    ) -> (Position<'i>, Self) {
         let mut vec = Vec::new();
 
         let mut tracker = Tracker::new(input);
@@ -95,6 +98,34 @@ impl<
         }
 
         Some((input, Self { content: vec }))
+    }
+    #[inline]
+    fn check_with_partial(
+        mut input: Position<'i>,
+        stack: &mut Stack<Span<'i>>,
+        tracker: &mut Tracker<'i, R>,
+    ) -> Option<Position<'i>> {
+        let mut vec = Vec::new();
+
+        for i in 0..MAX {
+            match restore_on_none(stack, |stack| {
+                try_parse_unit::<R, T, TRIVIA>(input, stack, tracker, i)
+            }) {
+                Some((next, matched)) => {
+                    input = next;
+                    vec.push(matched);
+                }
+                None => {
+                    if i < MIN {
+                        return None;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+
+        Some(input)
     }
 }
 impl<T, const TRIVIA: u8, const MIN: usize, const MAX: usize> IntoIterator

@@ -1,5 +1,5 @@
 //! Wrapper.
-use pest2::RuleType;
+use super::RuleType;
 
 /// A wrapper for string constant.
 pub trait String {
@@ -12,11 +12,11 @@ pub trait String {
 }
 
 /// A wrapper for string constant.
-pub trait Rule<R: RuleType> {
+pub trait Rule {
     /// Should be the type of wrapped rule.
     type Rule: RuleType;
     /// Wrapped rule.
-    const RULE: R;
+    const RULE: Self::Rule;
 }
 
 /// Bound for the length of vector.

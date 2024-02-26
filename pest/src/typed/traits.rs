@@ -17,6 +17,12 @@ pub trait RuleType: Copy + Debug + Eq + Hash + Ord {
 
 /// Node of a typed syntax tree.
 pub trait TypedNode<'i, R: RuleType>: Sized {
+    /// Try parse a part of or all of remained string into a node.
+    fn try_parse_with_partial(
+        input: Position<'i>,
+        stack: &mut Stack<Span<'i>>,
+        tracker: &mut Tracker<'i, R>,
+    ) -> Option<(Position<'i>, Self)>;
     /// Try parse remained string into a node.
     #[inline]
     fn try_parse_with(
@@ -24,52 +30,115 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
         stack: &mut Stack<Span<'i>>,
         tracker: &mut Tracker<'i, R>,
     ) -> Option<Self> {
-        let (input, res) = match Self::try_parse_with_partial(input, stack, tracker) {
-            Some((input, res)) => (input, res),
-            None => return None,
-        };
-        let (_input, _eoi) = match tracker.record_option_during_with(
+        let (input, res) = Self::try_parse_with_partial(input, stack, tracker)?;
+        let (_input, _eoi) = tracker.record_option_during_with(
             input,
             |tracker| EOI::try_parse_with_partial(input, stack, tracker),
             <R as RuleType>::EOI,
-        ) {
-            Some((input, res)) => (input, res),
-            None => return None,
-        };
+        )?;
         Some(res)
     }
-    /// Try parse a part of or all of remained string into a node.
-    fn try_parse_with_partial(
-        input: Position<'i>,
-        stack: &mut Stack<Span<'i>>,
-        tracker: &mut Tracker<'i, R>,
-    ) -> Option<(Position<'i>, Self)>;
-    /// Try parse given string into a node.
-    #[inline]
-    fn try_parse(input: &'i str) -> Result<Self, Error<R>> {
-        let mut stack = Stack::new();
-        let input = Position::from_start(input);
-        let mut tracker = Tracker::new(input);
-        match Self::try_parse_with(input, &mut stack, &mut tracker) {
-            Some(res) => Ok(res),
-            None => Err(tracker.collect()),
-        }
-    }
-    /// Try parse leading part of string into a node.
+    /// Try parsing leading part of string into a node.
     #[inline]
     fn try_parse_partial(input: &'i str) -> Result<(Position<'i>, Self), Error<R>> {
         let mut stack = Stack::new();
         let input = Position::from_start(input);
         let mut tracker = Tracker::new(input);
-        match Self::try_parse_with_partial(input, &mut stack, &mut tracker) {
-            Some((input, res)) => Ok((input, res)),
-            None => Err(tracker.collect()),
+        Self::try_parse_with_partial(input, &mut stack, &mut tracker)
+            .ok_or_else(|| tracker.collect())
+    }
+    /// Try parsing given string into a node.
+    #[inline]
+    fn try_parse(input: &'i str) -> Result<Self, Error<R>> {
+        let mut stack = Stack::new();
+        let input = Position::from_start(input);
+        let mut tracker = Tracker::new(input);
+        Self::try_parse_with(input, &mut stack, &mut tracker).ok_or_else(|| tracker.collect())
+    }
+    /// Check whether the some leading part of the result can be accepted.
+    fn check_with_partial(
+        input: Position<'i>,
+        stack: &mut Stack<Span<'i>>,
+        tracker: &mut Tracker<'i, R>,
+    ) -> Option<Position<'i>>;
+    /// Check whether the some leading part of the result can be accepted.
+    #[inline]
+    fn check_with(
+        input: Position<'i>,
+        stack: &mut Stack<Span<'i>>,
+        tracker: &mut Tracker<'i, R>,
+    ) -> bool {
+        let input = match Self::check_with_partial(input, stack, tracker) {
+            Some(input) => input,
+            None => return false,
+        };
+        let _input = match tracker.record_option_during_with(
+            input,
+            |tracker| EOI::check_with_partial(input, stack, tracker),
+            <R as RuleType>::EOI,
+        ) {
+            Some(input) => input,
+            None => return false,
+        };
+        true
+    }
+    /// Try parsing leading part of string into a node.
+    #[inline]
+    fn check_partial(input: &'i str) -> Result<Position<'i>, Error<R>> {
+        let mut stack = Stack::new();
+        let input = Position::from_start(input);
+        let mut tracker = Tracker::new(input);
+        Self::check_with_partial(input, &mut stack, &mut tracker).ok_or_else(|| tracker.collect())
+    }
+    /// Try parsing given string into a node.
+    #[inline]
+    fn check(input: &'i str) -> Result<(), Error<R>> {
+        let mut stack = Stack::new();
+        let input = Position::from_start(input);
+        let mut tracker = Tracker::new(input);
+        match Self::check_with(input, &mut stack, &mut tracker) {
+            true => Ok(()),
+            false => Err(tracker.collect()),
         }
     }
     // /// Whether this node accepts null input.
     // const NULLABLE: bool;
     // /// Leading characters that this node accepts.
     // const FIRST: &'static [char];
+}
+
+/// Struct for rules with full capacity.
+pub trait FullRuleStruct<'i>: wrapper::Rule {
+    /// Wrapped inner type.
+    type Inner: TypedNode<'i, Self::Rule>;
+    /// Wrapped content type.
+    type Content: From<Self::Inner>;
+    /// Create from span and content.
+    fn new(content: Self::Content, span: Span<'i>) -> Self;
+}
+impl<'i, R: RuleType, T: FullRuleStruct<'i, Rule = R>> TypedNode<'i, R> for T {
+    fn try_parse_with_partial(
+        input: Position<'i>,
+        stack: &mut Stack<Span<'i>>,
+        tracker: &mut Tracker<'i, R>,
+    ) -> Option<(Position<'i>, Self)> {
+        tracker.record_option_during(input, |tracker| {
+            let (pos, content) = <T::Inner>::try_parse_with_partial(input, stack, tracker)?;
+            let content = content.into();
+            let span = input.span(&pos);
+            Some((pos, Self::new(content, span)))
+        })
+    }
+    fn check_with_partial(
+        input: Position<'i>,
+        stack: &mut Stack<Span<'i>>,
+        tracker: &mut Tracker<'i, R>,
+    ) -> Option<Position<'i>> {
+        tracker.record_empty_during::<T>(input, |tracker| {
+            let pos = <T::Inner>::check_with_partial(input, stack, tracker)?;
+            Some(pos)
+        })
+    }
 }
 
 /// A container of pairs.
@@ -97,13 +166,14 @@ impl<R, T: PairContainer<R>> PairContainer<R> for Option<T> {
     }
 }
 
-pub(super) trait EmptyPairContainer {}
+/// Contains no pair.
+pub trait EmptyPairContainer {}
 impl<R, T: EmptyPairContainer> PairContainer<R> for T {
     fn for_each_child_pair(&self, _f: &mut impl FnMut(Pair<R>)) {}
 }
 
 /// A pair that can be converted to a pair tree.
-pub trait PairTree<R: RuleType>: PairContainer<R> + wrapper::Rule<R> {
+pub trait PairTree<R: RuleType>: PairContainer<R> + wrapper::Rule<Rule = R> {
     /// Get pair span.
     fn get_span(&self) -> (usize, usize);
     /// Convert `Self` to a pair tree.
@@ -121,6 +191,7 @@ pub trait PairTree<R: RuleType>: PairContainer<R> + wrapper::Rule<R> {
 }
 
 impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Option<T> {
+    #[inline]
     fn try_parse_with_partial(
         input: Position<'i>,
         stack: &mut Stack<Span<'i>>,
@@ -135,6 +206,24 @@ impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Option<T> {
             None => {
                 stack.restore();
                 Some((input, None))
+            }
+        }
+    }
+    #[inline]
+    fn check_with_partial(
+        input: Position<'i>,
+        stack: &mut Stack<Span<'i>>,
+        tracker: &mut Tracker<'i, R>,
+    ) -> Option<Position<'i>> {
+        stack.snapshot();
+        match T::check_with_partial(input, stack, tracker) {
+            Some(pos) => {
+                stack.clear_snapshot();
+                Some(pos)
+            }
+            None => {
+                stack.restore();
+                Some(input)
             }
         }
     }

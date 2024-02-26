@@ -2,6 +2,8 @@ use super::{
     generator::{ProcessedPathArgs, RuleRef},
     output::generics,
 };
+use pest::unicode::unicode_property_names;
+use pest_meta::parser::ParseRule;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::collections::{btree_map::Keys, BTreeMap};
@@ -10,6 +12,7 @@ use std::collections::{btree_map::Keys, BTreeMap};
 pub enum RuleGenerics {
     /// Defined rule in current module.
     Rule,
+    Unicode(Ident),
     BuiltIn {
         /// Built-in rule that accepts nothing as argument.
         ///
@@ -49,6 +52,9 @@ impl RuleGenerics {
                 );
                 let (path, name) = getter();
                 quote! { #root::rules::#( #path:: )* #name :: <'i> }
+            }
+            Self::Unicode(ident) => {
+                quote! { #root::rules::unicode::#ident }
             }
             Self::BuiltIn {
                 direct,
@@ -132,7 +138,7 @@ impl<'g> ModuleSystem<'g> {
                 )
             };
         }
-        let tree = BTreeMap::from([
+        let mut tree = BTreeMap::from([
             pest_builtin!(SOI {}),
             pest_builtin!(EOI {}),
             pest_builtin!(any {}),
@@ -143,9 +149,18 @@ impl<'g> ModuleSystem<'g> {
             pest_builtin!(pop {'i}),
             pest_builtin!(pop_all {'i}),
         ]);
+        for unicode in unicode_property_names() {
+            assert!(unicode.is_ascii());
+            let ident = format_ident!("{}", unicode.to_ascii_lowercase());
+            tree.insert(
+                vec!["pest", "unicode", unicode],
+                RuleGenerics::Unicode(ident),
+            );
+        }
         Self { tree }
     }
-    pub fn insert_rule(&mut self, key: &'g str) {
+    pub fn insert_rule(&mut self, rule: &'g ParseRule) {
+        let key = &rule.name;
         let value = RuleGenerics::Rule;
         self.tree.insert(vec![key], value);
     }

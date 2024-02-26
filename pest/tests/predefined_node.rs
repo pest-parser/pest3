@@ -13,11 +13,11 @@ mod tests {
             wrapper::{Rule as RuleWrapper, String as StringWrapper},
             RuleType, Tracker, TypedNode, TypedParser,
         },
-        Position, Span, Stack,
+        unicode, Position, Span, Stack,
     };
 
     #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-    enum Rule {
+    pub enum Rule {
         Foo,
         EOI,
     }
@@ -27,6 +27,8 @@ mod tests {
         type OptionalTrivia<'i> = Rep<Choice2<Char<' '>, Char<'\t'>>, 0>;
         type MandatoryTrivia<'i> = Empty;
     }
+
+    unicode!(MATH);
 
     struct Parser;
     impl TypedParser<Rule> for Parser {}
@@ -41,7 +43,7 @@ mod tests {
     pub struct StrFoo {
         content: Str<Foo>,
     }
-    impl RuleWrapper<Rule> for StrFoo {
+    impl RuleWrapper for StrFoo {
         type Rule = Rule;
         const RULE: Rule = Rule::Foo;
     }
@@ -53,6 +55,14 @@ mod tests {
         ) -> Option<(Position<'i>, Self)> {
             let (pos, content) = Str::<Foo>::try_parse_with_partial(input, stack, tracker)?;
             Some((pos, Self { content }))
+        }
+        fn check_with_partial(
+            input: Position<'i>,
+            stack: &mut Stack<Span<'i>>,
+            tracker: &mut Tracker<'i, Rule>,
+        ) -> Option<Position<'i>> {
+            let pos = Str::<Foo>::check_with_partial(input, stack, tracker)?;
+            Some(pos)
         }
     }
 
