@@ -36,17 +36,17 @@ repeat_min_atomic = string{2..}
 repeat_max = string~{..2}
 repeat_max_atomic = string{..2}
 soi_at_start = pest::SOI - string
-repeat_mutate_stack = (pest::push('a'..'c') - ",")* - pest::pop - pest::pop - pest::pop
-repeat_mutate_stack_pop_all = (pest::push('a'..'c') - ",")* - pest::pop_all
+repeat_mutate_stack = (pest::stack::push('a'..'c') - ",")* - pest::stack::pop - pest::stack::pop - pest::stack::pop
+repeat_mutate_stack_pop_all = (pest::stack::push('a'..'c') - ",")* - pest::stack::pop_all
 will_fail = repeat_mutate_stack_pop_all - "FAIL"
 stack_resume_after_fail = will_fail | repeat_mutate_stack_pop_all
-peek_ = pest::push(range) - pest::push(range) - pest::peek - pest::peek
-peek_all = pest::push(range) - pest::push(range) - pest::peek_all
-peek_slice_23 = pest::push(range) - pest::push(range) - pest::push(range) ~ pest::push(range) ~ pest::push(range) ~ pest::peek[1..-2]
-pop_ = pest::push(range) - pest::push(range) - pest::pop - pest::pop
-pop_all = pest::push(range) - pest::push(range) - pest::pop_all
-pop_fail = pest::push(range) - !pest::pop - range - pest::pop
-checkpoint_restore = pest::push("") - (pest::push("a") - "b" - pest::pop | pest::drop - "b" | pest::pop - "a") - pest::EOI
+peek_ = pest::stack::push(range) - pest::stack::push(range) - pest::stack::peek - pest::stack::peek
+peek_all = pest::stack::push(range) - pest::stack::push(range) - pest::stack::peek_all
+peek_slice_23 = pest::stack::push(range) - pest::stack::push(range) - pest::stack::push(range) ~ pest::stack::push(range) ~ pest::stack::push(range) ~ pest::stack::peek[1..-2]
+pop_ = pest::stack::push(range) - pest::stack::push(range) - pest::stack::pop - pest::stack::pop
+pop_all = pest::stack::push(range) - pest::stack::push(range) - pest::stack::pop_all
+pop_fail = pest::stack::push(range) - !pest::stack::pop - range - pest::stack::pop
+checkpoint_restore = pest::stack::push("") - (pest::stack::push("a") - "b" - pest::stack::pop | pest::stack::drop - "b" | pest::stack::pop - "a") - pest::EOI
 
 /*
 ascii_digits = ASCII_DIGIT+

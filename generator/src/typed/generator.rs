@@ -120,17 +120,6 @@ impl<'g> RuleRef<'g> {
         let path = path.iter().map(String::as_str).collect::<Vec<_>>();
         Self { path, args }
     }
-    /// Create from a name of a rule defined in current module.
-    pub fn from_current(path: Vec<&'g str>) -> Self {
-        let args = None;
-        Self { path, args }
-    }
-    /// Create from a name of a rule defined in current module.
-    fn from_top_level(name: &'g str) -> Self {
-        let path = vec![name];
-        let args = None;
-        Self { path, args }
-    }
 }
 impl<'g> Display for RuleRef<'g> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -144,6 +133,7 @@ impl<'g> Display for RuleRef<'g> {
 }
 
 fn create_rule<'g>(
+    config: Config,
     rule_config: &RuleConfig<'g>,
     rule_info: &RuleInfo<'g>,
     inner_type: TokenStream,
@@ -155,16 +145,22 @@ fn create_rule<'g>(
         "Generated for rule `{}`. Grammar: `{}`.",
         rule_info.rule_name, rule_config.grammar.node,
     );
+    let args: Vec<_> = rule_config
+        .grammar
+        .args
+        .iter()
+        .map(|s| format_ident!("r#{}", s))
+        .collect();
     // Pairs inside silent rule will be ignored.
     let pair_api = match rule_info.silent {
         true => quote! {
-            impl<'i> #this::typed::PairContainer<#root::Rule> for #name<'i> {
+            impl<'i, #(#args, )*> #this::typed::PairContainer<#root::Rule> for #name<'i, #(#args, )*> {
                 fn for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {}
                 fn for_self_or_for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {}
             }
         },
         false => quote! {
-            impl<'i> #this::typed::PairContainer<#root::Rule> for #name<'i> {
+            impl<'i, #(#args, )*> #this::typed::PairContainer<#root::Rule> for #name<'i, #(#args, )*> {
                 fn for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {
                     self.content.for_self_or_for_each_child_pair(f)
                 }
@@ -173,7 +169,7 @@ fn create_rule<'g>(
                     f(self.as_pair_tree())
                 }
             }
-            impl<'i> #this::typed::PairTree<#root::Rule> for #name<'i> {
+            impl<'i, #(#args, )*> #this::typed::PairTree<#root::Rule> for #name<'i, #(#args, )*> {
                 fn get_span(&self) -> (#this::std::usize, #this::std::usize) {
                     (self.span.start(), self.span.end())
                 }
@@ -188,21 +184,21 @@ fn create_rule<'g>(
     quote! {
         #[doc = #doc]
         #[derive(Clone, Debug, Eq, PartialEq)]
-        pub struct #name<'i> {
+        pub struct #name<'i, #(#args, )*> {
             /// Matched structure.
             pub content: #content_type,
             /// Matched span.
             pub span: #this::Span<'i>,
         }
-        impl<'i> #this::typed::wrapper::Rule for #name<'i> {
+        impl<'i, #(#args, )*> #this::typed::wrapper::Rule for #name<'i, #(#args, )*> {
             type Rule = #root::Rule;
             const RULE: #root::Rule = #root::Rule::#name;
         }
-        impl<'i> #this::typed::FullRuleStruct<'i> for #name<'i> {
+        impl<'i, #(#args, )*> #this::typed::FullRuleStruct<'i> for #name<'i, #(#args, )*> {
             type Inner = #inner_type;
             type Content = #content_type;
             #[inline]
-            fn new(content: Self::Content, span: #this::Span<'i>) -> Self {
+            fn new(content: <Self as #this::typed::FullRuleStruct<'i>>::Content, span: #this::Span<'i>) -> Self {
                 Self { content, span }
             }
         }
@@ -293,10 +289,8 @@ fn process_expr<'g>(
                 ProcessedPathArgs::process(args, rule_config, output, config, mod_sys, root)
             });
             let rule_ref = RuleRef::new(prefix, args);
-            let typename = mod_sys.resolve(&rule_ref, root).expect(&format!(
-                "`{rule_ref}` can't be resolved. Available rules are: {:?}",
-                mod_sys.keys()
-            ));
+            let typename = mod_sys
+                .resolve(rule_config.grammar, &rule_ref, root);
             Intermediate { typename }
         }
         ParseExpr::PosPred(node) => {
@@ -416,6 +410,7 @@ fn process_rule<'g: 'f, 'f>(
         _ => {
             let rule_info = RuleInfo::new(rule, config, reachability);
             res.insert_rule_struct(create_rule(
+                config,
                 &rule_config,
                 &rule_info,
                 inter.typename,

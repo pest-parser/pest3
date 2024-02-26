@@ -1,7 +1,6 @@
 use super::config::Config;
 use crate::config::{get_bool, get_string, GrammarSource};
 use proc_macro2::Ident;
-use quote::ToTokens;
 use syn::{DeriveInput, Generics};
 
 pub(crate) fn parse_derive(ast: DeriveInput) -> (Ident, Generics, Vec<GrammarSource>, Config) {
