@@ -194,22 +194,16 @@ fn create_rule<'g>(
             /// Matched span.
             pub span: #this::Span<'i>,
         }
-        impl<'i> #this::typed::wrapper::Rule<#root::Rule> for #name<'i> {
+        impl<'i> #this::typed::wrapper::Rule for #name<'i> {
             type Rule = #root::Rule;
             const RULE: #root::Rule = #root::Rule::#name;
         }
-        impl<'i> #this::typed::TypedNode<'i, #root::Rule> for #name<'i> {
-            fn try_parse_with_partial(
-                input: #this::Position<'i>,
-                stack: &mut #this::Stack<#this::Span<'i>>,
-                tracker: &mut #this::typed::Tracker<'i, #root::Rule>,
-            ) -> #this::std::Option<(#this::Position<'i>, Self)> {
-                tracker.record_option_during(input, |tracker| {
-                    let (pos, content) = #inner_type::try_parse_with_partial(input, stack, tracker)?;
-                    let content = content.into();
-                    let span = input.span(&pos);
-                    #this::std::Some((pos, Self{ content, span }))
-                })
+        impl<'i> #this::typed::FullRuleStruct<'i> for #name<'i> {
+            type Inner = #inner_type;
+            type Content = #content_type;
+            #[inline]
+            fn new(content: Self::Content, span: #this::Span<'i>) -> Self {
+                Self { content, span }
             }
         }
         #pair_api
@@ -440,7 +434,7 @@ fn process_rules<'g: 'f, 'f>(
     for rule in rules.iter() {
         match rule.name.as_str() {
             "~" | "^" => {}
-            _ => mod_sys.insert_rule(&rule.name),
+            _ => mod_sys.insert_rule(rule),
         }
     }
     let mut res = Output::new();
@@ -508,6 +502,7 @@ fn collect_used_rule<'g>(
     }
 }
 
+#[cfg(test)]
 fn collect_used_rules<'s>(rules: &'s [ParseRule]) -> BTreeSet<&'s str> {
     let mut res = BTreeSet::new();
     let rule_trivia = rules.iter().find(|rule| rule.name == "~");
@@ -598,6 +593,7 @@ fn generate_typed(
     res
 }
 
+/// Derive typed parser from given grammar, attributes and type.
 pub fn derive_typed_parser(
     input: TokenStream,
     include_grammar: bool,

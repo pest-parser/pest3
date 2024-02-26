@@ -63,6 +63,23 @@ macro_rules! sequence_type {
                 };
                 ::core::option::Option::Some((input, res))
             }
+            #[inline]
+            fn check_with_partial(
+                mut input: $crate::Position<'i>,
+                stack: &mut $crate::Stack<$crate::Span<'i>>,
+                tracker: &mut $crate::typed::Tracker<'i, R>,
+            ) -> ::core::option::Option<$crate::Position<'i>> {
+                let mut i = 0usize;
+                $(
+                    i += 1;
+                    if i > 1 {
+                        input = $crate::typed::template::try_handle_trivia::<R, $trivia>(input, stack, tracker)?;
+                    }
+                    let next = $type::check_with_partial(input, stack, tracker)?;
+                    input = next;
+                )*
+                ::core::option::Option::Some(input)
+            }
         }
         impl<R, $($type, const $trivia: ::core::primitive::u8, )*>
         $crate::typed::PairContainer<R> for $name<$($type, $trivia, )*>

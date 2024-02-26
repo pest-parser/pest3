@@ -169,9 +169,9 @@ impl<'i, R: RuleType> Tracker<'i, R> {
     pub(crate) fn record_option_during_with<T>(
         &mut self,
         pos: Position<'i>,
-        f: impl FnOnce(&mut Self) -> Option<(Position<'i>, T)>,
+        f: impl FnOnce(&mut Self) -> Option<T>,
         rule: R,
-    ) -> Option<(Position<'i>, T)> {
+    ) -> Option<T> {
         if let Some((_, _, has_children)) = self.stack.last_mut() {
             *has_children = true;
         }
@@ -186,7 +186,7 @@ impl<'i, R: RuleType> Tracker<'i, R> {
     }
     /// Record if the result doesn't match the state during calling `f`.
     #[inline]
-    pub fn record_during<T: RuleWrapper<R>, E>(
+    pub fn record_result_during<T: RuleWrapper<Rule = R>, E>(
         &mut self,
         pos: Position<'i>,
         f: impl FnOnce(&mut Self) -> Result<(Position<'i>, T), E>,
@@ -195,11 +195,20 @@ impl<'i, R: RuleType> Tracker<'i, R> {
     }
     /// Record if the result doesn't match the state during calling `f`.
     #[inline]
-    pub fn record_option_during<T: RuleWrapper<R>>(
+    pub fn record_option_during<T: RuleWrapper<Rule = R>>(
         &mut self,
         pos: Position<'i>,
         f: impl FnOnce(&mut Self) -> Option<(Position<'i>, T)>,
     ) -> Option<(Position<'i>, T)> {
+        self.record_option_during_with(pos, f, T::RULE)
+    }
+    /// Record if the result doesn't match the state during calling `f`.
+    #[inline]
+    pub fn record_empty_during<T: RuleWrapper<Rule = R>>(
+        &mut self,
+        pos: Position<'i>,
+        f: impl FnOnce(&mut Self) -> Option<Position<'i>>,
+    ) -> Option<Position<'i>> {
         self.record_option_during_with(pos, f, T::RULE)
     }
     fn collect_to_message(self) -> String {
@@ -299,7 +308,7 @@ mod tests {
 
     use super::*;
     #[derive(Clone, Copy, Debug, Hash, Eq, Ord, PartialEq, PartialOrd)]
-    enum Rule {
+    pub enum Rule {
         Program,
         SOI,
         Main,
@@ -319,7 +328,7 @@ mod tests {
             ($name:ident) => {
                 #[derive(Clone, PartialEq)]
                 pub struct $name;
-                impl RuleWrapper<Rule> for $name {
+                impl RuleWrapper for $name {
                     const RULE: Rule = Rule::$name;
                     type Rule = Rule;
                 }
@@ -335,12 +344,12 @@ mod tests {
     fn negative() -> Result<(), ()> {
         let pos = Position::from_start("abc\ndef\nghi");
         let mut tracker = Tracker::<'_, Rule>::new(pos);
-        let _ = tracker.record_during(pos, |tracker| {
+        let _ = tracker.record_result_during(pos, |tracker| {
             tracker.positive_during(|tracker| {
-                tracker.record_during(pos, |_| Ok((pos, rule_wrappers::Main)))
+                tracker.record_result_during(pos, |_| Ok((pos, rule_wrappers::Main)))
             })?;
             tracker.negative_during(|tracker| {
-                tracker.record_during(pos, |_| Ok((pos, rule_wrappers::Main)))
+                tracker.record_result_during(pos, |_| Ok((pos, rule_wrappers::Main)))
             })?;
             Ok((pos, rule_wrappers::Program))
         })?;
@@ -361,19 +370,19 @@ mod tests {
     fn positive() -> Result<(), ()> {
         let pos = Position::from_start("abc\ndef\nghi");
         let mut tracker = Tracker::<'_, Rule>::new(pos);
-        let _ = tracker.record_during(pos, |tracker| {
+        let _ = tracker.record_result_during(pos, |tracker| {
             let _ = tracker.positive_during(|tracker| {
                 if false {
                     Ok((pos, rule_wrappers::SOI))
                 } else {
-                    tracker.record_during(pos, |_| Err(()))
+                    tracker.record_result_during(pos, |_| Err(()))
                 }
             });
             let _ = tracker.negative_during(|tracker| {
                 if false {
                     Ok((pos, rule_wrappers::SOI))
                 } else {
-                    tracker.record_during(pos, |_| Err(()))
+                    tracker.record_result_during(pos, |_| Err(()))
                 }
             });
             Ok((pos, rule_wrappers::Program))
@@ -395,14 +404,14 @@ mod tests {
     fn unicode() -> Result<(), ()> {
         let mut pos = Position::from_start("αβψ\nδεφ\nγηι");
         let mut tracker = Tracker::<'_, Rule>::new(pos);
-        let _ = tracker.record_during(pos, |tracker| {
+        let _ = tracker.record_result_during(pos, |tracker| {
             let suc = pos.match_string("α");
             assert!(suc);
             tracker.positive_during(|tracker| {
-                tracker.record_during(pos, |_| Ok((pos, rule_wrappers::Main)))
+                tracker.record_result_during(pos, |_| Ok((pos, rule_wrappers::Main)))
             })?;
             tracker.negative_during(|tracker| {
-                tracker.record_during(pos, |_| Ok((pos, rule_wrappers::Main)))
+                tracker.record_result_during(pos, |_| Ok((pos, rule_wrappers::Main)))
             })?;
             Ok((pos, rule_wrappers::Program))
         })?;
@@ -423,13 +432,13 @@ mod tests {
     fn nested() -> Result<(), ()> {
         let mut pos = Position::from_start("αβψ\nδεφ\nγηι");
         let mut tracker = Tracker::<'_, Rule>::new(pos);
-        let _ = tracker.record_during(pos, |tracker| {
+        let _ = tracker.record_result_during(pos, |tracker| {
             let suc = pos.match_string("α");
             assert!(suc);
             tracker.negative_during(|tracker| {
-                tracker.record_during(pos, |tracker| {
+                tracker.record_result_during(pos, |tracker| {
                     tracker.negative_during(|tracker| {
-                        tracker.record_during(pos, |_| Ok((pos, rule_wrappers::Body)))
+                        tracker.record_result_during(pos, |_| Ok((pos, rule_wrappers::Body)))
                     })?;
                     Ok((pos, rule_wrappers::Main))
                 })
