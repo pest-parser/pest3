@@ -1,4 +1,4 @@
-//! A [macro](crate::choice_type) to generate choice type 
+//! A [macro](crate::choice_type) to generate choice type
 //! and generated choice types that has 2 to 15 variants,
 //! which are named `Choice{i}`.
 

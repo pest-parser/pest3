@@ -1,4 +1,4 @@
-//! A [macro](crate::sequence_type) to generate sequence type 
+//! A [macro](crate::sequence_type) to generate sequence type
 //! and generated sequence types that has 2 to 15 fields,
 //! which are named `field_{i}`.
 
