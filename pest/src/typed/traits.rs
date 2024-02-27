@@ -101,6 +101,11 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
             false => Err(tracker.collect()),
         }
     }
+    // /// Whether this node will modify the stack.
+    // /// Must be evaluated correctly,
+    // /// otherwise the stack won't be restored correctly.
+    // const MODIFY_STACK: bool;
+
     // /// Whether this node accepts null input.
     // const NULLABLE: bool;
     // /// Leading characters that this node accepts.
