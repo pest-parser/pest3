@@ -105,15 +105,12 @@ impl<
         stack: &mut Stack<Span<'i>>,
         tracker: &mut Tracker<'i, R>,
     ) -> Option<Position<'i>> {
-        let mut vec = Vec::new();
-
         for i in 0..MAX {
             match restore_on_none(stack, |stack| {
-                try_parse_unit::<R, T, TRIVIA>(input, stack, tracker, i)
+                check_unit::<R, T, TRIVIA>(input, stack, tracker, i)
             }) {
-                Some((next, matched)) => {
+                Some(next) => {
                     input = next;
-                    vec.push(matched);
                 }
                 None => {
                     if i < MIN {
@@ -190,4 +187,19 @@ fn try_parse_unit<'i, R: RuleType, T: TypedNode<'i, R>, const TRIVIA: u8>(
     let (next, matched) = T::try_parse_with_partial(input, stack, tracker)?;
     input = next;
     Some((input, matched))
+}
+
+#[inline]
+fn check_unit<'i, R: RuleType, T: TypedNode<'i, R>, const TRIVIA: u8>(
+    mut input: Position<'i>,
+    stack: &mut Stack<Span<'i>>,
+    tracker: &mut Tracker<'i, R>,
+    i: usize,
+) -> Option<Position<'i>> {
+    if i > 0 {
+        input = try_handle_trivia::<R, TRIVIA>(input, stack, tracker)?;
+    }
+    let next = T::check_with_partial(input, stack, tracker)?;
+    input = next;
+    Some(input)
 }
