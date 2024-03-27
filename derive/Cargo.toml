@@ -1,5 +1,5 @@
 [package]
-name = "pest_derive"
+name = "pest3_derive"
 
 # authors = [] # List authors later :)
 version.workspace = true
@@ -11,8 +11,8 @@ edition.workspace = true
 proc-macro = true
 
 [dependencies]
-pest_generator.workspace = true
+pest3_generator.workspace = true
 
 [dev-dependencies]
-pest.workspace = true
+pest3.workspace = true
 anyhow = "1"

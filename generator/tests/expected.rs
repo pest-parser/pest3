@@ -39,7 +39,7 @@ pub enum Rule {
     r#Drop,
     r#PeekAll,
 }
-impl ::pest::typed::RuleType for Rule {
+impl ::pest3::typed::RuleType for Rule {
     const EOI: Self = Rule::EOI;
     type OptionalTrivia<'i> = trivia::OptionalTrivia<'i>;
     type MandatoryTrivia<'i> = trivia::MandatoryTrivia<'i>;
@@ -54,67 +54,67 @@ mod wrapper {
     #[doc = "A wrapper for `\" \"`."]
     #[derive(Clone, Debug, Hash, PartialEq, Eq)]
     pub struct W0;
-    impl ::pest::typed::wrapper::String for W0 {
+    impl ::pest3::typed::wrapper::String for W0 {
         const CONTENT: &'static ::core::primitive::str = " ";
     }
     #[doc = "A wrapper for `\"+\"`."]
     #[derive(Clone, Debug, Hash, PartialEq, Eq)]
     pub struct W1;
-    impl ::pest::typed::wrapper::String for W1 {
+    impl ::pest3::typed::wrapper::String for W1 {
         const CONTENT: &'static ::core::primitive::str = "+";
     }
     #[doc = "A wrapper for `\"(\"`."]
     #[derive(Clone, Debug, Hash, PartialEq, Eq)]
     pub struct W2;
-    impl ::pest::typed::wrapper::String for W2 {
+    impl ::pest3::typed::wrapper::String for W2 {
         const CONTENT: &'static ::core::primitive::str = "(";
     }
     #[doc = "A wrapper for `\")\"`."]
     #[derive(Clone, Debug, Hash, PartialEq, Eq)]
     pub struct W3;
-    impl ::pest::typed::wrapper::String for W3 {
+    impl ::pest3::typed::wrapper::String for W3 {
         const CONTENT: &'static ::core::primitive::str = ")";
     }
     #[doc = "A wrapper for `\"r#\"`."]
     #[derive(Clone, Debug, Hash, PartialEq, Eq)]
     pub struct W4;
-    impl ::pest::typed::wrapper::String for W4 {
+    impl ::pest3::typed::wrapper::String for W4 {
         const CONTENT: &'static ::core::primitive::str = "r#";
     }
     #[doc = "A wrapper for `\"1\"`."]
     #[derive(Clone, Debug, Hash, PartialEq, Eq)]
     pub struct W5;
-    impl ::pest::typed::wrapper::String for W5 {
+    impl ::pest3::typed::wrapper::String for W5 {
         const CONTENT: &'static ::core::primitive::str = "1";
     }
     #[doc = "A wrapper for `\".\"`."]
     #[derive(Clone, Debug, Hash, PartialEq, Eq)]
     pub struct W6;
-    impl ::pest::typed::wrapper::String for W6 {
+    impl ::pest3::typed::wrapper::String for W6 {
         const CONTENT: &'static ::core::primitive::str = ".";
     }
     #[doc = "A wrapper for `\"a\"`."]
     #[derive(Clone, Debug, Hash, PartialEq, Eq)]
     pub struct W7;
-    impl ::pest::typed::wrapper::String for W7 {
+    impl ::pest3::typed::wrapper::String for W7 {
         const CONTENT: &'static ::core::primitive::str = "a";
     }
     #[doc = "A wrapper for `\"b\"`."]
     #[derive(Clone, Debug, Hash, PartialEq, Eq)]
     pub struct W8;
-    impl ::pest::typed::wrapper::String for W8 {
+    impl ::pest3::typed::wrapper::String for W8 {
         const CONTENT: &'static ::core::primitive::str = "b";
     }
     #[doc = "A wrapper for `\"c\"`."]
     #[derive(Clone, Debug, Hash, PartialEq, Eq)]
     pub struct W9;
-    impl ::pest::typed::wrapper::String for W9 {
+    impl ::pest3::typed::wrapper::String for W9 {
         const CONTENT: &'static ::core::primitive::str = "c";
     }
     #[doc = "A wrapper for `\"?\"`."]
     #[derive(Clone, Debug, Hash, PartialEq, Eq)]
     pub struct W10;
-    impl ::pest::typed::wrapper::String for W10 {
+    impl ::pest3::typed::wrapper::String for W10 {
         const CONTENT: &'static ::core::primitive::str = "?";
     }
 }
@@ -126,40 +126,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Regular<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Regular<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Regular;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Regular<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Regular<'i> {
         type Inner = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
         type Content = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Regular<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Regular<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Regular<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Regular<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -176,13 +176,13 @@ pub mod rules {
             1u8,
         >,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Atomic<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Atomic<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Atomic;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Atomic<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Atomic<'i> {
         type Inner = super::generics::Sequence3<
             super::generics::RepOnce<super::rules::r#CharRange<'i>, 0u8>,
             0u8,
@@ -201,29 +201,29 @@ pub mod rules {
         >;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Atomic<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Atomic<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Atomic<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Atomic<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -238,13 +238,13 @@ pub mod rules {
             2u8,
         >,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#NonAtomic<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#NonAtomic<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#NonAtomic;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#NonAtomic<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#NonAtomic<'i> {
         type Inner = super::generics::Sequence2<
             super::generics::Str<super::wrapper::W2>,
             0u8,
@@ -259,29 +259,29 @@ pub mod rules {
         >;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#NonAtomic<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#NonAtomic<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#NonAtomic<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#NonAtomic<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -291,40 +291,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::Str<super::wrapper::W4>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#ExactString<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#ExactString<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ExactString;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#ExactString<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#ExactString<'i> {
         type Inner = super::generics::Str<super::wrapper::W4>;
         type Content = super::generics::Str<super::wrapper::W4>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#ExactString<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#ExactString<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#ExactString<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#ExactString<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -334,40 +334,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::CharRange<'0', '9'>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#CharRange<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#CharRange<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#CharRange;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#CharRange<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#CharRange<'i> {
         type Inner = super::generics::CharRange<'0', '9'>;
         type Content = super::generics::CharRange<'0', '9'>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#CharRange<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#CharRange<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#CharRange<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#CharRange<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -377,40 +377,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::r#any,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Any<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Any<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Any;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Any<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Any<'i> {
         type Inner = super::generics::r#any;
         type Content = super::generics::r#any;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Any<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Any<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Any<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Any<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -427,13 +427,13 @@ pub mod rules {
             1u8,
         >,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Seq<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Seq<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Seq;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Seq<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Seq<'i> {
         type Inner = super::generics::Sequence3<
             super::generics::Str<super::wrapper::W5>,
             0u8,
@@ -452,29 +452,29 @@ pub mod rules {
         >;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Seq<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Seq<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Seq<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Seq<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -482,7 +482,7 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Choice<'i> {
         #[doc = r" Matched structure."]
-        pub content: ::pest::std::Box<
+        pub content: ::pest3::std::Box<
             super::generics::Choice9<
                 super::generics::Str<super::wrapper::W7>,
                 super::generics::Sequence2<
@@ -510,13 +510,13 @@ pub mod rules {
             >,
         >,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Choice<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Choice<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Choice;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Choice<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Choice<'i> {
         type Inner = super::generics::Choice9<
             super::generics::Str<super::wrapper::W7>,
             super::generics::Sequence2<
@@ -542,7 +542,7 @@ pub mod rules {
             super::rules::r#Drop<'i>,
             super::rules::r#PeekAll<'i>,
         >;
-        type Content = ::pest::std::Box<
+        type Content = ::pest3::std::Box<
             super::generics::Choice9<
                 super::generics::Str<super::wrapper::W7>,
                 super::generics::Sequence2<
@@ -571,29 +571,29 @@ pub mod rules {
         >;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Choice<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Choice<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Choice<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Choice<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -603,40 +603,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0u8>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Rep<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Rep<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Rep;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Rep<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Rep<'i> {
         type Inner = super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0u8>;
         type Content = super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0u8>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Rep<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Rep<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Rep<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Rep<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -646,40 +646,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#RepAtLeastOnce<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#RepAtLeastOnce<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepAtLeastOnce;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#RepAtLeastOnce<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepAtLeastOnce<'i> {
         type Inner = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
         type Content = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepAtLeastOnce<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepAtLeastOnce<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#RepAtLeastOnce<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepAtLeastOnce<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -687,42 +687,42 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Opt<'i> {
         #[doc = r" Matched structure."]
-        pub content: ::pest::std::Option<super::generics::Str<super::wrapper::W10>>,
+        pub content: ::pest3::std::Option<super::generics::Str<super::wrapper::W10>>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Opt<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Opt<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Opt;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Opt<'i> {
-        type Inner = ::pest::std::Option<super::generics::Str<super::wrapper::W10>>;
-        type Content = ::pest::std::Option<super::generics::Str<super::wrapper::W10>>;
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Opt<'i> {
+        type Inner = ::pest3::std::Option<super::generics::Str<super::wrapper::W10>>;
+        type Content = ::pest3::std::Option<super::generics::Str<super::wrapper::W10>>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Opt<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Opt<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Opt<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Opt<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -733,42 +733,42 @@ pub mod rules {
         pub content:
             super::generics::RepMinMax<super::rules::r#RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#RepExact<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#RepExact<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepExact;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#RepExact<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepExact<'i> {
         type Inner =
             super::generics::RepMinMax<super::rules::r#RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
         type Content =
             super::generics::RepMinMax<super::rules::r#RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepExact<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepExact<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#RepExact<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepExact<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -778,40 +778,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::RepMin<super::rules::r#RepExact<'i>, 0u8, 1usize>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#RepLeft<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#RepLeft<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepLeft;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#RepLeft<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepLeft<'i> {
         type Inner = super::generics::RepMin<super::rules::r#RepExact<'i>, 0u8, 1usize>;
         type Content = super::generics::RepMin<super::rules::r#RepExact<'i>, 0u8, 1usize>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepLeft<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepLeft<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#RepLeft<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepLeft<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -821,40 +821,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::RepMax<super::rules::r#RepLeft<'i>, 0u8, 2usize>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#RepRight<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#RepRight<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepRight;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#RepRight<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepRight<'i> {
         type Inner = super::generics::RepMax<super::rules::r#RepLeft<'i>, 0u8, 2usize>;
         type Content = super::generics::RepMax<super::rules::r#RepLeft<'i>, 0u8, 2usize>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepRight<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepRight<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#RepRight<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepRight<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -864,41 +864,41 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::RepMinMax<super::rules::r#RepRight<'i>, 0u8, 1usize, 2usize>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#RepLeftRight<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#RepLeftRight<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepLeftRight;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#RepLeftRight<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepLeftRight<'i> {
         type Inner = super::generics::RepMinMax<super::rules::r#RepRight<'i>, 0u8, 1usize, 2usize>;
         type Content =
             super::generics::RepMinMax<super::rules::r#RepRight<'i>, 0u8, 1usize, 2usize>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#RepLeftRight<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepLeftRight<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#RepLeftRight<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepLeftRight<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -915,13 +915,13 @@ pub mod rules {
             >,
         >,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Pos<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Pos<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Pos;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Pos<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Pos<'i> {
         type Inner = super::generics::Positive<
             super::generics::Sequence2<
                 super::generics::r#SOI,
@@ -940,29 +940,29 @@ pub mod rules {
         >;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Pos<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Pos<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Pos<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Pos<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -974,13 +974,13 @@ pub mod rules {
             super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::r#Pos<'i>, 1u8>,
         >,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Neg<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Neg<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Neg;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Neg<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Neg<'i> {
         type Inner = super::generics::Negative<
             super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::r#Pos<'i>, 1u8>,
         >;
@@ -989,29 +989,29 @@ pub mod rules {
         >;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Neg<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Neg<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Neg<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Neg<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -1019,7 +1019,7 @@ pub mod rules {
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct r#Push<'i> {
         #[doc = r" Matched structure."]
-        pub content: ::pest::std::Box<
+        pub content: ::pest3::std::Box<
             super::generics::r#push<
                 super::generics::Sequence7<
                     super::generics::Rep<super::rules::r#RepLeft<'i>, 0u8>,
@@ -1040,13 +1040,13 @@ pub mod rules {
             >,
         >,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Push<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Push<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Push;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Push<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Push<'i> {
         type Inner = super::generics::r#push<
             super::generics::Sequence7<
                 super::generics::Rep<super::rules::r#RepLeft<'i>, 0u8>,
@@ -1065,7 +1065,7 @@ pub mod rules {
                 1u8,
             >,
         >;
-        type Content = ::pest::std::Box<
+        type Content = ::pest3::std::Box<
             super::generics::r#push<
                 super::generics::Sequence7<
                     super::generics::Rep<super::rules::r#RepLeft<'i>, 0u8>,
@@ -1087,29 +1087,29 @@ pub mod rules {
         >;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Push<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Push<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Push<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Push<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -1119,40 +1119,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::r#pop<'i>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Pop<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Pop<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Pop;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Pop<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Pop<'i> {
         type Inner = super::generics::r#pop<'i>;
         type Content = super::generics::r#pop<'i>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Pop<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Pop<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Pop<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Pop<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -1162,40 +1162,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::r#pop_all<'i>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#PopAll<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#PopAll<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PopAll;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#PopAll<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PopAll<'i> {
         type Inner = super::generics::r#pop_all<'i>;
         type Content = super::generics::r#pop_all<'i>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PopAll<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PopAll<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#PopAll<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PopAll<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -1205,40 +1205,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::r#peek<'i>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Peek<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Peek<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Peek;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Peek<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Peek<'i> {
         type Inner = super::generics::r#peek<'i>;
         type Content = super::generics::r#peek<'i>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Peek<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Peek<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Peek<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Peek<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -1248,40 +1248,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::PeekSlice1<0isize>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#PeekUnlimited<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#PeekUnlimited<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekUnlimited;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#PeekUnlimited<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekUnlimited<'i> {
         type Inner = super::generics::PeekSlice1<0isize>;
         type Content = super::generics::PeekSlice1<0isize>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekUnlimited<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekUnlimited<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#PeekUnlimited<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekUnlimited<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -1291,40 +1291,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::PeekSlice1<1isize>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#PeekLeft<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#PeekLeft<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekLeft;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#PeekLeft<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekLeft<'i> {
         type Inner = super::generics::PeekSlice1<1isize>;
         type Content = super::generics::PeekSlice1<1isize>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekLeft<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekLeft<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#PeekLeft<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekLeft<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -1334,40 +1334,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::PeekSlice1<0isize>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#PeekRight<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#PeekRight<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekRight;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#PeekRight<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekRight<'i> {
         type Inner = super::generics::PeekSlice1<0isize>;
         type Content = super::generics::PeekSlice1<0isize>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekRight<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekRight<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#PeekRight<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekRight<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -1377,40 +1377,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::PeekSlice2<1isize, 2isize>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#PeekLeftRight<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#PeekLeftRight<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekLeftRight;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#PeekLeftRight<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekLeftRight<'i> {
         type Inner = super::generics::PeekSlice2<1isize, 2isize>;
         type Content = super::generics::PeekSlice2<1isize, 2isize>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekLeftRight<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekLeftRight<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#PeekLeftRight<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekLeftRight<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -1420,40 +1420,40 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::r#drop,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#Drop<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#Drop<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Drop;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#Drop<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Drop<'i> {
         type Inner = super::generics::r#drop;
         type Content = super::generics::r#drop;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#Drop<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Drop<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#Drop<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Drop<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
@@ -1463,52 +1463,52 @@ pub mod rules {
         #[doc = r" Matched structure."]
         pub content: super::generics::r#peek_all<'i>,
         #[doc = r" Matched span."]
-        pub span: ::pest::Span<'i>,
+        pub span: ::pest3::Span<'i>,
     }
-    impl<'i> ::pest::typed::wrapper::Rule for r#PeekAll<'i> {
+    impl<'i> ::pest3::typed::wrapper::Rule for r#PeekAll<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekAll;
     }
-    impl<'i> ::pest::typed::FullRuleStruct<'i> for r#PeekAll<'i> {
+    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekAll<'i> {
         type Inner = super::generics::r#peek_all<'i>;
         type Content = super::generics::r#peek_all<'i>;
         #[inline]
         fn new(
-            content: <Self as ::pest::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest::Span<'i>,
+            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
+            span: ::pest3::Span<'i>,
         ) -> Self {
             Self { content, span }
         }
     }
-    impl<'i> ::pest::typed::PairContainer<super::Rule> for r#PeekAll<'i> {
+    impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekAll<'i> {
         fn for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
             self.content.for_self_or_for_each_child_pair(f)
         }
         fn for_self_or_for_each_child_pair(
             &self,
-            f: &mut impl ::pest::std::FnMut(::pest::token::Pair<super::Rule>),
+            f: &mut impl ::pest3::std::FnMut(::pest3::token::Pair<super::Rule>),
         ) {
-            use pest::typed::PairTree;
+            use pest3::typed::PairTree;
             f(self.as_pair_tree())
         }
     }
-    impl<'i> ::pest::typed::PairTree<super::Rule> for r#PeekAll<'i> {
-        fn get_span(&self) -> (::pest::std::usize, ::pest::std::usize) {
+    impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekAll<'i> {
+        fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
 }
 #[doc = "Used generics."]
 pub mod generics {
-    pub use pest::choice::Choice9;
-    pub use pest::sequence::Sequence2;
-    pub use pest::sequence::Sequence3;
-    pub use pest::sequence::Sequence4;
-    pub use pest::sequence::Sequence7;
-    pub use pest::typed::template::{
+    pub use pest3::choice::Choice9;
+    pub use pest3::sequence::Sequence2;
+    pub use pest3::sequence::Sequence3;
+    pub use pest3::sequence::Sequence4;
+    pub use pest3::sequence::Sequence7;
+    pub use pest3::typed::template::{
         CharRange, Insens, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin,
         RepMinMax, RepOnce, Str, ANY as any, DROP as drop, EOI, EOI as eoi, PEEK as peek,
         PEEK_ALL as peek_all, POP as pop, POP_ALL as pop_all, PUSH as push, SOI, SOI as soi,
