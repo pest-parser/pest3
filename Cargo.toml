@@ -4,11 +4,12 @@ resolver = "2"
 
 package.authors = ["Dragoș Tiselice <dragostiselice@gmail.com>"]
 package.edition = "2021"
-package.version = "0.1.0"
+package.version = "0.0.0-prealpha0"
 
 [workspace.dependencies]
-pest = { path = "./pest" }
-pest_meta = { path = "./meta" }
-pest_generator = { path = "./generator" }
+pest3 = { path = "./pest", package = "pest3" }
+pest3_meta = { path = "./meta", package = "pest3_meta" }
+pest3_generator = { path = "./generator", package = "pest3_generator" }
 unicode-width = { version = "0.1.11" }
-pest2 = { version = "2.7.6", package = "pest" }
+pest2 = { version = "2.7.8", package = "pest" }
+pest2_derive =  { version = "2.7.8", package = "pest_derive" }

@@ -3,7 +3,7 @@ use quote::quote;
 
 pub fn pest() -> TokenStream {
     quote! {
-        ::pest
+        ::pest3
     }
 }
 pub fn _str() -> TokenStream {

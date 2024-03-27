@@ -6,7 +6,7 @@ extern crate alloc;
 
 #[cfg(test)]
 mod tests {
-    use pest::{
+    use pest3::{
         choice::Choice2,
         typed::{
             template::*,
