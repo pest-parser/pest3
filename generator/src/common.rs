@@ -1,6 +1,6 @@
 //! Some common codes that most backends will use.
 
-use pest_meta::{doc::DocComment, parser::ParseRule};
+use pest3_meta::{doc::DocComment, parser::ParseRule};
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::path::PathBuf;

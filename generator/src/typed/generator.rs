@@ -10,7 +10,7 @@ use crate::{
     types::option_type,
     types::pest,
 };
-use pest_meta::{
+use pest3_meta::{
     doc::DocComment,
     error::rename_meta_rule,
     parser::{self, fmt_sep, ParseExpr, ParseNode, ParseRule, PathArgs, Range, Trivia},
@@ -620,7 +620,7 @@ pub fn derive_typed_parser(
 mod tests {
     use super::*;
     use lazy_static::lazy_static;
-    use pest_meta::{
+    use pest3_meta::{
         doc::DocComment,
         parser::{self, ParseRule},
     };

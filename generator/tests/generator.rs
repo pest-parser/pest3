@@ -1,4 +1,4 @@
-use pest_generator::typed::derive_typed_parser;
+use pest3_generator::typed::derive_typed_parser;
 use quote::quote;
 
 /// Use a script to format generated codes if changed.

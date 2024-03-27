@@ -4,7 +4,7 @@
 /// Grammar rules of a sample JSON parser
 #[allow(missing_docs)]
 pub mod json {
-    use pest_derive::Parser;
+    use pest3_derive::Parser;
 
     /// JSON parser.
     #[derive(Parser)]
@@ -14,7 +14,7 @@ pub mod json {
 
 #[cfg(test)]
 mod tests {
-    use pest::typed::{PairContainer, TypedParser};
+    use pest3::typed::{PairContainer, TypedParser};
 
     use crate::{json, json::generics::*};
     #[test]

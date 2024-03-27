@@ -11,11 +11,11 @@
 //! and modified.
 //! Overridden the macro [`parses_to`].
 
-use pest::{
+use pest3::{
     token::Pair,
     typed::{PairTree, TypedNode},
 };
-use pest_derive::Parser;
+use pest3_derive::Parser;
 
 #[derive(Parser)]
 #[grammar = "tests/grammar.pest"]

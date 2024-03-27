@@ -13,5 +13,5 @@ use proc_macro::TokenStream;
     )
 )]
 pub fn derive_typed_parser(input: TokenStream) -> TokenStream {
-    pest_generator::typed::derive_typed_parser(input.into(), true, true).into()
+    pest3_generator::typed::derive_typed_parser(input.into(), true, true).into()
 }

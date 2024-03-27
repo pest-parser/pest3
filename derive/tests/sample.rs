@@ -1,7 +1,7 @@
 #![allow(unused_variables)]
 use anyhow::Result;
-use pest::typed::TypedNode as _;
-use pest_derive::Parser;
+use pest3::typed::TypedNode as _;
+use pest3_derive::Parser;
 
 #[derive(Parser)]
 #[grammar = "../meta/tests/pest3sample.pest"]

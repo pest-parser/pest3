@@ -2,8 +2,8 @@ use super::{
     generator::{ProcessedPathArgs, RuleRef},
     output::generics,
 };
-use pest::unicode::unicode_property_names;
-use pest_meta::parser::ParseRule;
+use pest3::unicode::unicode_property_names;
+use pest3_meta::parser::ParseRule;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::{
@@ -232,6 +232,7 @@ impl<'g> ModuleSystem<'g> {
             ("stack", Rc::new(ModuleNode::Collection(pest_stack))),
             ("unicode", Rc::new(pest_unicode)),
         ]);
+        // FIXME: make "pest" paths to refer to pest3 crate for the moment
         let root = ModuleNode::Collection(HashMap::from([(
             "pest",
             Rc::new(ModuleNode::Collection(pest)),
