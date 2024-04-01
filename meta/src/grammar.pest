@@ -11,7 +11,7 @@ grammar_rules = _{
 	SOI ~ grammar_doc* ~ import* ~ grammar_rule ~ (import | grammar_rule)* ~ EOI
 }
 
-import = { "use" ~ path ~ ("as" ~ identifier)? }
+import = { "use" ~ path ~ ("in" ~ string)? ~ ("as" ~ identifier)? }
 
 grammar_rule = {
     rule_doc* ~

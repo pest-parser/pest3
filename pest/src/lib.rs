@@ -42,7 +42,7 @@ macro_rules! unicode {
             fn try_parse_with_partial(
                 mut input: $crate::Position<'i>,
                 _stack: &mut $crate::Stack<$crate::Span<'i>>,
-                tracker: &mut $crate::typed::Tracker<'i, R>,
+                _tracker: &mut $crate::typed::Tracker<'i, R>,
             ) -> $crate::std::Option<($crate::Position<'i>, Self)> {
                 match $crate::typed::template::match_char_by(&mut input, $crate::unicode::$property)
                 {
@@ -54,7 +54,7 @@ macro_rules! unicode {
             fn check_with_partial(
                 mut input: $crate::Position<'i>,
                 _stack: &mut $crate::Stack<$crate::Span<'i>>,
-                tracker: &mut $crate::typed::Tracker<'i, R>,
+                _tracker: &mut $crate::typed::Tracker<'i, R>,
             ) -> $crate::std::Option<$crate::Position<'i>> {
                 match $crate::typed::template::match_char_by(&mut input, $crate::unicode::$property)
                 {

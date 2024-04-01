@@ -44,9 +44,8 @@ pub(crate) fn get_bool(attr: &Attribute, flag: &str) -> bool {
     }
 }
 
-pub(crate) fn collect_data(contents: Vec<GrammarSource>) -> (String, Vec<PathBuf>) {
-    let mut data = String::new();
-    let mut paths = vec![];
+pub(crate) fn collect_data(contents: Vec<GrammarSource>) -> Vec<(String, Option<PathBuf>)> {
+    let mut res = vec![];
 
     for content in contents {
         let (_data, _path) = match content {
@@ -81,11 +80,8 @@ pub(crate) fn collect_data(contents: Vec<GrammarSource>) -> (String, Vec<PathBuf
             GrammarSource::Inline(content) => (content, None),
         };
 
-        data.push_str(&_data);
-        if let Some(path) = _path {
-            paths.push(path);
-        }
+        res.push((_data, _path));
     }
 
-    (data, paths)
+    res
 }

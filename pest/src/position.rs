@@ -52,7 +52,7 @@ impl<'i> Position<'i> {
     ///
     /// # Examples
     /// ```
-    /// # use pest::Position;
+    /// # use pest2::Position;
     /// let cheart = '💖';
     /// let heart = "💖";
     /// assert_eq!(Position::new(heart, 1), None);
@@ -67,7 +67,7 @@ impl<'i> Position<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use pest2::Position;
     /// let start = Position::from_start("");
     /// assert_eq!(start.pos(), 0);
     /// ```
@@ -82,7 +82,7 @@ impl<'i> Position<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use pest2::Position;
     /// let input = "ab";
     /// let mut start = Position::from_start(input);
     ///
@@ -102,7 +102,7 @@ impl<'i> Position<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use pest2::Position;
     /// let input = "ab";
     /// let start = Position::from_start(input);
     /// let span = start.span(&start.clone());
@@ -131,7 +131,7 @@ impl<'i> Position<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use pest2;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -191,7 +191,6 @@ impl<'i> Position<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}

@@ -122,16 +122,19 @@ mod wrapper {
 pub mod rules {
     #[doc = "Generated for rule `Regular`. Grammar: `'0'..'9'+`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Regular<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Regular<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Regular;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Regular<'i> {
         type Inner = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
         type Content = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
@@ -143,6 +146,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Regular<'i> {
         fn for_each_child_pair(
             &self,
@@ -158,6 +162,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Regular<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -165,6 +170,7 @@ pub mod rules {
     }
     #[doc = "Generated for rule `Atomic`. Grammar: `(CharRange+ ~ (\"+\" ~ CharRange+))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Atomic<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::Sequence3<
@@ -178,10 +184,12 @@ pub mod rules {
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Atomic<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Atomic;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Atomic<'i> {
         type Inner = super::generics::Sequence3<
             super::generics::RepOnce<super::rules::r#CharRange<'i>, 0u8>,
@@ -207,6 +215,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Atomic<'i> {
         fn for_each_child_pair(
             &self,
@@ -222,6 +231,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Atomic<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -229,6 +239,7 @@ pub mod rules {
     }
     #[doc = "Generated for rule `NonAtomic`. Grammar: `(\"(\" ^ \")\")`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#NonAtomic<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::Sequence2<
@@ -240,10 +251,12 @@ pub mod rules {
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#NonAtomic<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#NonAtomic;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#NonAtomic<'i> {
         type Inner = super::generics::Sequence2<
             super::generics::Str<super::wrapper::W2>,
@@ -265,6 +278,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#NonAtomic<'i> {
         fn for_each_child_pair(
             &self,
@@ -280,6 +294,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#NonAtomic<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -287,16 +302,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `ExactString`. Grammar: `\"r#\"`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#ExactString<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::Str<super::wrapper::W4>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#ExactString<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ExactString;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#ExactString<'i> {
         type Inner = super::generics::Str<super::wrapper::W4>;
         type Content = super::generics::Str<super::wrapper::W4>;
@@ -308,6 +326,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#ExactString<'i> {
         fn for_each_child_pair(
             &self,
@@ -323,6 +342,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#ExactString<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -330,16 +350,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `CharRange`. Grammar: `'0'..'9'`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#CharRange<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::CharRange<'0', '9'>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#CharRange<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#CharRange;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#CharRange<'i> {
         type Inner = super::generics::CharRange<'0', '9'>;
         type Content = super::generics::CharRange<'0', '9'>;
@@ -351,6 +374,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#CharRange<'i> {
         fn for_each_child_pair(
             &self,
@@ -366,6 +390,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#CharRange<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -373,16 +398,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `Any`. Grammar: `pest::any`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Any<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::r#any,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Any<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Any;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Any<'i> {
         type Inner = super::generics::r#any;
         type Content = super::generics::r#any;
@@ -394,6 +422,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Any<'i> {
         fn for_each_child_pair(
             &self,
@@ -409,6 +438,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Any<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -416,6 +446,7 @@ pub mod rules {
     }
     #[doc = "Generated for rule `Seq`. Grammar: `(\"1\" ~ ('2'..'9' ~ \".\"))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Seq<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::Sequence3<
@@ -429,10 +460,12 @@ pub mod rules {
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Seq<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Seq;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Seq<'i> {
         type Inner = super::generics::Sequence3<
             super::generics::Str<super::wrapper::W5>,
@@ -458,6 +491,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Seq<'i> {
         fn for_each_child_pair(
             &self,
@@ -473,6 +507,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Seq<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -480,6 +515,7 @@ pub mod rules {
     }
     #[doc = "Generated for rule `Choice`. Grammar: `(\"a\" | ((\"b\"+ ~ RepAtLeastOnce) | ((&\"c\" ~ (Choice ~ (Rep ~ Opt))) | (Peek | (PeekLeft | (PeekRight | (PeekLeftRight | (Drop | PeekAll))))))))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Choice<'i> {
         #[doc = r" Matched structure."]
         pub content: ::pest3::std::Box<
@@ -512,10 +548,12 @@ pub mod rules {
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Choice<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Choice;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Choice<'i> {
         type Inner = super::generics::Choice9<
             super::generics::Str<super::wrapper::W7>,
@@ -577,6 +615,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Choice<'i> {
         fn for_each_child_pair(
             &self,
@@ -592,6 +631,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Choice<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -599,16 +639,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `Rep`. Grammar: `\"b\"*`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Rep<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0u8>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Rep<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Rep;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Rep<'i> {
         type Inner = super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0u8>;
         type Content = super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0u8>;
@@ -620,6 +663,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Rep<'i> {
         fn for_each_child_pair(
             &self,
@@ -635,6 +679,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Rep<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -642,16 +687,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `RepAtLeastOnce`. Grammar: `'0'..'9'+`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#RepAtLeastOnce<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#RepAtLeastOnce<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepAtLeastOnce;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepAtLeastOnce<'i> {
         type Inner = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
         type Content = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
@@ -663,6 +711,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepAtLeastOnce<'i> {
         fn for_each_child_pair(
             &self,
@@ -678,6 +727,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepAtLeastOnce<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -685,16 +735,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `Opt`. Grammar: `\"?\"?`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Opt<'i> {
         #[doc = r" Matched structure."]
         pub content: ::pest3::std::Option<super::generics::Str<super::wrapper::W10>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Opt<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Opt;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Opt<'i> {
         type Inner = ::pest3::std::Option<super::generics::Str<super::wrapper::W10>>;
         type Content = ::pest3::std::Option<super::generics::Str<super::wrapper::W10>>;
@@ -706,6 +759,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Opt<'i> {
         fn for_each_child_pair(
             &self,
@@ -721,6 +775,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Opt<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -728,6 +783,7 @@ pub mod rules {
     }
     #[doc = "Generated for rule `RepExact`. Grammar: `RepAtLeastOnce[3..3]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#RepExact<'i> {
         #[doc = r" Matched structure."]
         pub content:
@@ -735,10 +791,12 @@ pub mod rules {
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#RepExact<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepExact;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepExact<'i> {
         type Inner =
             super::generics::RepMinMax<super::rules::r#RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
@@ -752,6 +810,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepExact<'i> {
         fn for_each_child_pair(
             &self,
@@ -767,6 +826,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepExact<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -774,16 +834,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `RepLeft`. Grammar: `RepExact[1..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#RepLeft<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::RepMin<super::rules::r#RepExact<'i>, 0u8, 1usize>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#RepLeft<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepLeft;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepLeft<'i> {
         type Inner = super::generics::RepMin<super::rules::r#RepExact<'i>, 0u8, 1usize>;
         type Content = super::generics::RepMin<super::rules::r#RepExact<'i>, 0u8, 1usize>;
@@ -795,6 +858,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepLeft<'i> {
         fn for_each_child_pair(
             &self,
@@ -810,6 +874,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepLeft<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -817,16 +882,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `RepRight`. Grammar: `RepLeft[..2]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#RepRight<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::RepMax<super::rules::r#RepLeft<'i>, 0u8, 2usize>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#RepRight<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepRight;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepRight<'i> {
         type Inner = super::generics::RepMax<super::rules::r#RepLeft<'i>, 0u8, 2usize>;
         type Content = super::generics::RepMax<super::rules::r#RepLeft<'i>, 0u8, 2usize>;
@@ -838,6 +906,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepRight<'i> {
         fn for_each_child_pair(
             &self,
@@ -853,6 +922,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepRight<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -860,16 +930,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `RepLeftRight`. Grammar: `RepRight[1..2]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#RepLeftRight<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::RepMinMax<super::rules::r#RepRight<'i>, 0u8, 1usize, 2usize>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#RepLeftRight<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepLeftRight;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepLeftRight<'i> {
         type Inner = super::generics::RepMinMax<super::rules::r#RepRight<'i>, 0u8, 1usize, 2usize>;
         type Content =
@@ -882,6 +955,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepLeftRight<'i> {
         fn for_each_child_pair(
             &self,
@@ -897,6 +971,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepLeftRight<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -904,6 +979,7 @@ pub mod rules {
     }
     #[doc = "Generated for rule `Pos`. Grammar: `&(pest::SOI ~ RepLeftRight[2..4])`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Pos<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::Positive<
@@ -917,10 +993,12 @@ pub mod rules {
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Pos<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Pos;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Pos<'i> {
         type Inner = super::generics::Positive<
             super::generics::Sequence2<
@@ -946,6 +1024,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Pos<'i> {
         fn for_each_child_pair(
             &self,
@@ -961,6 +1040,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Pos<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -968,6 +1048,7 @@ pub mod rules {
     }
     #[doc = "Generated for rule `Neg`. Grammar: `!(pest::EOI ~ Pos)`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Neg<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::Negative<
@@ -976,10 +1057,12 @@ pub mod rules {
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Neg<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Neg;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Neg<'i> {
         type Inner = super::generics::Negative<
             super::generics::Sequence2<super::generics::r#EOI, 0u8, super::rules::r#Pos<'i>, 1u8>,
@@ -995,6 +1078,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Neg<'i> {
         fn for_each_child_pair(
             &self,
@@ -1010,6 +1094,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Neg<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1017,6 +1102,7 @@ pub mod rules {
     }
     #[doc = "Generated for rule `Push`. Grammar: `pest::stack::push((RepLeft* ~ (Neg ~ (ExactString+ ~ (Push ~ (Pop ~ (Push ~ PopAll)))))))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Push<'i> {
         #[doc = r" Matched structure."]
         pub content: ::pest3::std::Box<
@@ -1042,10 +1128,12 @@ pub mod rules {
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Push<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Push;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Push<'i> {
         type Inner = super::generics::r#push<
             super::generics::Sequence7<
@@ -1093,6 +1181,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Push<'i> {
         fn for_each_child_pair(
             &self,
@@ -1108,6 +1197,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Push<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1115,16 +1205,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `Pop`. Grammar: `pest::stack::pop`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Pop<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::r#pop<'i>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Pop<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Pop;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Pop<'i> {
         type Inner = super::generics::r#pop<'i>;
         type Content = super::generics::r#pop<'i>;
@@ -1136,6 +1229,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Pop<'i> {
         fn for_each_child_pair(
             &self,
@@ -1151,6 +1245,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Pop<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1158,16 +1253,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `PopAll`. Grammar: `pest::stack::pop_all`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#PopAll<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::r#pop_all<'i>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#PopAll<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PopAll;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PopAll<'i> {
         type Inner = super::generics::r#pop_all<'i>;
         type Content = super::generics::r#pop_all<'i>;
@@ -1179,6 +1277,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PopAll<'i> {
         fn for_each_child_pair(
             &self,
@@ -1194,6 +1293,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PopAll<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1201,16 +1301,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `Peek`. Grammar: `pest::stack::peek`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Peek<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::r#peek<'i>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Peek<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Peek;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Peek<'i> {
         type Inner = super::generics::r#peek<'i>;
         type Content = super::generics::r#peek<'i>;
@@ -1222,6 +1325,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Peek<'i> {
         fn for_each_child_pair(
             &self,
@@ -1237,6 +1341,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Peek<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1244,16 +1349,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `PeekUnlimited`. Grammar: `pest::stack::peek[..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#PeekUnlimited<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::PeekSlice1<0isize>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#PeekUnlimited<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekUnlimited;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekUnlimited<'i> {
         type Inner = super::generics::PeekSlice1<0isize>;
         type Content = super::generics::PeekSlice1<0isize>;
@@ -1265,6 +1373,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekUnlimited<'i> {
         fn for_each_child_pair(
             &self,
@@ -1280,6 +1389,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekUnlimited<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1287,16 +1397,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `PeekLeft`. Grammar: `pest::stack::peek[1..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#PeekLeft<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::PeekSlice1<1isize>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#PeekLeft<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekLeft;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekLeft<'i> {
         type Inner = super::generics::PeekSlice1<1isize>;
         type Content = super::generics::PeekSlice1<1isize>;
@@ -1308,6 +1421,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekLeft<'i> {
         fn for_each_child_pair(
             &self,
@@ -1323,6 +1437,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekLeft<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1330,16 +1445,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `PeekRight`. Grammar: `pest::stack::peek[..]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#PeekRight<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::PeekSlice1<0isize>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#PeekRight<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekRight;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekRight<'i> {
         type Inner = super::generics::PeekSlice1<0isize>;
         type Content = super::generics::PeekSlice1<0isize>;
@@ -1351,6 +1469,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekRight<'i> {
         fn for_each_child_pair(
             &self,
@@ -1366,6 +1485,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekRight<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1373,16 +1493,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `PeekLeftRight`. Grammar: `pest::stack::peek[1..2]`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#PeekLeftRight<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::PeekSlice2<1isize, 2isize>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#PeekLeftRight<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekLeftRight;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekLeftRight<'i> {
         type Inner = super::generics::PeekSlice2<1isize, 2isize>;
         type Content = super::generics::PeekSlice2<1isize, 2isize>;
@@ -1394,6 +1517,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekLeftRight<'i> {
         fn for_each_child_pair(
             &self,
@@ -1409,6 +1533,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekLeftRight<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1416,16 +1541,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `Drop`. Grammar: `pest::stack::drop`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#Drop<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::r#drop,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#Drop<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Drop;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Drop<'i> {
         type Inner = super::generics::r#drop;
         type Content = super::generics::r#drop;
@@ -1437,6 +1565,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Drop<'i> {
         fn for_each_child_pair(
             &self,
@@ -1452,6 +1581,7 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Drop<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1459,16 +1589,19 @@ pub mod rules {
     }
     #[doc = "Generated for rule `PeekAll`. Grammar: `pest::stack::peek_all`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
     pub struct r#PeekAll<'i> {
         #[doc = r" Matched structure."]
         pub content: super::generics::r#peek_all<'i>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::wrapper::Rule for r#PeekAll<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekAll;
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekAll<'i> {
         type Inner = super::generics::r#peek_all<'i>;
         type Content = super::generics::r#peek_all<'i>;
@@ -1480,6 +1613,7 @@ pub mod rules {
             Self { content, span }
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekAll<'i> {
         fn for_each_child_pair(
             &self,
@@ -1495,12 +1629,14 @@ pub mod rules {
             f(self.as_pair_tree())
         }
     }
+    #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekAll<'i> {
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
     }
 }
+pub use pest3::typed::unicode;
 #[doc = "Used generics."]
 pub mod generics {
     pub use pest3::choice::Choice9;
@@ -1510,7 +1646,12 @@ pub mod generics {
     pub use pest3::sequence::Sequence7;
     pub use pest3::typed::template::{
         CharRange, Insens, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin,
-        RepMinMax, RepOnce, Str, ANY as any, DROP as drop, EOI, EOI as eoi, PEEK as peek,
-        PEEK_ALL as peek_all, POP as pop, POP_ALL as pop_all, PUSH as push, SOI, SOI as soi,
+        RepMinMax, RepOnce, Str, ANY as any, ASCII as ascii, ASCII_ALPHA as ascii_alpha,
+        ASCII_ALPHANUMERIC as ascii_alphanumeric, ASCII_ALPHA_LOWER as ascii_alpha_lower,
+        ASCII_ALPHA_UPPER as ascii_alpha_upper, ASCII_BIN_DIGIT as ascii_bin_digit,
+        ASCII_DIGIT as ascii_digit, ASCII_HEX_DIGIT as ascii_hex_digit,
+        ASCII_NONZERO_DIGIT as ascii_nonzero_digit, ASCII_OCT_DIGIT as ascii_oct_digit,
+        DROP as drop, EOI, EOI as eoi, NEWLINE as newline, PEEK as peek, PEEK_ALL as peek_all,
+        POP as pop, POP_ALL as pop_all, PUSH as push, SOI, SOI as soi,
     };
 }

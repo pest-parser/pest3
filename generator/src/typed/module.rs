@@ -1,16 +1,11 @@
 use super::{
-    generator::{ProcessedPathArgs, RuleRef},
+    generator::{Intermediate, ProcessedPathArgs, RuleRef},
     output::generics,
 };
-use pest3::unicode::unicode_property_names;
 use pest3_meta::parser::ParseRule;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
-use std::{
-    cell::RefCell,
-    collections::{btree_map::Keys, BTreeMap, HashMap, HashSet},
-    rc::Rc,
-};
+use std::{collections::HashMap, rc::Rc};
 
 #[derive(Clone, Debug)]
 pub enum RuleGenerics {
@@ -42,16 +37,25 @@ impl RuleGenerics {
         rule_ref: &RuleRef<'_>,
         args: Option<&ProcessedPathArgs>,
         root: &TokenStream,
-    ) -> TokenStream {
+    ) -> Intermediate {
         let generics = generics();
         let name = format_ident!("r#{}", name);
         match self {
             Self::Rule { argc } => match (argc, args) {
                 (0, None) => {
-                    quote! { #root::rules::#name::<'i> }
+                    let typename = quote! { #root::rules::#name::<'i> };
+                    Intermediate { typename }
                 }
-                (0, Some(_args)) => {
-                    panic!("Unexpected arguments in `{}`.", rule_ref,);
+                (0, Some(ProcessedPathArgs::Call(args))) => {
+                    if args.len() > 0 {
+                        panic!("Unexpected arguments in `{}`.", rule_ref,);
+                    } else {
+                        let typename = quote! { #root::rules::#name::<'i> };
+                        Intermediate { typename }
+                    }
+                }
+                (0, Some(ProcessedPathArgs::Slice(slice))) => {
+                    panic!("Unexpected slice argument {} in `{}`.", slice, rule_ref,);
                 }
                 (argc, None) => {
                     panic!("Expect {argc} arguments in `{rule_ref}`.");
@@ -66,11 +70,13 @@ impl RuleGenerics {
                         "Argument count not matched in `{}`.",
                         rule_ref
                     );
-                    quote! { #root::rules::#name::<'i, #(#args, )*> }
+                    let typename = quote! { #root::rules::#name::<'i, #(#args, )*> };
+                    Intermediate { typename }
                 }
             },
             Self::Unicode(ident) => {
-                quote! { #root::rules::unicode::#ident }
+                let typename = quote! { #root::rules::unicode::#ident };
+                Intermediate { typename }
             }
             Self::BuiltIn {
                 direct,
@@ -81,10 +87,11 @@ impl RuleGenerics {
                     let (lifetime,) = direct.expect(&format!(
                         "Built-in rule {rule_ref} can't be called without arguments."
                     ));
-                    match lifetime {
+                    let typename = match lifetime {
                         true => quote! { #root::#generics::#name::<'i> },
                         false => quote! { #root::#generics::#name },
-                    }
+                    };
+                    Intermediate { typename }
                 }
                 Some(ProcessedPathArgs::Slice(range)) => {
                     let (slice1, slice2) = slice.as_ref().expect(&format!(
@@ -92,10 +99,11 @@ impl RuleGenerics {
                     ));
                     let start = range.start.unwrap_or(0);
                     let end = range.end;
-                    match end {
+                    let typename = match end {
                         Some(end) => quote! { #root::#generics::#slice2::<#start, #end> },
                         None => quote! { #root::#generics::#slice1::<#start> },
-                    }
+                    };
+                    Intermediate { typename }
                 }
                 Some(ProcessedPathArgs::Call(args)) => {
                     let (argc,) = callable.expect(&format!(
@@ -104,40 +112,37 @@ impl RuleGenerics {
                     if let Some(argc) = argc {
                         assert_eq!(args.len(), argc, "Argument count not matched.");
                     }
-                    quote! { #root::#generics::#name::< #( #args, )* > }
+                    let typename = quote! { #root::#generics::#name::< #( #args, )* > };
+                    Intermediate { typename }
                 }
             },
         }
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 enum ModuleNode<'g> {
-    // MutableCollection(RefCell<HashMap<&'g str, Rc<ModuleNode<'g>>>>),
     Collection(HashMap<&'g str, Rc<ModuleNode<'g>>>),
-    Map {
-        bound: HashSet<String>,
-        mapper: fn(&'g str) -> TokenStream,
-    },
     Generics(RuleGenerics),
+    Absolute(Rc<dyn Fn(&TokenStream) -> Intermediate>),
     Imported(Rc<Self>),
 }
 
 impl<'g> ModuleNode<'g> {
     /// [Err] here is actually not an error.
-    fn child(&self, node: &'g str) -> &Self {
+    fn child(&self, node: &'g str) -> Rc<Self> {
         match self {
-            Self::Collection(map) => map.get(node).unwrap_or_else(|| {
-                panic!(
-                    "Node {} can't be resolved. Available nodes are {:?}.",
-                    node,
-                    map.keys()
-                )
-            }),
-            Self::Map { bound, mapper } => {
-                assert!(bound.contains(node), "{node} is out of bound.");
-                panic!("No child found.")
-            }
+            Self::Collection(map) => map
+                .get(node)
+                .unwrap_or_else(|| {
+                    panic!(
+                        "Node {} can't be resolved. Available nodes are {:?}.",
+                        node,
+                        map.keys()
+                    )
+                })
+                .clone(),
+            Self::Absolute(f) => panic!("No child found."),
             Self::Generics(_generics) => panic!("No child found."),
             Self::Imported(rc) => rc.child(node),
         }
@@ -148,12 +153,17 @@ impl<'g> ModuleNode<'g> {
         node: &'g str,
         rule_ref: &RuleRef<'g>,
         args: &Option<ProcessedPathArgs>,
-    ) -> TokenStream {
+    ) -> Intermediate {
         match self {
             Self::Collection(map) => panic!("Collection can't be called."),
-            Self::Map { bound, mapper } => {
-                assert!(args.is_none(), "Unexpected arguments.");
-                mapper(node)
+            Self::Absolute(f) => {
+                let empty = match args {
+                    None => true,
+                    Some(ProcessedPathArgs::Call(args)) => args.is_empty(),
+                    _ => false,
+                };
+                assert!(empty);
+                f(root)
             }
             Self::Generics(generics) => generics.call(node, rule_ref, args.as_ref(), root),
             Self::Imported(rc) => rc.get(root, node, rule_ref, args),
@@ -164,13 +174,13 @@ impl<'g> ModuleNode<'g> {
 /// Module system for pest3.
 ///
 /// `'g` stands for the lifetime of grammar file content.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct ModuleSystem<'g> {
     root: ModuleNode<'g>,
 }
 
 impl<'g> ModuleSystem<'g> {
-    pub fn new() -> Self {
+    pub fn new(unicode_names: &'g [(impl AsRef<str>, impl AsRef<str>)]) -> Self {
         macro_rules! pest_direct {
             () => {
                 (false,)
@@ -213,22 +223,44 @@ impl<'g> ModuleSystem<'g> {
             pest_builtin!(pop {'i}),
             pest_builtin!(pop_all {'i}),
         ]);
-        let bound = HashSet::from_iter(unicode_property_names().map(|unicode| {
-            assert!(unicode.is_ascii());
-            // let ident = format_ident!("{}", unicode.to_ascii_lowercase());
-            unicode.to_ascii_lowercase()
-        }));
-        let mapper = |s: &'g str| {
-            let ident = format_ident!("{}", s.to_ascii_uppercase());
-            quote! {#ident}
-        };
-        let pest_unicode = ModuleNode::Map { bound, mapper };
+        let pest_unicode = ModuleNode::Collection(
+            unicode_names
+                .iter()
+                .map(|unicode| {
+                    let (lower, upper) = unicode;
+                    let lower = lower.as_ref();
+                    let upper = upper.as_ref();
+
+                    let name = lower;
+                    let ident = format_ident!("{}", upper);
+                    let node = ModuleNode::Absolute(Rc::new(move |root| {
+                        let typename = quote! { #root::unicode::#ident};
+                        Intermediate { typename }
+                    }));
+                    let node = Rc::new(node);
+                    (name, node)
+                })
+                .collect(),
+        );
         let pest = HashMap::from([
             pest_builtin!(SOI {}),
             pest_builtin!(EOI {}),
             pest_builtin!(soi {}),
             pest_builtin!(eoi {}),
             pest_builtin!(any {}),
+            // ASCII.
+            pest_builtin!(ascii_digit {}),
+            pest_builtin!(ascii_nonzero_digit {}),
+            pest_builtin!(ascii_bin_digit {}),
+            pest_builtin!(ascii_oct_digit {}),
+            pest_builtin!(ascii_hex_digit {}),
+            pest_builtin!(ascii_alpha_lower {}),
+            pest_builtin!(ascii_alpha_upper {}),
+            pest_builtin!(ascii_alpha {}),
+            pest_builtin!(ascii_alphanumeric {}),
+            pest_builtin!(ascii {}),
+            pest_builtin!(newline {}),
+            // Submodule.
             ("stack", Rc::new(ModuleNode::Collection(pest_stack))),
             ("unicode", Rc::new(pest_unicode)),
         ]);
@@ -248,31 +280,32 @@ impl<'g> ModuleSystem<'g> {
             root.insert(key, Rc::new(ModuleNode::Generics(value)));
         }
     }
-    pub fn resolve(
-        &self,
-        rule: &'g ParseRule,
-        rule_ref: &RuleRef<'g>,
-        root: &TokenStream,
-    ) -> TokenStream {
-        // Rule generics arguments.
-        if let None = rule_ref.args {
-            if rule_ref.path.len() == 1 {
-                let arg = rule.args.iter().find(|arg| arg == &rule_ref.path[0]);
-                if let Some(arg) = arg {
-                    let ident = format_ident!("r#{}", arg);
-                    return quote! {#ident};
-                }
-            }
-        }
-        let mut rc = &self.root;
-        for node in &rule_ref.path {
+    fn resolve_node(&self, mut iter: impl Iterator<Item = &'g str>) -> Rc<ModuleNode<'g>> {
+        let r = &self.root;
+        let first = iter.next().expect("Empty path.");
+        let mut rc = r.child(first);
+        for node in iter {
             rc = rc.child(node);
         }
+        rc
+    }
+    pub fn resolve(&self, rule_ref: &RuleRef<'g>, root: &TokenStream) -> Intermediate {
+        let rc = self.resolve_node(rule_ref.path.iter().cloned());
         rc.get(
             root,
             rule_ref.path.last().unwrap(),
             rule_ref,
             &rule_ref.args,
         )
+    }
+    pub fn alias(&mut self, source: impl Iterator<Item = &'g str>, name: &'g str) {
+        let node = self.resolve_node(source);
+        match &mut self.root {
+            ModuleNode::Collection(collection) => {
+                let res = collection.insert(name, node);
+                assert!(res.is_none(), "node {name:?} already defined.")
+            }
+            _ => unreachable!(),
+        }
     }
 }

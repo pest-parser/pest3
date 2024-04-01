@@ -10,10 +10,13 @@ use crate::{
     types::option_type,
     types::pest,
 };
+use pest3::unicode::unicode_property_names;
 use pest3_meta::{
-    doc::DocComment,
     error::rename_meta_rule,
-    parser::{self, fmt_sep, ParseExpr, ParseNode, ParseRule, PathArgs, Range, Trivia},
+    parser::{
+        self, fmt_sep, GrammarModule, Import, ParseExpr, ParseNode, ParseRule, PathArgs, Range,
+        Trivia,
+    },
 };
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote, ToTokens};
@@ -154,13 +157,15 @@ fn create_rule<'g>(
     // Pairs inside silent rule will be ignored.
     let pair_api = match rule_info.silent {
         true => quote! {
+            #[allow(non_camel_case_types)]
             impl<'i, #(#args, )*> #this::typed::PairContainer<#root::Rule> for #name<'i, #(#args, )*> {
-                fn for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {}
-                fn for_self_or_for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {}
+                fn for_each_child_pair(&self, _f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {}
+                fn for_self_or_for_each_child_pair(&self, _f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {}
             }
         },
         false => quote! {
-            impl<'i, #(#args, )*> #this::typed::PairContainer<#root::Rule> for #name<'i, #(#args, )*> {
+            #[allow(non_camel_case_types)]
+            impl<'i, #(#args: #this::typed::PairContainer<#root::Rule>, )*> #this::typed::PairContainer<#root::Rule> for #name<'i, #(#args, )*> {
                 fn for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {
                     self.content.for_self_or_for_each_child_pair(f)
                 }
@@ -169,7 +174,8 @@ fn create_rule<'g>(
                     f(self.as_pair_tree())
                 }
             }
-            impl<'i, #(#args, )*> #this::typed::PairTree<#root::Rule> for #name<'i, #(#args, )*> {
+            #[allow(non_camel_case_types)]
+            impl<'i, #(#args: #this::typed::PairContainer<#root::Rule>, )*> #this::typed::PairTree<#root::Rule> for #name<'i, #(#args, )*> {
                 fn get_span(&self) -> (#this::std::usize, #this::std::usize) {
                     (self.span.start(), self.span.end())
                 }
@@ -184,17 +190,20 @@ fn create_rule<'g>(
     quote! {
         #[doc = #doc]
         #[derive(Clone, Debug, Eq, PartialEq)]
+        #[allow(non_camel_case_types)]
         pub struct #name<'i, #(#args, )*> {
             /// Matched structure.
             pub content: #content_type,
             /// Matched span.
             pub span: #this::Span<'i>,
         }
+        #[allow(non_camel_case_types)]
         impl<'i, #(#args, )*> #this::typed::wrapper::Rule for #name<'i, #(#args, )*> {
             type Rule = #root::Rule;
             const RULE: #root::Rule = #root::Rule::#name;
         }
-        impl<'i, #(#args, )*> #this::typed::FullRuleStruct<'i> for #name<'i, #(#args, )*> {
+        #[allow(non_camel_case_types)]
+        impl<'i, #(#args: #this::typed::TypedNode<'i, #root::Rule>, )*> #this::typed::FullRuleStruct<'i> for #name<'i, #(#args, )*> {
             type Inner = #inner_type;
             type Content = #content_type;
             #[inline]
@@ -208,7 +217,7 @@ fn create_rule<'g>(
 
 #[derive(Clone, Debug)]
 pub struct Intermediate {
-    typename: TokenStream,
+    pub typename: TokenStream,
 }
 
 impl Intermediate {}
@@ -285,13 +294,18 @@ fn process_expr<'g>(
             Intermediate { typename }
         }
         ParseExpr::Path(prefix, args) => {
+            if prefix.len() == 1 {
+                if rule_config.grammar.args.contains(&prefix[0]) {
+                    let ident = format_ident!("r#{}", prefix[0]);
+                    let typename = quote! {#ident};
+                    return Intermediate { typename };
+                }
+            }
             let args = args.as_ref().map(|args| {
                 ProcessedPathArgs::process(args, rule_config, output, config, mod_sys, root)
             });
             let rule_ref = RuleRef::new(prefix, args);
-            let typename = mod_sys
-                .resolve(rule_config.grammar, &rule_ref, root);
-            Intermediate { typename }
+            mod_sys.resolve(&rule_ref, root)
         }
         ParseExpr::PosPred(node) => {
             let inner = process_expr(&node.expr, rule_config, output, config, mod_sys, root);
@@ -544,8 +558,27 @@ fn collect_reachability(rules: &[ParseRule]) -> BTreeMap<&str, BTreeSet<&str>> {
     res
 }
 
-fn generate_typed_pair_from_rule(rules: &[ParseRule], config: Config) -> TokenStream {
-    let mut mod_sys = ModuleSystem::new();
+fn generate_typed_pair_from_rule(
+    rules: &[ParseRule],
+    imports: &[Import],
+    config: Config,
+) -> TokenStream {
+    let unicode_names = unicode_property_names()
+        .into_iter()
+        .map(|name| {
+            assert!(name.is_ascii());
+            (name.to_ascii_lowercase(), name.to_ascii_uppercase())
+        })
+        .collect::<Vec<_>>();
+    let mut mod_sys = ModuleSystem::new(&unicode_names);
+    for import in imports {
+        match import {
+            Import::Builtin(name, path) => mod_sys.alias(path.iter().map(String::as_str), name),
+            Import::File(name, path) => {
+                todo!("importing external grammar {path:?} as {name:?} is not supported yet.")
+            }
+        }
+    }
     let graph = process_rules(rules, &mut mod_sys, config);
     graph.collect()
 }
@@ -555,8 +588,7 @@ fn generate_typed(
     name: Ident,
     generics: &Generics,
     paths: Vec<PathBuf>,
-    rules: Vec<ParseRule>,
-    doc_comment: &DocComment,
+    module: GrammarModule,
     include_grammar: bool,
     impl_parser: bool,
     config: Config,
@@ -566,8 +598,9 @@ fn generate_typed(
     } else {
         quote!()
     };
-    let rule_enum = generate_rule_enum(&rules, doc_comment);
-    let definition = generate_typed_pair_from_rule(&rules, config);
+    let GrammarModule(rules, doc_comment, imports) = module;
+    let rule_enum = generate_rule_enum(&rules, &doc_comment);
+    let definition = generate_typed_pair_from_rule(&rules, &imports, config);
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
     let pest = pest();
 
@@ -597,19 +630,24 @@ pub fn derive_typed_parser(
     let ast: DeriveInput = syn::parse2(input).unwrap();
     let (name, generics, contents, config) = parse_derive(ast);
 
-    let (data, paths) = collect_data(contents);
+    let data = collect_data(contents);
 
-    let (rules, doc) = match parser::parse_with_doc_comment(&data, &data) {
-        Ok(pairs) => pairs,
-        Err(error) => panic!("error parsing \n{}", error.renamed_rules(rename_meta_rule)),
-    };
+    let module = data
+        .iter()
+        .map(
+            |(input, root)| match parser::parse(input, root.as_ref().unwrap_or(&PathBuf::new())) {
+                Ok(pairs) => pairs,
+                Err(error) => panic!("error parsing \n{}", error.renamed_rules(rename_meta_rule)),
+            },
+        )
+        .collect();
+    let paths = data.iter().filter_map(|(_, p)| p.clone()).collect();
 
     generate_typed(
         name,
         &generics,
         paths,
-        rules,
-        &doc,
+        module,
         include_grammar,
         impl_parser,
         config,
@@ -620,22 +658,19 @@ pub fn derive_typed_parser(
 mod tests {
     use super::*;
     use lazy_static::lazy_static;
-    use pest3_meta::{
-        doc::DocComment,
-        parser::{self, ParseRule},
-    };
+    use pest3_meta::parser;
     use std::string::String;
 
     lazy_static! {
         static ref SYNTAX: String =
             String::from_utf8(std::fs::read("tests/syntax.pest").unwrap()).unwrap();
-        static ref PARSE_RESULT: (Vec<ParseRule>, DocComment) =
-            parser::parse_with_doc_comment(&SYNTAX, &"tests/syntax.pest").unwrap();
+        static ref PARSE_RESULT: GrammarModule =
+            parser::parse(&SYNTAX, &"tests/syntax.pest").unwrap();
     }
 
     #[test]
     fn inlined_used_rules() {
-        let rules = parser::parse(
+        let GrammarModule(rules, _, _) = parser::parse(
             r#"
 x = a - b
 a = "a"*
@@ -651,7 +686,7 @@ b = "b"+
     #[test]
     /// Check we can actually break the cycles.
     fn inter_reference() {
-        let rules = parser::parse(
+        let GrammarModule(rules, _, _) = parser::parse(
             &r#"
 a = "a" - b*
 b = "b" - c?
