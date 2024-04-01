@@ -257,11 +257,31 @@ fn skip(rule: Rule, pairs: &mut Pairs<Rule>) {
     }
 }
 
+fn mod_path_to_fs_path(root: &impl AsRef<Path>, mod_path: &[String]) -> PathBuf {
+    let mut path = root.as_ref().to_owned();
+    for sec in mod_path {
+        let sec = match sec.as_str() {
+            "super" => "..",
+            sec => sec,
+        };
+        path.push(sec);
+    }
+    path
+}
+
+/// Imported modules.
+#[derive(Debug)]
+pub enum Import {
+    Builtin(String, Vec<String>),
+    File(String, PathBuf),
+}
+
 fn _parse<P: AsRef<Path>>(
     input: &str,
     root: &P,
     rules: &mut Vec<ParseRule>,
     doc: &mut DocComment,
+    imports: &mut Vec<Import>,
     module: Option<&str>,
 ) -> Result<(), Error<Rule>> {
     let pairs = grammar::Parser::parse(Rule::grammar_rules, input)?;
@@ -272,60 +292,47 @@ fn _parse<P: AsRef<Path>>(
                 let mut pairs = pair.into_inner();
 
                 let path_pair = pairs.next().expect("import Pair must contain path");
-                let path_string = string_content(&path_pair)?;
-                if path_string.starts_with("pest") {
-                    continue;
-                }
-                let path = Path::new(&path_string);
-
-                let path = if path.is_relative() {
-                    root.as_ref().join(path)
-                } else {
-                    path.to_path_buf()
+                let span_path2 = path_pair.as_span();
+                let span_path = Span {
+                    path: root.as_ref().to_owned(),
+                    start: span_path2.start(),
+                    end: span_path2.end(),
                 };
-                // FIXME: provide an alternative for pest_vm / web environments
-                if let Ok(mut file) = File::open(&path) {
-                    let root = path.parent().expect("path cannot be root");
-                    let mut input = String::new();
-
-                    if file.read_to_string(&mut input).is_err() {
-                        return Err(Error::new_from_span(
-                            ErrorVariant::CustomError {
-                                message: format!("cannot read from '{}'", path_string),
-                            },
-                            path_pair.as_span(),
-                        ));
+                let (mod_path, args) = parse_path_raw(path_pair, &span_path, &PrattParser::new())?;
+                if !args.is_none() {
+                    todo!("import module node with arguments.")
+                }
+                let (mut fs_path, mut alias) = (None, None);
+                for pair in pairs {
+                    match pair.as_rule() {
+                        Rule::string => fs_path = Some(string_content(&pair)?),
+                        Rule::identifier => alias = Some(pair.as_str()),
+                        _ => unreachable!(),
                     }
+                }
 
-                    let mut is_aliased = false;
+                let alias = match alias {
+                    Some(alias) => alias,
+                    None => mod_path.last().expect("empty path"),
+                };
 
-                    if let Some(pair) = pairs.next() {
-                        if pair.as_rule() == Rule::identifier {
-                            is_aliased = true;
-
-                            match module {
-                                Some(module) => _parse(
-                                    &input,
-                                    &root,
-                                    rules,
-                                    doc,
-                                    Some(&format!("{}::{}", module, pair.as_str())),
-                                )?,
-                                None => _parse(&input, &root, rules, doc, Some(pair.as_str()))?,
-                            };
-                        }
-                    }
-
-                    if !is_aliased {
-                        _parse(&input, &root, rules, doc, module)?;
-                    }
+                if mod_path.starts_with(&["pest".to_owned()]) {
+                    let import = Import::Builtin(alias.to_owned(), mod_path);
+                    imports.push(import);
                 } else {
-                    return Err(Error::new_from_span(
-                        ErrorVariant::CustomError {
-                            message: format!("cannot open '{}'", path_string),
-                        },
-                        path_pair.as_span(),
-                    ));
+                    let fs_path = match fs_path {
+                        Some(fs_path) => PathBuf::from(fs_path),
+                        None => mod_path_to_fs_path(root, &mod_path),
+                    };
+
+                    let path = if fs_path.is_relative() {
+                        root.as_ref().join(fs_path)
+                    } else {
+                        fs_path.to_path_buf()
+                    };
+
+                    let import = Import::File(alias.to_owned(), path);
+                    imports.push(import);
                 }
             }
             Rule::grammar_rule => {
@@ -339,25 +346,33 @@ fn _parse<P: AsRef<Path>>(
     Ok(())
 }
 
-pub fn parse<P: AsRef<Path>>(input: &str, root: &P) -> Result<Vec<ParseRule>, Error<Rule>> {
-    let mut rules = vec![];
-    let mut doc = DocComment::default();
+/// Parsed grammar module.
+#[derive(Debug, Default)]
+pub struct GrammarModule(pub Vec<ParseRule>, pub DocComment, pub Vec<Import>);
 
-    _parse(input, root, &mut rules, &mut doc, None)?;
-
-    Ok(rules)
+impl FromIterator<GrammarModule> for GrammarModule {
+    fn from_iter<T: IntoIterator<Item = GrammarModule>>(iter: T) -> Self {
+        let mut rules = Vec::default();
+        let mut doc = DocComment::default();
+        let mut imports = Vec::default();
+        for Self(r, d, i) in iter.into_iter() {
+            rules.extend(r);
+            doc.grammar_doc.extend(d.grammar_doc);
+            imports.extend(i);
+        }
+        Self(rules, doc, imports)
+    }
 }
 
-pub fn parse_with_doc_comment<P: AsRef<Path>>(
-    input: &str,
-    root: &P,
-) -> Result<(Vec<ParseRule>, DocComment), Error<Rule>> {
+/// Parse a grammar file.
+pub fn parse<P: AsRef<Path>>(input: &str, root: &P) -> Result<GrammarModule, Error<Rule>> {
     let mut rules = vec![];
     let mut doc = DocComment::default();
+    let mut imports = vec![];
 
-    _parse(input, root, &mut rules, &mut doc, None)?;
+    _parse(input, root, &mut rules, &mut doc, &mut imports, None)?;
 
-    Ok((rules, doc))
+    Ok(GrammarModule(rules, doc, imports))
 }
 
 fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>> {
@@ -433,12 +448,11 @@ fn parse_prefix(pair: Pair<Rule>, child: ParseNode) -> ParseNode {
     ParseNode { expr, span }
 }
 
-fn parse_path(
+fn parse_path_raw(
     pair: Pair<Rule>,
     span: &Span,
     pratt_parser: &PrattParser<Rule>,
-) -> Result<ParseNode, Error<Rule>> {
-    let span = span.from_pest(pair.as_span());
+) -> Result<(Vec<String>, Option<PathArgs>), Error<Rule>> {
     let mut path = vec![];
 
     let mut pairs = pair.into_inner();
@@ -470,6 +484,16 @@ fn parse_path(
         None
     };
 
+    Ok((path, args))
+}
+
+fn parse_path(
+    pair: Pair<Rule>,
+    span: &Span,
+    pratt_parser: &PrattParser<Rule>,
+) -> Result<ParseNode, Error<Rule>> {
+    let span = span.from_pest(pair.as_span());
+    let (path, args) = parse_path_raw(pair, &span, pratt_parser)?;
     let expr = ParseExpr::Path(path, args);
 
     Ok(ParseNode { expr, span })
@@ -847,8 +871,8 @@ mod tests {
     #[test]
     fn grammar_test() {
         let input = include_str!("../tests/pest3sample.pest");
-        let parsed = parse_with_doc_comment(input, &Path::new("../tests/pest3sample.pest"));
-        let (rules, doc_comment) = match parsed {
+        let parsed = parse(input, &Path::new("../tests/pest3sample.pest"));
+        let GrammarModule(rules, doc_comment, _) = match parsed {
             Ok(parsed) => parsed,
             Err(err) => panic!("{err}"),
         };

@@ -3,6 +3,7 @@
 pub mod template;
 mod tracker;
 mod traits;
+pub mod unicode;
 pub mod wrapper;
 
 pub use tracker::Tracker;

@@ -8,7 +8,7 @@
 /// ## Example
 ///
 /// ```rust
-/// pest::choice_type!(Choice2, (Choice0, T0), (Choice1, T1));
+/// pest3::choice_type!(Choice2, (Choice0, T0), (Choice1, T1));
 /// ```
 #[macro_export]
 macro_rules! choice_type {

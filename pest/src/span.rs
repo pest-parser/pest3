@@ -57,7 +57,7 @@ impl<'i> Span<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Span;
+    /// # use pest2::Span;
     /// let input = "Hello!";
     /// assert_eq!(None, Span::new(input, 100, 0));
     /// assert!(Span::new(input, 0, input.len()).is_some());
@@ -73,7 +73,7 @@ impl<'i> Span<'i> {
     /// Attempts to create a new span based on a sub-range.
     ///
     /// ```
-    /// use pest::Span;
+    /// use pest2::Span;
     /// let input = "Hello World!";
     /// let world = Span::new(input, 6, input.len()).unwrap();
     /// let orl = world.get(1..=3);
@@ -106,7 +106,7 @@ impl<'i> Span<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use pest2::Position;
     /// let input = "ab";
     /// let start = Position::from_start(input);
     /// let end = start.clone();
@@ -124,7 +124,7 @@ impl<'i> Span<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use pest2::Position;
     /// let input = "ab";
     /// let start = Position::from_start(input);
     /// let end = start.clone();
@@ -142,7 +142,7 @@ impl<'i> Span<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use pest2::Position;
     /// let input = "ab";
     /// let start = Position::from_start(input);
     /// let end = start.clone();
@@ -161,7 +161,7 @@ impl<'i> Span<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use pest2::Position;
     /// let input = "ab";
     /// let start = Position::from_start(input);
     /// let end = start.clone();
@@ -180,7 +180,7 @@ impl<'i> Span<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest::Position;
+    /// # use pest2::Position;
     /// let input = "ab";
     /// let start = Position::from_start(input);
     /// let end = start.clone();
@@ -202,7 +202,7 @@ impl<'i> Span<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest;
+    /// # use pest2;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -229,8 +229,7 @@ impl<'i> Span<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest;
-    /// # use pest::Span;
+    /// # use pest2::Span;
     ///
     /// // Example: Get input string from a span
     /// let input = "abc\ndef\nghi";
@@ -246,7 +245,6 @@ impl<'i> Span<'i> {
     /// # Examples
     ///
     /// ```
-    /// # use pest;
     /// # #[allow(non_camel_case_types)]
     /// # #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
     /// enum Rule {}
@@ -357,9 +355,8 @@ impl<'i> fmt::Display for Span<'i> {
 /// # Examples
 ///
 /// ```
-/// # use pest;
-/// # use pest::Span;
-/// # use pest::span::merge_spans;
+/// # use pest2::Span;
+/// # use pest2::merge_spans;
 ///
 /// // Example 1: Contiguous spans
 /// let input = "abc\ndef\nghi";
