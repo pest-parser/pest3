@@ -1,5 +1,7 @@
-#![warn(rust_2018_idioms, rust_2021_compatibility, missing_docs)]
+//! Generator for [pest3].
 
+#![warn(rust_2018_idioms, rust_2021_compatibility, missing_docs)]
+#![allow(unused)]
 mod common;
 mod config;
 mod expr;

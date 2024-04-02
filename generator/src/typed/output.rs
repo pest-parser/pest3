@@ -1,7 +1,14 @@
-use crate::types::{_str, pest};
+use crate::{
+    common::generate_rule_enum,
+    types::{_str, pest},
+};
+use pest3_meta::parser::GrammarModule;
 use proc_macro2::{Ident, TokenStream};
-use quote::{format_ident, quote};
-use std::collections::{BTreeMap, BTreeSet};
+use quote::{format_ident, quote, ToTokens};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    marker::PhantomData,
+};
 use syn::Index;
 
 pub fn generics() -> TokenStream {
@@ -9,7 +16,7 @@ pub fn generics() -> TokenStream {
         generics
     }
 }
-pub fn rules_mod() -> TokenStream {
+pub fn types_mod() -> TokenStream {
     quote! {rules}
 }
 
@@ -17,25 +24,19 @@ pub fn constant_wrappers() -> TokenStream {
     quote! {wrapper}
 }
 
-pub(crate) struct Output<'g> {
-    content: Vec<TokenStream>,
+pub(crate) struct Tracker<'g> {
     wrappers: Vec<TokenStream>,
     wrapper_counter: BTreeMap<&'g str, usize>,
     sequences: BTreeSet<usize>,
     choices: BTreeSet<usize>,
-    optional_trivia: Option<TokenStream>,
-    mandatory_trivia: Option<TokenStream>,
 }
-impl<'g> Output<'g> {
+impl<'g> Tracker<'g> {
     pub fn new() -> Self {
         Self {
-            content: Vec::new(),
             wrappers: Vec::new(),
             wrapper_counter: BTreeMap::new(),
             sequences: BTreeSet::new(),
             choices: BTreeSet::new(),
-            optional_trivia: None,
-            mandatory_trivia: None,
         }
     }
     /// Record usage of Seq* generics.
@@ -53,10 +54,6 @@ impl<'g> Output<'g> {
     /// Used choices.
     pub fn choices(&self) -> &BTreeSet<usize> {
         &self.choices
-    }
-    /// Insert rule struct to rule module.
-    pub fn insert_rule_struct(&mut self, tokens: TokenStream) {
-        self.content.push(tokens);
     }
     /// Insert a string wrapper to corresponding module.
     /// Return the module path relative to module root.
@@ -84,27 +81,10 @@ impl<'g> Output<'g> {
             quote! {#wrapper_mod::#s}
         }
     }
-    pub fn add_option_trivia(&mut self, tokens: TokenStream) {
-        self.optional_trivia = Some(tokens);
-    }
-    pub fn add_mandatory_trivia(&mut self, tokens: TokenStream) {
-        self.mandatory_trivia = Some(tokens);
-    }
-    /// Collect to final [TokenStream].
     pub fn collect(&self) -> TokenStream {
         let pest = pest();
-        let content = &self.content;
         let wrappers = &self.wrappers;
         let wrapper_mod = constant_wrappers();
-        let rules = rules_mod();
-        let optional_trivia = self
-            .optional_trivia
-            .clone()
-            .unwrap_or(quote! {#pest::typed::template::Empty});
-        let mandatory_trivia = self
-            .mandatory_trivia
-            .clone()
-            .unwrap_or(quote! {#pest::typed::template::Empty});
         let generics = {
             let fill = |set: &BTreeSet<usize>,
                         target: &mut Vec<TokenStream>,
@@ -166,7 +146,7 @@ impl<'g> Output<'g> {
                         Positive, Negative,
                         CharRange, Str, Insens,
                         Rep, RepOnce, RepMin, RepMax, RepMinMax,
-                        SOI,EOI,
+                        SOI, EOI,
                         SOI as soi,
                         EOI as eoi,
                         ANY as any,
@@ -195,23 +175,86 @@ impl<'g> Output<'g> {
             }
         };
         quote! {
-            impl #pest::typed::RuleType for Rule {
-                const EOI: Self = Rule::EOI;
-                type OptionalTrivia<'i> = trivia::OptionalTrivia<'i>;
-                type MandatoryTrivia<'i> = trivia::MandatoryTrivia<'i>;
-            }
-            mod trivia {
-                pub type OptionalTrivia<'i> = #optional_trivia;
-                pub type MandatoryTrivia<'i> = #mandatory_trivia;
-            }
             mod #wrapper_mod {
                 #(#wrappers)*
             }
+            #generics
+        }
+    }
+}
+impl ToTokens for Tracker<'_> {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        tokens.extend(self.collect())
+    }
+}
+
+pub(crate) struct Output<'g> {
+    content: Vec<TokenStream>,
+    optional_trivia: Option<TokenStream>,
+    mandatory_trivia: Option<TokenStream>,
+    modules: Vec<(Ident, Self)>,
+    phantom: PhantomData<&'g ()>,
+    rule_enum: TokenStream,
+}
+impl<'g> Output<'g> {
+    pub fn new(module: &'g GrammarModule, modules: Vec<(Ident, Self)>) -> Self {
+        let GrammarModule(rules, doc, _) = module;
+        let rule_enum = generate_rule_enum(rules, doc);
+        Self {
+            content: Vec::new(),
+            optional_trivia: None,
+            mandatory_trivia: None,
+            modules,
+            phantom: PhantomData,
+            rule_enum,
+        }
+    }
+    /// Insert rule struct to rule module.
+    pub fn insert_rule_struct(&mut self, tokens: TokenStream) {
+        self.content.push(tokens);
+    }
+    pub fn add_option_trivia(&mut self, tokens: TokenStream) {
+        self.optional_trivia = Some(tokens);
+    }
+    pub fn add_mandatory_trivia(&mut self, tokens: TokenStream) {
+        self.mandatory_trivia = Some(tokens);
+    }
+    /// Collect to final [TokenStream].
+    pub fn collect(&self) -> TokenStream {
+        let pest = pest();
+        let content = &self.content;
+        let types = types_mod();
+        let rule_enum = &self.rule_enum;
+        let optional_trivia = self
+            .optional_trivia
+            .clone()
+            .unwrap_or(quote! {#pest::typed::template::Empty});
+        let mandatory_trivia = self
+            .mandatory_trivia
+            .clone()
+            .unwrap_or(quote! {#pest::typed::template::Empty});
+        let modules = self.modules.iter().map(|(name, output)| {
+            let output = output.collect();
+            quote! {
+                pub mod #name {
+                    #output
+                }
+            }
+        });
+        quote! {
+            #rule_enum
+            impl #pest::typed::RuleType for Rule {
+                const EOI: Self = Rule::EOI;
+                type OptionalTrivia<'i> = #types::__OptionalTrivia<'i>;
+                type MandatoryTrivia<'i> = #types::__MandatoryTrivia<'i>;
+            }
             #[doc = "Definitions of statically typed nodes generated by pest-generator."]
-            pub mod #rules {
+            pub mod #types {
+                pub type __OptionalTrivia<'i> = #optional_trivia;
+                pub type __MandatoryTrivia<'i> = #mandatory_trivia;
+                #(#modules)*
                 #(#content)*
             }
-            #generics
         }
     }
 }

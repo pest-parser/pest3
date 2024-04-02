@@ -35,6 +35,7 @@ macro_rules! unicode {
         #[derive(Clone, Debug, Hash, PartialEq, Eq)]
         #[allow(non_camel_case_types)]
         pub struct $property {
+            /// Matched character.
             pub content: $crate::std::char,
         }
         impl<'i, R: $crate::typed::RuleType> $crate::typed::TypedNode<'i, R> for $property {

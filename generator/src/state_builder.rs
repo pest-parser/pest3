@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::{cmp, collections::HashMap, ops::Range};
 
 use proc_macro2::{Ident, Span, TokenStream};

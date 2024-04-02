@@ -1,3 +1,4 @@
+//! Derive macros implemented with [pest3_generator].
 #![warn(rust_2018_idioms, rust_2021_compatibility, missing_docs)]
 
 use proc_macro::TokenStream;

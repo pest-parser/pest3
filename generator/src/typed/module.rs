@@ -2,18 +2,41 @@ use super::{
     generator::{Intermediate, ProcessedPathArgs, RuleRef},
     output::generics,
 };
-use pest3_meta::parser::ParseRule;
-use proc_macro2::{Ident, TokenStream};
+use pest3::unicode::unicode_property_names;
+use pest3_meta::parser::{ParseRule, Range};
+use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
-use std::{collections::HashMap, rc::Rc};
+use std::{collections::HashMap, rc::Rc, sync::OnceLock};
+
+/// TODO: Implement [Display](std::fmt::Display) for this.
+#[derive(Clone, Debug)]
+pub enum ModuleError<'g> {
+    EmptyPath,
+    NodeNotFound(&'g str, Vec<&'g str>),
+    AlreadyDefined(&'g str),
+    NotMutable,
+    NoChildren,
+    UnexpectedArguments(RuleRef<'g>),
+    UnexpectedSliceArgument(Range<isize>, RuleRef<'g>),
+    ArgumentCountNotMatch(RuleRef<'g>),
+    CollectionCannotBeCalled,
+    ExpectedArgcArguments(usize, RuleRef<'g>),
+    ExpectedArguments(RuleRef<'g>),
+}
+impl<'g> ModuleError<'g> {
+    fn check_argc(argc: usize, args: usize, rule_ref: &RuleRef<'g>) -> Result<(), Self> {
+        if argc != args {
+            Err(Self::ArgumentCountNotMatch(rule_ref.clone()))
+        } else {
+            Ok(())
+        }
+    }
+}
 
 #[derive(Clone, Debug)]
-pub enum RuleGenerics {
+pub(crate) enum RuleGenerics {
     /// Defined rule in current module.
-    Rule {
-        argc: usize,
-    },
-    Unicode(Ident),
+    Rule { argc: usize },
     BuiltIn {
         /// Built-in rule that accepts nothing as argument.
         ///
@@ -23,7 +46,7 @@ pub enum RuleGenerics {
         ///
         /// - Slice 1.
         /// - Slice 2.
-        slice: Option<(Ident, Ident)>,
+        slice: Option<(&'static str, &'static str)>,
         /// Built-in rule that accepts parsing expressions as arguments.
         ///
         /// - Argument count (optional).
@@ -31,62 +54,54 @@ pub enum RuleGenerics {
     },
 }
 impl RuleGenerics {
-    pub fn call(
+    pub fn call<'g>(
         &self,
         name: &str,
-        rule_ref: &RuleRef<'_>,
+        rule_ref: &RuleRef<'g>,
         args: Option<&ProcessedPathArgs>,
         root: &TokenStream,
-    ) -> Intermediate {
+    ) -> Result<Intermediate, ModuleError<'g>> {
         let generics = generics();
         let name = format_ident!("r#{}", name);
-        match self {
+        let current = rule_ref.path[0..rule_ref.path.len() - 1].iter().map(|sec| {
+            let sec = format_ident!("{}", sec);
+            quote! {#sec::rules::}
+        });
+        let res = match self {
             Self::Rule { argc } => match (argc, args) {
                 (0, None) => {
-                    let typename = quote! { #root::rules::#name::<'i> };
+                    let typename = quote! { #(#current)* #name::<'i> };
                     Intermediate { typename }
                 }
                 (0, Some(ProcessedPathArgs::Call(args))) => {
                     if args.len() > 0 {
-                        panic!("Unexpected arguments in `{}`.", rule_ref,);
+                        Err(ModuleError::UnexpectedArguments(rule_ref.clone()))?
                     } else {
-                        let typename = quote! { #root::rules::#name::<'i> };
+                        let typename = quote! { #(#current)* #name::<'i> };
                         Intermediate { typename }
                     }
                 }
-                (0, Some(ProcessedPathArgs::Slice(slice))) => {
-                    panic!("Unexpected slice argument {} in `{}`.", slice, rule_ref,);
-                }
-                (argc, None) => {
-                    panic!("Expect {argc} arguments in `{rule_ref}`.");
-                }
-                (_argc, Some(ProcessedPathArgs::Slice(slice))) => {
-                    panic!("Unexpected slice {slice} in `{rule_ref}`.");
-                }
+                (0, Some(ProcessedPathArgs::Slice(slice))) => Err(
+                    ModuleError::UnexpectedSliceArgument(slice.clone(), rule_ref.clone()),
+                )?,
+                (argc, None) => Err(ModuleError::ExpectedArgcArguments(*argc, rule_ref.clone()))?,
+                (_argc, Some(ProcessedPathArgs::Slice(slice))) => Err(
+                    ModuleError::UnexpectedSliceArgument(slice.clone(), rule_ref.clone()),
+                )?,
                 (argc, Some(ProcessedPathArgs::Call(args))) => {
-                    assert_eq!(
-                        *argc,
-                        args.len(),
-                        "Argument count not matched in `{}`.",
-                        rule_ref
-                    );
-                    let typename = quote! { #root::rules::#name::<'i, #(#args, )*> };
+                    let _ = ModuleError::check_argc(*argc, args.len(), rule_ref)?;
+                    let typename = quote! { #(#current)* #name::<'i, #(#args, )*> };
                     Intermediate { typename }
                 }
             },
-            Self::Unicode(ident) => {
-                let typename = quote! { #root::rules::unicode::#ident };
-                Intermediate { typename }
-            }
             Self::BuiltIn {
                 direct,
                 slice,
                 callable,
             } => match args {
                 None => {
-                    let (lifetime,) = direct.expect(&format!(
-                        "Built-in rule {rule_ref} can't be called without arguments."
-                    ));
+                    let (lifetime,) =
+                        direct.ok_or_else(|| ModuleError::ExpectedArguments(rule_ref.clone()))?;
                     let typename = match lifetime {
                         true => quote! { #root::#generics::#name::<'i> },
                         false => quote! { #root::#generics::#name },
@@ -94,9 +109,11 @@ impl RuleGenerics {
                     Intermediate { typename }
                 }
                 Some(ProcessedPathArgs::Slice(range)) => {
-                    let (slice1, slice2) = slice.as_ref().expect(&format!(
-                        "Built-in rule {rule_ref} can't be called without arguments."
-                    ));
+                    let (slice1, slice2) = slice
+                        .as_ref()
+                        .ok_or_else(|| ModuleError::ExpectedArguments(rule_ref.clone()))?;
+                    let slice1 = format_ident!("{}", slice1);
+                    let slice2 = format_ident!("{}", slice2);
                     let start = range.start.unwrap_or(0);
                     let end = range.end;
                     let typename = match end {
@@ -106,46 +123,37 @@ impl RuleGenerics {
                     Intermediate { typename }
                 }
                 Some(ProcessedPathArgs::Call(args)) => {
-                    let (argc,) = callable.expect(&format!(
-                        "Built-in rule {rule_ref} can't be called without arguments."
-                    ));
+                    let (argc,) =
+                        callable.ok_or_else(|| ModuleError::ExpectedArguments(rule_ref.clone()))?;
                     if let Some(argc) = argc {
-                        assert_eq!(args.len(), argc, "Argument count not matched.");
+                        let _ = ModuleError::check_argc(argc, args.len(), rule_ref)?;
                     }
                     let typename = quote! { #root::#generics::#name::< #( #args, )* > };
                     Intermediate { typename }
                 }
             },
-        }
+        };
+        Ok(res)
     }
 }
 
-#[derive(Clone)]
-enum ModuleNode<'g> {
+pub enum ModuleNode<'g> {
     Collection(HashMap<&'g str, Rc<ModuleNode<'g>>>),
     Generics(RuleGenerics),
-    Absolute(Rc<dyn Fn(&TokenStream) -> Intermediate>),
-    Imported(Rc<Self>),
+    Absolute(Box<dyn Fn(&TokenStream) -> Intermediate>),
 }
 
 impl<'g> ModuleNode<'g> {
     /// [Err] here is actually not an error.
-    fn child(&self, node: &'g str) -> Rc<Self> {
-        match self {
+    fn child(&self, node: &'g str) -> Result<Rc<Self>, ModuleError<'g>> {
+        let res = match self {
             Self::Collection(map) => map
                 .get(node)
-                .unwrap_or_else(|| {
-                    panic!(
-                        "Node {} can't be resolved. Available nodes are {:?}.",
-                        node,
-                        map.keys()
-                    )
-                })
-                .clone(),
-            Self::Absolute(f) => panic!("No child found."),
-            Self::Generics(_generics) => panic!("No child found."),
-            Self::Imported(rc) => rc.child(node),
-        }
+                .cloned()
+                .ok_or_else(|| ModuleError::NodeNotFound(&node, map.keys().cloned().collect()))?,
+            Self::Absolute(_) | Self::Generics(_) => Err(ModuleError::NoChildren)?,
+        };
+        Ok(res)
     }
     fn get(
         &self,
@@ -153,34 +161,85 @@ impl<'g> ModuleNode<'g> {
         node: &'g str,
         rule_ref: &RuleRef<'g>,
         args: &Option<ProcessedPathArgs>,
-    ) -> Intermediate {
-        match self {
-            Self::Collection(map) => panic!("Collection can't be called."),
+    ) -> Result<Intermediate, ModuleError<'g>> {
+        let res = match self {
+            Self::Collection(_map) => Err(ModuleError::CollectionCannotBeCalled)?,
             Self::Absolute(f) => {
                 let empty = match args {
                     None => true,
                     Some(ProcessedPathArgs::Call(args)) => args.is_empty(),
                     _ => false,
                 };
-                assert!(empty);
+                if !empty {
+                    Err(ModuleError::UnexpectedArguments(rule_ref.clone()))?
+                }
                 f(root)
             }
-            Self::Generics(generics) => generics.call(node, rule_ref, args.as_ref(), root),
-            Self::Imported(rc) => rc.get(root, node, rule_ref, args),
+            Self::Generics(generics) => generics.call(node, rule_ref, args.as_ref(), root)?,
+        };
+        Ok(res)
+    }
+    pub fn insert_rule(&mut self, rule: &'g ParseRule) -> Result<(), ModuleError<'g>> {
+        let key = &rule.name;
+        let argc = rule.args.len();
+        let value = RuleGenerics::Rule { argc };
+        if let ModuleNode::Collection(root) = self {
+            let prev = root.insert(key, Rc::new(ModuleNode::Generics(value)));
+            if prev.is_some() {
+                Err(ModuleError::AlreadyDefined(&key))
+            } else {
+                Ok(())
+            }
+        } else {
+            Err(ModuleError::NotMutable)
         }
+    }
+    pub fn alias(&mut self, node: Rc<Self>, name: &'g str) -> Result<(), ModuleError<'g>> {
+        match self {
+            ModuleNode::Collection(collection) => {
+                let res = collection.insert(name, node);
+                if res.is_some() {
+                    Err(ModuleError::AlreadyDefined(&name))?
+                }
+                Ok(())
+            }
+            _ => Err(ModuleError::NotMutable),
+        }
+    }
+    pub fn resolve_node(
+        &self,
+        mut iter: impl Iterator<Item = &'g str>,
+    ) -> Result<Rc<Self>, ModuleError<'g>> {
+        let r = self;
+        let first = iter.next().ok_or_else(|| ModuleError::EmptyPath)?;
+        let mut rc = r.child(first)?;
+        for node in iter {
+            rc = rc.child(node)?;
+        }
+        Ok(rc)
     }
 }
 
 /// Module system for pest3.
 ///
 /// `'g` stands for the lifetime of grammar file content.
-#[derive(Clone)]
-pub struct ModuleSystem<'g> {
+pub(crate) struct ModuleSystem<'g> {
     root: ModuleNode<'g>,
+    pest: Rc<ModuleNode<'g>>,
 }
 
 impl<'g> ModuleSystem<'g> {
-    pub fn new(unicode_names: &'g [(impl AsRef<str>, impl AsRef<str>)]) -> Self {
+    pub fn make_global() -> Rc<ModuleNode<'g>> {
+        static UNICODE_NAMES: OnceLock<Vec<(String, String)>> = OnceLock::new();
+        let unicode_names = UNICODE_NAMES.get_or_init(|| {
+            unicode_property_names()
+                .into_iter()
+                .map(|name| {
+                    // name.is_ascii()
+                    (name.to_ascii_lowercase(), name.to_ascii_uppercase())
+                })
+                .collect::<Vec<_>>()
+        });
         macro_rules! pest_direct {
             () => {
                 (false,)
@@ -191,7 +250,7 @@ impl<'g> ModuleSystem<'g> {
         }
         macro_rules! pest_slice {
             ($($T:ident),*) => {
-                ($( format_ident!("{}", core::stringify!($T)) ),*)
+                ($( core::stringify!($T) ),*)
             };
         }
         macro_rules! pest_callable {
@@ -228,12 +287,10 @@ impl<'g> ModuleSystem<'g> {
                 .iter()
                 .map(|unicode| {
                     let (lower, upper) = unicode;
-                    let lower = lower.as_ref();
-                    let upper = upper.as_ref();
 
-                    let name = lower;
+                    let name = lower.as_str();
                     let ident = format_ident!("{}", upper);
-                    let node = ModuleNode::Absolute(Rc::new(move |root| {
+                    let node = ModuleNode::Absolute(Box::new(move |root| {
                         let typename = quote! { #root::unicode::#ident};
                         Intermediate { typename }
                     }));
@@ -264,48 +321,54 @@ impl<'g> ModuleSystem<'g> {
             ("stack", Rc::new(ModuleNode::Collection(pest_stack))),
             ("unicode", Rc::new(pest_unicode)),
         ]);
-        // FIXME: make "pest" paths to refer to pest3 crate for the moment
         let root = ModuleNode::Collection(HashMap::from([(
             "pest",
             Rc::new(ModuleNode::Collection(pest)),
         )]));
-
-        Self { root }
+        root.into()
     }
-    pub fn insert_rule(&mut self, rule: &'g ParseRule) {
-        let key = &rule.name;
-        let argc = rule.args.len();
-        let value = RuleGenerics::Rule { argc };
-        if let ModuleNode::Collection(root) = &mut self.root {
-            root.insert(key, Rc::new(ModuleNode::Generics(value)));
-        }
+    pub fn new(pest: Rc<ModuleNode<'g>>) -> Self {
+        let root = ModuleNode::Collection(Default::default());
+        // FIXME: make "pest" paths to refer to pest3 crate for the moment
+        Self { root, pest }
     }
-    fn resolve_node(&self, mut iter: impl Iterator<Item = &'g str>) -> Rc<ModuleNode<'g>> {
-        let r = &self.root;
-        let first = iter.next().expect("Empty path.");
-        let mut rc = r.child(first);
-        for node in iter {
-            rc = rc.child(node);
-        }
-        rc
+    pub fn insert(&mut self, node: ModuleNode<'g>, name: &'g str) -> Result<(), ModuleError<'g>> {
+        self.root.alias(node.into(), name)
     }
-    pub fn resolve(&self, rule_ref: &RuleRef<'g>, root: &TokenStream) -> Intermediate {
-        let rc = self.resolve_node(rule_ref.path.iter().cloned());
-        rc.get(
+    pub fn insert_rule(&mut self, rule: &'g ParseRule) -> Result<(), ModuleError<'g>> {
+        self.root.insert_rule(rule)
+    }
+    pub fn resolve_node(
+        &self,
+        iter: &'g [impl AsRef<str>],
+    ) -> Result<Rc<ModuleNode<'g>>, ModuleError<'g>> {
+        self.pest
+            .resolve_node(iter.iter().map(AsRef::as_ref))
+            .or_else(|_err| self.root.resolve_node(iter.iter().map(AsRef::as_ref)))
+    }
+    pub fn resolve(
+        &self,
+        rule_ref: &'g RuleRef<'g>,
+        root: &TokenStream,
+    ) -> Result<Intermediate, ModuleError<'g>> {
+        let rc = self.resolve_node(&rule_ref.path)?;
+        let res = rc.get(
             root,
-            rule_ref.path.last().unwrap(),
+            rule_ref.path.last().ok_or(ModuleError::EmptyPath)?,
             rule_ref,
             &rule_ref.args,
-        )
+        )?;
+        Ok(res)
     }
-    pub fn alias(&mut self, source: impl Iterator<Item = &'g str>, name: &'g str) {
-        let node = self.resolve_node(source);
-        match &mut self.root {
-            ModuleNode::Collection(collection) => {
-                let res = collection.insert(name, node);
-                assert!(res.is_none(), "node {name:?} already defined.")
-            }
-            _ => unreachable!(),
-        }
+    pub fn alias(
+        &mut self,
+        source: &'g [impl AsRef<str>],
+        name: &'g str,
+    ) -> Result<(), ModuleError<'g>> {
+        let node = self.resolve_node(source)?;
+        Ok(self.root.alias(node, name)?)
+    }
+    pub fn take(self) -> ModuleNode<'g> {
+        self.root
     }
 }
