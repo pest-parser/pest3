@@ -7,9 +7,13 @@ use std::fmt::Display;
 /// See [Token](pest2::Token) and [Pair](pest2::iterators::Pair).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Pair<R> {
+    /// Rule.
     pub rule: R,
+    /// Start position in code points.
     pub start: usize,
+    /// End position in code points.
     pub end: usize,
+    /// Children pairs.
     pub children: Vec<Self>,
 }
 impl<R: crate::RuleType> Display for Pair<R> {

@@ -1,14 +1,14 @@
 #![allow(clippy::result_large_err)]
 use std::{
     char,
-    fmt::{write, Display},
-    fs::File,
-    io::Read,
+    collections::HashMap,
+    fmt::Display,
+    fs::read_to_string,
     mem,
     ops::{Bound, RangeBounds},
     path::{Path, PathBuf},
-    rc::Rc,
     str::FromStr,
+    sync::Arc,
 };
 
 use pest::{
@@ -63,7 +63,7 @@ impl Span {
         }
     }
 
-    pub fn from_pest(&self, span: pest::Span) -> Self {
+    pub fn from_pest(&self, span: pest::Span<'_>) -> Self {
         self.start_end(span.start(), span.end())
     }
 
@@ -247,7 +247,7 @@ impl Display for ParseExpr {
     }
 }
 
-fn skip(rule: Rule, pairs: &mut Pairs<Rule>) {
+fn skip(rule: Rule, pairs: &mut Pairs<'_, Rule>) {
     if let Some(current_rule) = pairs.peek().map(|pair| pair.as_rule()) {
         if current_rule == rule {
             pairs
@@ -266,24 +266,25 @@ fn mod_path_to_fs_path(root: &impl AsRef<Path>, mod_path: &[String]) -> PathBuf 
         };
         path.push(sec);
     }
-    path
+    path.with_extension("pest")
 }
 
 /// Imported modules.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Import {
+    /// Built-in modules like `pest::stacks`.
     Builtin(String, Vec<String>),
-    File(String, PathBuf),
+    /// Modules defined in external files.
+    File(String, Arc<GrammarModule>),
 }
 
 fn _parse<P: AsRef<Path>>(
     input: &str,
     root: &P,
-    rules: &mut Vec<ParseRule>,
-    doc: &mut DocComment,
-    imports: &mut Vec<Import>,
-    module: Option<&str>,
-) -> Result<(), Error<Rule>> {
+    cache: &mut HashMap<PathBuf, Arc<GrammarModule>>,
+) -> Result<Arc<GrammarModule>, Error<Rule>> {
+    let mut res = GrammarModule::default();
+    let GrammarModule(rules, doc, imports) = &mut res;
     let pairs = grammar::Parser::parse(Rule::grammar_rules, input)?;
 
     for pair in pairs {
@@ -331,7 +332,32 @@ fn _parse<P: AsRef<Path>>(
                         fs_path.to_path_buf()
                     };
 
-                    let import = Import::File(alias.to_owned(), path);
+                    let import = {
+                        let module = match cache.get(&path) {
+                            Some(module) => module.clone(),
+                            None => {
+                                let module = _parse(
+                                    &read_to_string(&path).map_err(|err| {
+                                        Error::new_from_span(
+                                            ErrorVariant::CustomError {
+                                                message: format!(
+                                                    "cannot read from {:?} due to: {}",
+                                                    path, err
+                                                ),
+                                            },
+                                            span_path2,
+                                        )
+                                    })?,
+                                    &path,
+                                    cache,
+                                )
+                                .unwrap();
+                                cache.insert(path, module.clone());
+                                module
+                            }
+                        };
+                        Import::File(alias.to_owned(), module)
+                    };
                     imports.push(import);
                 }
             }
@@ -343,7 +369,7 @@ fn _parse<P: AsRef<Path>>(
         }
     }
 
-    Ok(())
+    Ok(Arc::new(res))
 }
 
 /// Parsed grammar module.
@@ -355,7 +381,8 @@ impl FromIterator<GrammarModule> for GrammarModule {
         let mut rules = Vec::default();
         let mut doc = DocComment::default();
         let mut imports = Vec::default();
-        for Self(r, d, i) in iter.into_iter() {
+        for item in iter.into_iter() {
+            let Self(r, d, i) = item;
             rules.extend(r);
             doc.grammar_doc.extend(d.grammar_doc);
             imports.extend(i);
@@ -364,18 +391,29 @@ impl FromIterator<GrammarModule> for GrammarModule {
     }
 }
 
-/// Parse a grammar file.
-pub fn parse<P: AsRef<Path>>(input: &str, root: &P) -> Result<GrammarModule, Error<Rule>> {
-    let mut rules = vec![];
-    let mut doc = DocComment::default();
-    let mut imports = vec![];
-
-    _parse(input, root, &mut rules, &mut doc, &mut imports, None)?;
-
-    Ok(GrammarModule(rules, doc, imports))
+impl FromIterator<Arc<GrammarModule>> for GrammarModule {
+    fn from_iter<T: IntoIterator<Item = Arc<GrammarModule>>>(iter: T) -> Self {
+        let mut rules = Vec::default();
+        let mut doc = DocComment::default();
+        let mut imports = Vec::default();
+        for item in iter.into_iter() {
+            let Self(r, d, i) = item.as_ref();
+            rules.extend(r.iter().cloned());
+            doc.grammar_doc.extend(d.grammar_doc.iter().cloned());
+            imports.extend(i.iter().cloned());
+        }
+        Self(rules, doc, imports)
+    }
 }
 
-fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>> {
+/// Parse a grammar file.
+pub fn parse<P: AsRef<Path>>(input: &str, root: &P) -> Result<Arc<GrammarModule>, Error<Rule>> {
+    let mut cache = Default::default();
+
+    Ok(_parse(input, root, &mut cache)?)
+}
+
+fn parse_rule(rule: Pair<'_, Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>> {
     let span = rule.as_span();
     let span = Span {
         path,
@@ -437,7 +475,7 @@ fn parse_rule(rule: Pair<Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>>
     })
 }
 
-fn parse_prefix(pair: Pair<Rule>, child: ParseNode) -> ParseNode {
+fn parse_prefix(pair: Pair<'_, Rule>, child: ParseNode) -> ParseNode {
     let span = child.span.start(pair.as_span().start());
     let expr = match pair.as_rule() {
         Rule::positive_predicate_operator => ParseExpr::PosPred(Box::new(child)),
@@ -449,7 +487,7 @@ fn parse_prefix(pair: Pair<Rule>, child: ParseNode) -> ParseNode {
 }
 
 fn parse_path_raw(
-    pair: Pair<Rule>,
+    pair: Pair<'_, Rule>,
     span: &Span,
     pratt_parser: &PrattParser<Rule>,
 ) -> Result<(Vec<String>, Option<PathArgs>), Error<Rule>> {
@@ -488,7 +526,7 @@ fn parse_path_raw(
 }
 
 fn parse_path(
-    pair: Pair<Rule>,
+    pair: Pair<'_, Rule>,
     span: &Span,
     pratt_parser: &PrattParser<Rule>,
 ) -> Result<ParseNode, Error<Rule>> {
@@ -499,7 +537,7 @@ fn parse_path(
     Ok(ParseNode { expr, span })
 }
 
-fn parse_grammar_doc(pair: Pair<Rule>) -> Result<String, Error<Rule>> {
+fn parse_grammar_doc(pair: Pair<'_, Rule>) -> Result<String, Error<Rule>> {
     let string = &pair.as_str()[3..];
     let string = string.trim();
     let content = Some(string).ok_or(Error::new_from_span(
@@ -512,7 +550,7 @@ fn parse_grammar_doc(pair: Pair<Rule>) -> Result<String, Error<Rule>> {
     Ok(content.to_string())
 }
 
-fn parse_rule_doc(pair: Pair<Rule>) -> Result<String, Error<Rule>> {
+fn parse_rule_doc(pair: Pair<'_, Rule>) -> Result<String, Error<Rule>> {
     let string = &pair.as_str()[3..];
     let string = string.trim();
     let content = Some(string).ok_or(Error::new_from_span(
@@ -525,7 +563,7 @@ fn parse_rule_doc(pair: Pair<Rule>) -> Result<String, Error<Rule>> {
     Ok(content.to_string())
 }
 
-fn parse_string(pair: Pair<Rule>, span: &Span) -> Result<ParseNode, Error<Rule>> {
+fn parse_string(pair: Pair<'_, Rule>, span: &Span) -> Result<ParseNode, Error<Rule>> {
     let string = pair.as_str();
     let content = unescape(&string[1..string.len() - 1]).ok_or(Error::new_from_span(
         ErrorVariant::CustomError {
@@ -540,7 +578,7 @@ fn parse_string(pair: Pair<Rule>, span: &Span) -> Result<ParseNode, Error<Rule>>
     Ok(ParseNode { expr, span })
 }
 
-fn parse_raw_string(pair: Pair<Rule>, span: &Span) -> ParseNode {
+fn parse_raw_string(pair: Pair<'_, Rule>, span: &Span) -> ParseNode {
     let span = span.from_pest(pair.as_span());
     let mut pairs = pair.into_inner();
 
@@ -552,7 +590,7 @@ fn parse_raw_string(pair: Pair<Rule>, span: &Span) -> ParseNode {
     ParseNode { expr, span }
 }
 
-fn parse_insensitive_string(pair: Pair<Rule>, span: &Span) -> Result<ParseNode, Error<Rule>> {
+fn parse_insensitive_string(pair: Pair<'_, Rule>, span: &Span) -> Result<ParseNode, Error<Rule>> {
     let string = pair.as_str();
     let content = unescape(&string[2..string.len() - 1]).ok_or(Error::new_from_span(
         ErrorVariant::CustomError {
@@ -567,7 +605,7 @@ fn parse_insensitive_string(pair: Pair<Rule>, span: &Span) -> Result<ParseNode, 
     Ok(ParseNode { expr, span })
 }
 
-fn parse_char_range(pair: Pair<Rule>, span: &Span) -> Result<ParseNode, Error<Rule>> {
+fn parse_char_range(pair: Pair<'_, Rule>, span: &Span) -> Result<ParseNode, Error<Rule>> {
     let span = span.from_pest(pair.as_span());
     let mut pairs = pair.into_inner();
 
@@ -599,7 +637,7 @@ fn parse_char_range(pair: Pair<Rule>, span: &Span) -> Result<ParseNode, Error<Ru
     Ok(ParseNode { expr, span })
 }
 
-fn pair_to<F: FromStr>(pair: Pair<Rule>) -> Result<F, Error<Rule>> {
+fn pair_to<F: FromStr>(pair: Pair<'_, Rule>) -> Result<F, Error<Rule>> {
     if let Ok(number) = pair.as_str().parse() {
         Ok(number)
     } else {
@@ -612,7 +650,7 @@ fn pair_to<F: FromStr>(pair: Pair<Rule>) -> Result<F, Error<Rule>> {
     }
 }
 
-fn parse_range<F: FromStr + Copy>(pairs: &mut Pairs<Rule>) -> Result<Range<F>, Error<Rule>> {
+fn parse_range<F: FromStr + Copy>(pairs: &mut Pairs<'_, Rule>) -> Result<Range<F>, Error<Rule>> {
     pairs.next().unwrap(); // opening_brace | opening_brack
 
     let rules: Vec<_> = pairs.clone().map(|pair| pair.as_rule()).collect();
@@ -652,8 +690,8 @@ fn parse_range<F: FromStr + Copy>(pairs: &mut Pairs<Rule>) -> Result<Range<F>, E
     Ok(range)
 }
 
-fn parse_bounded_repeat(pair: Pair<Rule>, child: ParseNode) -> Result<ParseExpr, Error<Rule>> {
-    fn inner_span(pair: Pair<Rule>) -> pest::Span {
+fn parse_bounded_repeat(pair: Pair<'_, Rule>, child: ParseNode) -> Result<ParseExpr, Error<Rule>> {
+    fn inner_span(pair: Pair<'_, Rule>) -> pest::Span<'_> {
         let mut pairs = pair.into_inner();
 
         pairs.next().unwrap(); // opening_brace
@@ -695,7 +733,7 @@ fn parse_bounded_repeat(pair: Pair<Rule>, child: ParseNode) -> Result<ParseExpr,
     Ok(ParseExpr::RepRange(Box::new(child), range))
 }
 
-fn parse_postfix(pair: Pair<Rule>, child: ParseNode) -> Result<ParseNode, Error<Rule>> {
+fn parse_postfix(pair: Pair<'_, Rule>, child: ParseNode) -> Result<ParseNode, Error<Rule>> {
     let span = match pair.as_rule() {
         Rule::overridable_operator => child.span.start(pair.as_span().start()),
         _ => child.span.end(pair.as_span().end()),
@@ -714,7 +752,7 @@ fn parse_postfix(pair: Pair<Rule>, child: ParseNode) -> Result<ParseNode, Error<
 }
 
 fn parse_term(
-    pair: Pair<Rule>,
+    pair: Pair<'_, Rule>,
     span: &Span,
     pratt_parser: &PrattParser<Rule>,
 ) -> Result<ParseNode, Error<Rule>> {
@@ -756,12 +794,12 @@ fn parse_term(
 }
 
 fn parse_node(
-    expr: Pair<Rule>,
+    expr: Pair<'_, Rule>,
     span: &Span,
     pratt_parser: &PrattParser<Rule>,
 ) -> Result<ParseNode, Error<Rule>> {
     let infix = |lhs: Result<ParseNode, Error<Rule>>,
-                 op: Pair<Rule>,
+                 op: Pair<'_, Rule>,
                  rhs: Result<ParseNode, Error<Rule>>| {
         let lhs = lhs?;
         let rhs = rhs?;
@@ -786,7 +824,7 @@ fn parse_node(
         .parse(pairs)
 }
 
-fn string_content(pair: &Pair<Rule>) -> Result<String, Error<Rule>> {
+fn string_content(pair: &Pair<'_, Rule>) -> Result<String, Error<Rule>> {
     let string = unescape(pair.as_str()).ok_or(Error::new_from_span(
         ErrorVariant::CustomError {
             message: "invalid string literal".to_string(),
@@ -872,10 +910,11 @@ mod tests {
     fn grammar_test() {
         let input = include_str!("../tests/pest3sample.pest");
         let parsed = parse(input, &Path::new("../tests/pest3sample.pest"));
-        let GrammarModule(rules, doc_comment, _) = match parsed {
+        let module = match parsed {
             Ok(parsed) => parsed,
             Err(err) => panic!("{err}"),
         };
+        let GrammarModule(rules, doc_comment, _) = module.as_ref();
         assert_ne!(rules.len(), 0);
         assert_ne!(doc_comment.grammar_doc.len(), 0);
     }

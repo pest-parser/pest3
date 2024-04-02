@@ -1,23 +1,14 @@
+//! Use a script to format generated codes if changed.
+//!
+//! ```shell
+//! cargo fmt
+//! ```
 use pest3_generator::typed::derive_typed_parser;
+use proc_macro2::TokenStream;
 use quote::quote;
 
-/// Use a script to format generated codes if changed.
-///
-/// ```shell
-/// rustfmt generator/tests/generated.txt
-/// ```
-#[test]
-fn generated() {
-    let path_generated = "tests/generated.rs";
-    let path_expected = "tests/expected.rs";
-    let actual = derive_typed_parser(
-        quote! {
-            #[grammar = "tests/syntax.pest"]
-            struct Parser;
-        },
-        false,
-        false,
-    );
+fn template(path_generated: &'static str, path_expected: &'static str, input: TokenStream) {
+    let actual = derive_typed_parser(input, false, false);
     let actual = actual.to_string();
     std::fs::write(path_generated, &actual).unwrap();
     let output = std::process::Command::new("rustfmt")
@@ -37,31 +28,38 @@ fn generated() {
 }
 
 #[test]
+fn generated() {
+    template(
+        "tests/generated.rs",
+        "tests/expected.rs",
+        quote! {
+            #[grammar = "tests/syntax.pest"]
+            struct Parser;
+        },
+    );
+}
+
+#[test]
 fn generated_sample() {
-    let path_generated = "tests/generated_sample.rs";
-    let path_expected = "tests/expected_sample.rs";
-    let actual = derive_typed_parser(
+    template(
+        "tests/generated_sample.rs",
+        "tests/expected_sample.rs",
         quote! {
             #[grammar = "../meta/tests/pest3sample.pest"]
             struct Parser;
         },
-        false,
-        false,
     );
-    let actual = actual.to_string();
-    std::fs::write(path_generated, &actual).unwrap();
-    let output = std::process::Command::new("rustfmt")
-        .arg(path_generated)
-        .output()
-        .unwrap();
-    assert!(
-        output.status.success(),
-        "STDOUT:\n{}\nSTDERR:\n{}",
-        String::from_utf8(output.stdout).unwrap(),
-        String::from_utf8(output.stderr).unwrap(),
-    );
+}
 
-    if std::fs::read(path_generated).unwrap() != std::fs::read(path_expected).unwrap() {
-        panic!("Generated codes have changed.")
-    }
+
+#[test]
+fn generated_import_inline() {
+    template(
+        "tests/generated_import_inline.rs",
+        "tests/expected_import_inline.rs",
+        quote! {
+            #[grammar_inline = "use tests::minimal\nx = minimal::x\nxx = x - x"]
+            struct Parser;
+        },
+    );
 }

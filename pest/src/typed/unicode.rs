@@ -1,3 +1,4 @@
+//! Wrapped types for unicode property. See [pest2::unicode] for details.
 crate::unicode!(ALPHABETIC);
 crate::unicode!(BIDI_CONTROL);
 crate::unicode!(CASE_IGNORABLE);

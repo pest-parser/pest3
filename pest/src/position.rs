@@ -14,6 +14,8 @@
 //!
 //! [pest-typed/position.rs]: https://github.com/TheVeryDarkness/pest-typed/blob/0.12.1/main/src/position.rs
 
+#![allow(dead_code)]
+
 use core::cmp::Ordering;
 use core::fmt::{self, Write};
 use core::hash::{Hash, Hasher};

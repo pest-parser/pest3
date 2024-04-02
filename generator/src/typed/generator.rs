@@ -1,16 +1,10 @@
 use super::{
     attr::parse_derive,
     config::Config,
-    module::ModuleSystem,
-    output::{generics, Output},
+    module::{ModuleNode, ModuleSystem},
+    output::{generics, Output, Tracker},
 };
-use crate::{
-    common::{generate_include, generate_rule_enum},
-    config::collect_data,
-    types::option_type,
-    types::pest,
-};
-use pest3::unicode::unicode_property_names;
+use crate::{common::generate_include, config::collect_data, types::option_type, types::pest};
 use pest3_meta::{
     error::rename_meta_rule,
     parser::{
@@ -24,6 +18,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fmt::Display,
     path::PathBuf,
+    rc::Rc,
 };
 use syn::{DeriveInput, Generics};
 
@@ -91,6 +86,7 @@ impl ProcessedPathArgs {
     fn process<'g>(
         args: &'g PathArgs,
         rule_config: &RuleConfig<'g>,
+        tracker: &mut Tracker<'g>,
         output: &mut Output<'g>,
         config: Config,
         mod_sys: &ModuleSystem<'g>,
@@ -100,7 +96,17 @@ impl ProcessedPathArgs {
             PathArgs::Call(args) => {
                 let args = args
                     .iter()
-                    .map(|arg| process_expr(&arg.expr, rule_config, output, config, mod_sys, root))
+                    .map(|arg| {
+                        process_expr(
+                            &arg.expr,
+                            rule_config,
+                            tracker,
+                            output,
+                            config,
+                            mod_sys,
+                            root,
+                        )
+                    })
                     .collect();
                 Self::Call(args)
             }
@@ -136,7 +142,7 @@ impl<'g> Display for RuleRef<'g> {
 }
 
 fn create_rule<'g>(
-    config: Config,
+    _config: Config,
     rule_config: &RuleConfig<'g>,
     rule_info: &RuleInfo<'g>,
     inner_type: TokenStream,
@@ -272,6 +278,7 @@ fn get_trivia(expr: &ParseExpr) -> Trivia {
 fn process_expr<'g>(
     expr: &'g ParseExpr,
     rule_config: &RuleConfig<'g>,
+    tracker: &mut Tracker<'g>,
     output: &mut Output<'g>,
     config: Config,
     mod_sys: &ModuleSystem<'g>,
@@ -280,12 +287,12 @@ fn process_expr<'g>(
     let generics = generics();
     match expr {
         ParseExpr::Str(content) => {
-            let wrapper = output.insert_string_wrapper(content.as_str());
+            let wrapper = tracker.insert_string_wrapper(content.as_str());
             let typename = quote! {#root::#generics::Str::<#root::#wrapper>};
             Intermediate { typename }
         }
         ParseExpr::Insens(content) => {
-            let wrapper = output.insert_string_wrapper(content.as_str());
+            let wrapper = tracker.insert_string_wrapper(content.as_str());
             let typename = quote! {#root::#generics::Insens::<'i, #root::#wrapper>};
             Intermediate { typename }
         }
@@ -302,20 +309,44 @@ fn process_expr<'g>(
                 }
             }
             let args = args.as_ref().map(|args| {
-                ProcessedPathArgs::process(args, rule_config, output, config, mod_sys, root)
+                ProcessedPathArgs::process(
+                    args,
+                    rule_config,
+                    tracker,
+                    output,
+                    config,
+                    mod_sys,
+                    root,
+                )
             });
             let rule_ref = RuleRef::new(prefix, args);
-            mod_sys.resolve(&rule_ref, root)
+            mod_sys.resolve(&rule_ref, root).unwrap()
         }
         ParseExpr::PosPred(node) => {
-            let inner = process_expr(&node.expr, rule_config, output, config, mod_sys, root);
+            let inner = process_expr(
+                &node.expr,
+                rule_config,
+                tracker,
+                output,
+                config,
+                mod_sys,
+                root,
+            );
             let inner_typename = &inner.typename;
             let typename = quote! {#root::#generics::Positive::<#inner_typename>};
             Intermediate { typename }
         }
         ParseExpr::NegPred(node) => {
             // Impossible to access inner tokens.
-            let inner = process_expr(&node.expr, rule_config, output, config, mod_sys, root);
+            let inner = process_expr(
+                &node.expr,
+                rule_config,
+                tracker,
+                output,
+                config,
+                mod_sys,
+                root,
+            );
             let inner_typename = &inner.typename;
             let typename = quote! {#root::#generics::Negative::<#inner_typename>};
             Intermediate { typename }
@@ -324,7 +355,7 @@ fn process_expr<'g>(
             let vec = collect_sequence(&left.expr, &right.expr, trivia.clone());
             let mut types = Vec::with_capacity(vec.len());
             for (trivia, expr) in vec.into_iter() {
-                let child = process_expr(expr, rule_config, output, config, mod_sys, root);
+                let child = process_expr(expr, rule_config, tracker, output, config, mod_sys, root);
                 types.push((child, trivia));
             }
             let typenames = types.iter().map(|(inter, trivia)| {
@@ -334,7 +365,7 @@ fn process_expr<'g>(
             });
 
             let seq = format_ident!("Sequence{}", types.len());
-            output.record_seq(types.len());
+            tracker.record_seq(types.len());
 
             let typename = quote! { #root::#generics::#seq::<#(#typenames, )*> };
             Intermediate { typename }
@@ -343,40 +374,72 @@ fn process_expr<'g>(
             let vec = collect_choices(&left.expr, &right.expr);
             let mut types = vec![];
             for expr in vec.into_iter() {
-                let child = process_expr(expr, rule_config, output, config, mod_sys, root);
+                let child = process_expr(expr, rule_config, tracker, output, config, mod_sys, root);
                 types.push(child);
             }
             let typenames = types.iter().map(|inter| &inter.typename);
 
             let choice = format_ident!("Choice{}", types.len());
-            output.record_choice(types.len());
+            tracker.record_choice(types.len());
 
             let typename = quote! { #root::#generics::#choice::<#(#typenames, )*> };
             Intermediate { typename }
         }
         ParseExpr::Opt(inner) => {
-            let inner = process_expr(&inner.expr, rule_config, output, config, mod_sys, root);
+            let inner = process_expr(
+                &inner.expr,
+                rule_config,
+                tracker,
+                output,
+                config,
+                mod_sys,
+                root,
+            );
             let option = option_type();
             let inner_name = &inner.typename;
             let typename = quote! {#option::<#inner_name>};
             Intermediate { typename }
         }
         ParseExpr::Rep(inner_node) => {
-            let inner = process_expr(&inner_node.expr, rule_config, output, config, mod_sys, root);
+            let inner = process_expr(
+                &inner_node.expr,
+                rule_config,
+                tracker,
+                output,
+                config,
+                mod_sys,
+                root,
+            );
             let inner_name = &inner.typename;
             let trivia = get_trivia(&inner_node.expr).get_code();
             let typename = quote! { #root::#generics::Rep::<#inner_name, #trivia> };
             Intermediate { typename }
         }
         ParseExpr::RepOnce(inner_node) => {
-            let inner = process_expr(&inner_node.expr, rule_config, output, config, mod_sys, root);
+            let inner = process_expr(
+                &inner_node.expr,
+                rule_config,
+                tracker,
+                output,
+                config,
+                mod_sys,
+                root,
+            );
             let inner_name = &inner.typename;
             let trivia = get_trivia(&inner_node.expr).get_code();
             let typename = quote! { #root::#generics::RepOnce::<#inner_name, #trivia> };
             Intermediate { typename }
         }
         ParseExpr::RepRange(inner_node, range) => {
-            let inner = process_expr(&inner_node.expr, rule_config, output, config, mod_sys, root);
+            let inner = process_expr(
+                &inner_node.expr,
+                rule_config,
+                tracker,
+                output,
+                config,
+                mod_sys,
+                root,
+            );
             let inner_name = &inner.typename;
             let parser::Range { start, end } = range;
             let trivia = get_trivia(&inner_node.expr).get_code();
@@ -396,9 +459,15 @@ fn process_expr<'g>(
             };
             Intermediate { typename }
         }
-        ParseExpr::Separated(inner, _trivia) => {
-            process_expr(&inner.expr, rule_config, output, config, mod_sys, root)
-        }
+        ParseExpr::Separated(inner, _trivia) => process_expr(
+            &inner.expr,
+            rule_config,
+            tracker,
+            output,
+            config,
+            mod_sys,
+            root,
+        ),
     }
 }
 
@@ -407,16 +476,19 @@ fn process_rule<'g: 'f, 'f>(
     mod_sys: &ModuleSystem<'g>,
     reachability: &BTreeMap<&str, BTreeSet<&str>>,
     config: Config,
+    root: &TokenStream,
+    tracker: &mut Tracker<'g>,
     res: &mut Output<'g>,
 ) {
     let rule_config = RuleConfig::from(rule);
     let inter = process_expr(
         &rule.node.expr,
         &rule_config,
+        tracker,
         res,
         config,
         &mod_sys,
-        &quote! {super},
+        root,
     );
     match rule.name.as_str() {
         "~" => res.add_option_trivia(inter.typename),
@@ -434,23 +506,66 @@ fn process_rule<'g: 'f, 'f>(
     }
 }
 
-fn process_rules<'g: 'f, 'f>(
-    rules: &'g [ParseRule],
+fn process_rules<'g>(
+    module: &'g GrammarModule,
     mod_sys: &mut ModuleSystem<'g>,
     config: Config,
+    global: Rc<ModuleNode<'g>>,
+    prefix: &[String],
+    root: &TokenStream,
+    tracker: &mut Tracker<'g>,
 ) -> Output<'g> {
+    let GrammarModule(rules, _doc, imports) = module;
+    let mut prefix = prefix.to_owned();
+    let modules = imports
+        .iter()
+        .filter_map(|module| match module {
+            Import::Builtin(name, path) => {
+                prefix.push(name.clone());
+                mod_sys.alias(&path, name).unwrap();
+                None
+            }
+            Import::File(name, module) => {
+                let mut child_mod_sys = ModuleSystem::new(global.clone());
+                prefix.push(name.clone());
+                let module = (
+                    format_ident!("{name}"),
+                    process_rules(
+                        module,
+                        &mut child_mod_sys,
+                        config,
+                        global.clone(),
+                        &prefix,
+                        &quote! {super::super::#root},
+                        tracker,
+                    ),
+                );
+                let imported = child_mod_sys.take();
+                mod_sys.insert(imported, name);
+                Some(module)
+            }
+        })
+        .collect();
+    let mut output = Output::new(module, modules);
     let reachability = collect_reachability(rules);
     for rule in rules.iter() {
         match rule.name.as_str() {
             "~" | "^" => {}
-            _ => mod_sys.insert_rule(rule),
+            _ => mod_sys.insert_rule(rule).unwrap(),
         }
     }
-    let mut res = Output::new();
     for rule in rules.iter() {
-        process_rule(rule, mod_sys, &reachability, config, &mut res);
+        process_rule(
+            rule,
+            mod_sys,
+            &reachability,
+            config,
+            root,
+            tracker,
+            &mut output,
+        );
     }
-    res
+    output
 }
 
 /// `'g` refers to grammar.
@@ -558,29 +673,24 @@ fn collect_reachability(rules: &[ParseRule]) -> BTreeMap<&str, BTreeSet<&str>> {
     res
 }
 
-fn generate_typed_pair_from_rule(
-    rules: &[ParseRule],
-    imports: &[Import],
+fn generate_typed_pair_from_rule<'g>(
+    module: &'g GrammarModule,
     config: Config,
+    global: Rc<ModuleNode<'g>>,
+    tracker: &mut Tracker<'g>,
 ) -> TokenStream {
-    let unicode_names = unicode_property_names()
-        .into_iter()
-        .map(|name| {
-            assert!(name.is_ascii());
-            (name.to_ascii_lowercase(), name.to_ascii_uppercase())
-        })
-        .collect::<Vec<_>>();
-    let mut mod_sys = ModuleSystem::new(&unicode_names);
-    for import in imports {
-        match import {
-            Import::Builtin(name, path) => mod_sys.alias(path.iter().map(String::as_str), name),
-            Import::File(name, path) => {
-                todo!("importing external grammar {path:?} as {name:?} is not supported yet.")
-            }
-        }
-    }
-    let graph = process_rules(rules, &mut mod_sys, config);
-    graph.collect()
+    let mut mod_sys = ModuleSystem::new(global.clone());
+    let output = process_rules(
+        &module,
+        &mut mod_sys,
+        config,
+        global,
+        &[],
+        &quote! {super},
+        tracker,
+    );
+    let output = output.collect();
+    quote! {#output}
 }
 
 /// Generate codes for Parser.
@@ -598,9 +708,9 @@ fn generate_typed(
     } else {
         quote!()
     };
-    let GrammarModule(rules, doc_comment, imports) = module;
-    let rule_enum = generate_rule_enum(&rules, &doc_comment);
-    let definition = generate_typed_pair_from_rule(&rules, &imports, config);
+    let mut tracker = Tracker::new();
+    let global = ModuleSystem::make_global();
+    let definition = generate_typed_pair_from_rule(&module, config, global, &mut tracker);
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
     let pest = pest();
 
@@ -614,9 +724,9 @@ fn generate_typed(
 
     let res = quote! {
         #include_fix
-        #rule_enum
         #impl_parser
         #definition
+        #tracker
     };
     res
 }
@@ -634,12 +744,15 @@ pub fn derive_typed_parser(
 
     let module = data
         .iter()
-        .map(
-            |(input, root)| match parser::parse(input, root.as_ref().unwrap_or(&PathBuf::new())) {
+        .map(|(input, root)| {
+            let root = root.clone().unwrap_or_else(|| {
+                PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap_or(".".to_owned()))
+            });
+            match parser::parse(input, &root) {
                 Ok(pairs) => pairs,
                 Err(error) => panic!("error parsing \n{}", error.renamed_rules(rename_meta_rule)),
-            },
-        )
+            }
+        })
         .collect();
     let paths = data.iter().filter_map(|(_, p)| p.clone()).collect();
 
@@ -655,22 +768,30 @@ pub fn derive_typed_parser(
 }
 
 #[cfg(test)]
+#[allow(unused)]
 mod tests {
     use super::*;
-    use lazy_static::lazy_static;
     use pest3_meta::parser;
-    use std::string::String;
+    use std::{
+        string::String,
+        sync::{Arc, OnceLock},
+    };
 
-    lazy_static! {
-        static ref SYNTAX: String =
-            String::from_utf8(std::fs::read("tests/syntax.pest").unwrap()).unwrap();
-        static ref PARSE_RESULT: GrammarModule =
-            parser::parse(&SYNTAX, &"tests/syntax.pest").unwrap();
+    static SYNTAX: OnceLock<String> = OnceLock::new();
+    static PARSE_RESULT: OnceLock<Arc<GrammarModule>> = OnceLock::new();
+
+    fn get() -> (&'static String, &'static Arc<GrammarModule>) {
+        let syntax = SYNTAX.get_or_init(|| {
+            String::from_utf8(std::fs::read("tests/syntax.pest").unwrap()).unwrap()
+        });
+        let parse_result =
+            PARSE_RESULT.get_or_init(|| parser::parse(&syntax, &"tests/syntax.pest").unwrap());
+        (syntax, parse_result)
     }
 
     #[test]
     fn inlined_used_rules() {
-        let GrammarModule(rules, _, _) = parser::parse(
+        let module = parser::parse(
             r#"
 x = a - b
 a = "a"*
@@ -679,6 +800,7 @@ b = "b"+
             &file!(),
         )
         .unwrap();
+        let GrammarModule(rules, _, _) = module.as_ref();
         let used = collect_used_rules(&rules);
         assert_eq!(used, BTreeSet::from(["a", "b"]));
     }
@@ -686,7 +808,7 @@ b = "b"+
     #[test]
     /// Check we can actually break the cycles.
     fn inter_reference() {
-        let GrammarModule(rules, _, _) = parser::parse(
+        let module = parser::parse(
             &r#"
 a = "a" - b*
 b = "b" - c?
@@ -695,6 +817,7 @@ c = a+
             &file!(),
         )
         .unwrap();
+        let GrammarModule(rules, _, _) = module.as_ref();
         let used = collect_used_rules(&rules);
         assert_eq!(used, BTreeSet::from(["a", "b", "c"]));
         let graph = collect_reachability(&rules);

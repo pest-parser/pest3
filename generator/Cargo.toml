@@ -10,6 +10,3 @@ quote = "1.0"
 syn = "2.0"
 pest3_meta.workspace = true
 pest3.workspace = true
-
-[dev-dependencies]
-lazy_static = { version = "1.4.0" }

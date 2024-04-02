@@ -1,0 +1,4 @@
+//! A minimal grammar file.
+
+/// A rule that matches a string "x".
+x = "x"
