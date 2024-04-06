@@ -149,6 +149,7 @@ fn create_rule<'g>(
     root: TokenStream,
 ) -> TokenStream {
     let name = &rule_info.rule_id;
+    let rule = quote! {super::Rule};
     let this = pest();
     let doc = format!(
         "Generated for rule `{}`. Grammar: `{}`.",
@@ -164,24 +165,24 @@ fn create_rule<'g>(
     let pair_api = match rule_info.silent {
         true => quote! {
             #[allow(non_camel_case_types)]
-            impl<'i, #(#args, )*> #this::typed::PairContainer<#root::Rule> for #name<'i, #(#args, )*> {
-                fn for_each_child_pair(&self, _f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {}
-                fn for_self_or_for_each_child_pair(&self, _f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {}
+            impl<'i, #(#args, )*> #this::typed::PairContainer<#rule> for #name<'i, #(#args, )*> {
+                fn for_each_child_pair(&self, _f: &mut impl #this::std::FnMut(#this::token::Pair<#rule>)) {}
+                fn for_self_or_for_each_child_pair(&self, _f: &mut impl #this::std::FnMut(#this::token::Pair<#rule>)) {}
             }
         },
         false => quote! {
             #[allow(non_camel_case_types)]
-            impl<'i, #(#args: #this::typed::PairContainer<#root::Rule>, )*> #this::typed::PairContainer<#root::Rule> for #name<'i, #(#args, )*> {
-                fn for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {
+            impl<'i, #(#args: #this::typed::PairContainer<#rule>, )*> #this::typed::PairContainer<#rule> for #name<'i, #(#args, )*> {
+                fn for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#rule>)) {
                     self.content.for_self_or_for_each_child_pair(f)
                 }
-                fn for_self_or_for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#root::Rule>)) {
+                fn for_self_or_for_each_child_pair(&self, f: &mut impl #this::std::FnMut(#this::token::Pair<#rule>)) {
                     use #this::typed::PairTree;
                     f(self.as_pair_tree())
                 }
             }
             #[allow(non_camel_case_types)]
-            impl<'i, #(#args: #this::typed::PairContainer<#root::Rule>, )*> #this::typed::PairTree<#root::Rule> for #name<'i, #(#args, )*> {
+            impl<'i, #(#args: #this::typed::PairContainer<#rule>, )*> #this::typed::PairTree<#rule> for #name<'i, #(#args, )*> {
                 fn get_span(&self) -> (#this::std::usize, #this::std::usize) {
                     (self.span.start(), self.span.end())
                 }
@@ -205,11 +206,11 @@ fn create_rule<'g>(
         }
         #[allow(non_camel_case_types)]
         impl<'i, #(#args, )*> #this::typed::wrapper::Rule for #name<'i, #(#args, )*> {
-            type Rule = #root::Rule;
-            const RULE: #root::Rule = #root::Rule::#name;
+            type Rule = #rule;
+            const RULE: #rule = #rule::#name;
         }
         #[allow(non_camel_case_types)]
-        impl<'i, #(#args: #this::typed::TypedNode<'i, #root::Rule>, )*> #this::typed::FullRuleStruct<'i> for #name<'i, #(#args, )*> {
+        impl<'i, #(#args: #this::typed::TypedNode<'i, #rule>, )*> #this::typed::FullRuleStruct<'i> for #name<'i, #(#args, )*> {
             type Inner = #inner_type;
             type Content = #content_type;
             #[inline]
