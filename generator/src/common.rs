@@ -1,6 +1,9 @@
 //! Some common codes that most backends will use.
 
-use pest3_meta::{doc::DocComment, parser::ParseRule};
+use pest3_meta::{
+    doc::DocComment,
+    parser::{GrammarModule, Import, ParseRule},
+};
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::path::PathBuf;
@@ -35,7 +38,8 @@ pub(crate) fn generate_include(name: &Ident, paths: Vec<PathBuf>) -> TokenStream
     }
 }
 
-pub(crate) fn generate_rule_enum(rules: &[ParseRule], doc_comment: &DocComment) -> TokenStream {
+pub(crate) fn generate_rule_enum(module: &GrammarModule) -> TokenStream {
+    let GrammarModule(rules, doc, imports) = module;
     let rules = rules
         .iter()
         .filter(|rule| rule.name != "~" && rule.name != "^")
@@ -51,7 +55,17 @@ pub(crate) fn generate_rule_enum(rules: &[ParseRule], doc_comment: &DocComment) 
             }
         });
 
-    let grammar_doc = &doc_comment.grammar_doc;
+    let subrules = imports.iter().map(|import| match import {
+        Import::Builtin(_, _) => quote! {},
+        Import::File(name, module) => {
+            let ident = format_ident!("{}", name);
+            quote! {
+                #ident(rules::#ident::Rule),
+            }
+        }
+    });
+
+    let grammar_doc = &doc.grammar_doc;
     let grammar_doc = quote! {#(#[doc = #grammar_doc])*};
     quote! {
         #grammar_doc
@@ -60,6 +74,7 @@ pub(crate) fn generate_rule_enum(rules: &[ParseRule], doc_comment: &DocComment) 
         pub enum Rule {
             EOI,
             #( #rules )*
+            #( #subrules )*
         }
     }
 }

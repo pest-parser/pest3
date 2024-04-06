@@ -198,8 +198,7 @@ pub(crate) struct Output<'g> {
 }
 impl<'g> Output<'g> {
     pub fn new(module: &'g GrammarModule, modules: Vec<(Ident, Self)>) -> Self {
-        let GrammarModule(rules, doc, _) = module;
-        let rule_enum = generate_rule_enum(rules, doc);
+        let rule_enum = generate_rule_enum(module);
         Self {
             content: Vec::new(),
             optional_trivia: None,
