@@ -238,6 +238,12 @@ impl<'g> Output<'g> {
                 pub mod #name {
                     #output
                 }
+                impl #pest::typed::SubRule for #name::Rule {
+                    type Super = super::Rule;
+                    fn cvt_into(self) -> Self::Super {
+                        super::Rule::#name(self)
+                    }
+                }
             }
         });
         quote! {

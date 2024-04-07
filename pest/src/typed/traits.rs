@@ -112,6 +112,25 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
     // const FIRST: &'static [char];
 }
 
+/// The super rule of `R`.
+pub trait SuperRule<R: RuleType>: RuleType {
+    /// Convert from.
+    fn cvt_from(rule: R) -> Self;
+}
+impl<R: RuleType> SuperRule<R> for R {
+    fn cvt_from(rule: R) -> Self {
+        rule
+    }
+}
+
+/// A sub rule of `Self::Super`.
+pub trait SubRule: RuleType {
+    /// Super rule.
+    type Super: RuleType;
+    /// Convert into.
+    fn cvt_into(self) -> Self::Super;
+}
+
 /// Struct for rules with full capacity.
 pub trait FullRuleStruct<'i>: wrapper::Rule {
     /// Wrapped inner type.

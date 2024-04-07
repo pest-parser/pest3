@@ -15,10 +15,10 @@ pub(crate) fn parse_derive(ast: DeriveInput) -> (Ident, Generics, Vec<GrammarSou
             grammar_sources.push(GrammarSource::File(get_string(attr, "grammar")));
         } else if path.is_ident("grammar_inline") {
             grammar_sources.push(GrammarSource::Inline(get_string(attr, "grammar_inline")));
-        } else if path.is_ident("emit_rule_reference") {
-            config.emit_rule_reference = get_bool(attr, "emit_rule_reference");
-        } else if path.is_ident("do_not_emit_span") {
-            config.do_not_emit_span = get_bool(attr, "do_not_emit_span");
+        } else if path.is_ident("no_pair") {
+            config.no_pair = get_bool(attr, "no_pair");
+        } else if path.is_ident("no_span") {
+            config.no_span = get_bool(attr, "no_span");
         } else if path.is_ident("no_warnings") {
             config.no_warnings = get_bool(attr, "no_warnings");
         } else if path.is_ident("box_all_rules") {

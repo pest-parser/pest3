@@ -8,6 +8,8 @@ use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::path::PathBuf;
 
+use crate::types::pest;
+
 /// Generate Rust `include_str!` for grammar files, then Cargo will watch changes in grammars.
 pub(crate) fn generate_include(name: &Ident, paths: Vec<PathBuf>) -> TokenStream {
     let const_name = format_ident!("_PEST_GRAMMAR_{}", name);
@@ -39,6 +41,7 @@ pub(crate) fn generate_include(name: &Ident, paths: Vec<PathBuf>) -> TokenStream
 }
 
 pub(crate) fn generate_rule_enum(module: &GrammarModule) -> TokenStream {
+    let this = pest();
     let GrammarModule(rules, doc, imports) = module;
     let rules = rules
         .iter()
@@ -58,9 +61,22 @@ pub(crate) fn generate_rule_enum(module: &GrammarModule) -> TokenStream {
     let subrules = imports.iter().map(|import| match import {
         Import::Builtin(_, _) => quote! {},
         Import::File(name, module) => {
-            let ident = format_ident!("{}", name);
+            let ident = format_ident!("r#{}", name);
             quote! {
                 #ident(rules::#ident::Rule),
+            }
+        }
+    });
+    let impl_sup_rules = imports.iter().map(|import| match import {
+        Import::Builtin(_, _) => quote! {},
+        Import::File(name, module) => {
+            let ident = format_ident!("r#{}", name);
+            quote! {
+                impl #this::typed::SuperRule<rules::#ident::Rule> for Rule {
+                    fn cvt_from(rule: rules::#ident::Rule) -> Self {
+                        Self::#ident(rule)
+                    }
+                }
             }
         }
     });
@@ -76,5 +92,6 @@ pub(crate) fn generate_rule_enum(module: &GrammarModule) -> TokenStream {
             #( #rules )*
             #( #subrules )*
         }
+        #( #impl_sup_rules )*
     }
 }
