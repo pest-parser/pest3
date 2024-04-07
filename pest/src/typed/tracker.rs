@@ -166,6 +166,15 @@ impl<'i, R: RuleType> Tracker<'i, R> {
     }
     /// Record if the result doesn't match the state during calling `f`.
     #[inline]
+    pub fn record_result_during<T: RuleWrapper<Rule = R>, E>(
+        &mut self,
+        pos: Position<'i>,
+        f: impl FnOnce(&mut Self) -> Result<(Position<'i>, T), E>,
+    ) -> Result<(Position<'i>, T), E> {
+        self.record_during_with(pos, f, T::RULE)
+    }
+    /// Record if the result doesn't match the state during calling `f`.
+    #[inline]
     pub(crate) fn record_option_during_with<T>(
         &mut self,
         pos: Position<'i>,
@@ -186,30 +195,23 @@ impl<'i, R: RuleType> Tracker<'i, R> {
     }
     /// Record if the result doesn't match the state during calling `f`.
     #[inline]
-    pub fn record_result_during<T: RuleWrapper<Rule = R>, E>(
-        &mut self,
-        pos: Position<'i>,
-        f: impl FnOnce(&mut Self) -> Result<(Position<'i>, T), E>,
-    ) -> Result<(Position<'i>, T), E> {
-        self.record_during_with(pos, f, T::RULE)
-    }
-    /// Record if the result doesn't match the state during calling `f`.
-    #[inline]
-    pub fn record_option_during<T: RuleWrapper<Rule = R>>(
+    pub fn record_option_during<T>(
         &mut self,
         pos: Position<'i>,
         f: impl FnOnce(&mut Self) -> Option<(Position<'i>, T)>,
+        rule: R,
     ) -> Option<(Position<'i>, T)> {
-        self.record_option_during_with(pos, f, T::RULE)
+        self.record_option_during_with(pos, f, rule)
     }
     /// Record if the result doesn't match the state during calling `f`.
     #[inline]
-    pub fn record_empty_during<T: RuleWrapper<Rule = R>>(
+    pub fn record_empty_during<T>(
         &mut self,
         pos: Position<'i>,
         f: impl FnOnce(&mut Self) -> Option<Position<'i>>,
+        rule: R,
     ) -> Option<Position<'i>> {
-        self.record_option_during_with(pos, f, T::RULE)
+        self.record_option_during_with(pos, f, rule)
     }
     fn collect_to_message(self) -> String {
         let (pos, attempts) = self.finish();

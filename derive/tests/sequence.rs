@@ -62,6 +62,6 @@ fn single() -> anyhow::Result<()> {
 
 #[test]
 fn as_ref() -> anyhow::Result<()> {
-    let s4 = rules::s4::try_parse("abcd")?;
+    let _s4 = rules::s4::try_parse("abcd")?;
     Ok(())
 }

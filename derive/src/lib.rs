@@ -13,6 +13,7 @@ use proc_macro::TokenStream;
         no_warnings,
     )
 )]
+/// Derive typed parser from given grammar.
 pub fn derive_typed_parser(input: TokenStream) -> TokenStream {
     pest3_generator::typed::derive_typed_parser(input.into(), true, true).into()
 }

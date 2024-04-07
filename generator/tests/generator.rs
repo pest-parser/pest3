@@ -70,3 +70,18 @@ x4 = minimal::x | \"z\"
         },
     );
 }
+
+#[test]
+fn generated_import_dag() {
+    template(
+        "tests/generated_import_dag.rs",
+        "tests/expected_import_dag.rs",
+        quote! {
+            #[grammar_inline = "
+use tests::dag::f
+main = f::f
+"]
+            struct Parser;
+        },
+    );
+}

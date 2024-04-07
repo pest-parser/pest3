@@ -228,6 +228,24 @@ fn create_rule<'g>(
     } else {
         inner_type.clone()
     };
+    let typed_node = {
+        let rule = (0..=prefix.len()).map(|n| {
+            let supers = prefix.iter().take(n).map(|s| quote! {super::super::});
+            let rule = quote! {
+                super::#(#supers)* Rule
+            };
+            let mut rule_val = quote!{#root::Rule::#name};
+            for _ in 0..n {
+                rule_val = quote!{#rule_val.cvt_into()};
+            }
+            quote! {
+                #[allow(unused_imports)]
+                use pest3::typed::SubRule as _;
+                #this::full_rule_struct!(#name, (#(#args),*), #rule, #rule_val, #inner_type, #content_type, );
+            }
+        });
+        quote! {#(#rule)*}
+    };
     quote! {
         #[doc = #doc]
         #[derive(Clone, Debug, Eq, PartialEq)]
@@ -243,15 +261,7 @@ fn create_rule<'g>(
             type Rule = #rule;
             const RULE: #rule = #rule::#name;
         }
-        #[allow(non_camel_case_types)]
-        impl<'i, #(#args: #this::typed::TypedNode<'i, #rule>, )*> #this::typed::FullRuleStruct<'i> for #name<'i, #(#args, )*> {
-            type Inner = #inner_type;
-            type Content = #content_type;
-            #[inline]
-            fn new(content: <Self as #this::typed::FullRuleStruct<'i>>::Content, span: #this::Span<'i>) -> Self {
-                Self { content, span }
-            }
-        }
+        #typed_node
         #pair_api
     }
 }
@@ -560,6 +570,7 @@ fn process_rules<'g>(
             Import::Builtin(name, path) => {
                 new_prefix.push(name.clone());
                 mod_sys.alias(&path, name).unwrap();
+                new_prefix.pop().unwrap();
                 None
             }
             Import::File(name, module) => {
@@ -579,6 +590,7 @@ fn process_rules<'g>(
                 );
                 let imported = child_mod_sys.take();
                 mod_sys.insert(imported, name);
+                new_prefix.pop().unwrap();
                 Some(module)
             }
         })
@@ -783,9 +795,10 @@ pub fn derive_typed_parser(
     let module = data
         .iter()
         .map(|(input, root)| {
-            let root = root.clone().unwrap_or_else(|| {
+            let mut root = root.clone().unwrap_or_else(|| {
                 PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap_or(".".to_owned()))
             });
+            root.push("_.rs");
             match parser::parse(input, &root) {
                 Ok(pairs) => pairs,
                 Err(error) => panic!("error parsing \n{}", error.renamed_rules(rename_meta_rule)),

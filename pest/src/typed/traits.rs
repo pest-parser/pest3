@@ -1,4 +1,4 @@
-use super::{template::EOI, wrapper};
+use super::template::EOI;
 use crate::{token::Pair, typed::tracker::Tracker, Position, Span};
 use core::{fmt::Debug, hash::Hash};
 use pest2::{error::Error, Stack};
@@ -131,38 +131,44 @@ pub trait SubRule: RuleType {
     fn cvt_into(self) -> Self::Super;
 }
 
+#[macro_export]
 /// Struct for rules with full capacity.
-pub trait FullRuleStruct<'i>: wrapper::Rule {
-    /// Wrapped inner type.
-    type Inner: TypedNode<'i, Self::Rule>;
-    /// Wrapped content type.
-    type Content: From<Self::Inner>;
-    /// Create from span and content.
-    fn new(content: Self::Content, span: Span<'i>) -> Self;
-}
-impl<'i, R: RuleType, T: FullRuleStruct<'i, Rule = R>> TypedNode<'i, R> for T {
-    fn try_parse_with_partial(
-        input: Position<'i>,
-        stack: &mut Stack<Span<'i>>,
-        tracker: &mut Tracker<'i, R>,
-    ) -> Option<(Position<'i>, Self)> {
-        tracker.record_option_during(input, |tracker| {
-            let (pos, content) = <T::Inner>::try_parse_with_partial(input, stack, tracker)?;
-            let content = content.into();
-            let span = input.span(&pos);
-            Some((pos, Self::new(content, span)))
-        })
-    }
-    fn check_with_partial(
-        input: Position<'i>,
-        stack: &mut Stack<Span<'i>>,
-        tracker: &mut Tracker<'i, R>,
-    ) -> Option<Position<'i>> {
-        tracker.record_empty_during::<T>(input, |tracker| {
-            let pos = <T::Inner>::check_with_partial(input, stack, tracker)?;
-            Some(pos)
-        })
-    }
+macro_rules! full_rule_struct {
+    ($name:ident, ( $($args:ident ),* ), $Rule:ty, $rule:expr, $inner:ty, $content:ty, $(,)?) => {
+        #[allow(non_camel_case_types)]
+        impl<'i, $($args: $crate::typed::TypedNode<'i, $Rule>, )*> $crate::typed::TypedNode<'i, $Rule> for $name<'i, $($args, )*> {
+            fn try_parse_with_partial(
+                input: $crate::Position<'i>,
+                stack: &mut $crate::Stack<$crate::Span<'i>>,
+                tracker: &mut $crate::typed::Tracker<'i, $Rule>,
+            ) -> Option<($crate::Position<'i>, Self)> {
+                tracker.record_option_during(
+                    input,
+                    |tracker| {
+                        let (pos, content) = <$inner as $crate::typed::TypedNode<'i, $Rule>>::try_parse_with_partial(input, stack, tracker)?;
+                        let content = content.into();
+                        let span = input.span(&pos);
+                        Some((pos, Self { content, span }))
+                    },
+                    $rule
+                )
+            }
+            fn check_with_partial(
+                input: $crate::Position<'i>,
+                stack: &mut $crate::Stack<$crate::Span<'i>>,
+                tracker: &mut $crate::typed::Tracker<'i, $Rule>,
+            ) -> Option<$crate::Position<'i>> {
+                tracker.record_empty_during::<Self>(
+                    input,
+                    |tracker| {
+                        let pos = <$inner>::check_with_partial(input, stack, tracker)?;
+                        Some(pos)
+                    },
+                    $rule
+                )
+            }
+        }
+    };
 }
 
 /// A container of pairs.
@@ -197,12 +203,14 @@ impl<R, T: EmptyPairContainer> PairContainer<R> for T {
 }
 
 /// A pair that can be converted to a pair tree.
-pub trait PairTree<R: RuleType>: PairContainer<R> + wrapper::Rule<Rule = R> {
+pub trait PairTree<R: RuleType>: PairContainer<R> {
+    /// Wrapped rule.
+    fn get_rule() -> R;
     /// Get pair span.
     fn get_span(&self) -> (usize, usize);
     /// Convert `Self` to a pair tree.
     fn as_pair_tree(&self) -> Pair<R> {
-        let rule = Self::RULE;
+        let rule = Self::get_rule();
         let (start, end) = self.get_span();
         let children = self.vec_children_pairs();
         Pair {

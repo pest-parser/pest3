@@ -8,6 +8,7 @@ extern crate alloc;
 mod tests {
     use pest3::{
         choice::Choice2,
+        full_rule_struct,
         typed::{
             template::*,
             wrapper::{Rule as RuleWrapper, String as StringWrapper},
@@ -106,4 +107,11 @@ mod tests {
         assert_ne!(rep1, rep3);
         assert_eq!(rep3, rep4);
     }
+
+    #[allow(unused)]
+    struct A<'i> {
+        content: Empty,
+        span: Span<'i>,
+    }
+    full_rule_struct!(A, (), Rule, Rule::Foo, Empty, Box<Empty>,);
 }
