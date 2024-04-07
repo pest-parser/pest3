@@ -258,7 +258,11 @@ fn skip(rule: Rule, pairs: &mut Pairs<'_, Rule>) {
 }
 
 fn mod_path_to_fs_path(root: &impl AsRef<Path>, mod_path: &[String]) -> PathBuf {
-    let mut path = root.as_ref().to_owned();
+    let mut path = root
+        .as_ref()
+        .parent()
+        .expect("Grammar file path cannot be root.")
+        .to_owned();
     for sec in mod_path {
         let sec = match sec.as_str() {
             "super" => "..",
@@ -326,11 +330,7 @@ fn _parse<P: AsRef<Path>>(
                         None => mod_path_to_fs_path(root, &mod_path),
                     };
 
-                    let path = if fs_path.is_relative() {
-                        root.as_ref().join(fs_path)
-                    } else {
-                        fs_path.to_path_buf()
-                    };
+                    let path = fs_path;
 
                     let import = {
                         let module = match cache.get(&path) {
@@ -351,7 +351,7 @@ fn _parse<P: AsRef<Path>>(
                                     &path,
                                     cache,
                                 )
-                                .unwrap();
+                                .unwrap_or_else(|err| panic!("{}", err));
                                 cache.insert(path, module.clone());
                                 module
                             }

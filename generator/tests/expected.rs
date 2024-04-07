@@ -64,18 +64,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Regular;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Regular<'i> {
-        type Inner = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
-        type Content = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Regular,
+        (),
+        super::Rule,
+        super::Rule::r#Regular,
+        super::generics::RepOnce::<super::generics::CharRange::<'0', '9'>, 0u8>,
+        super::generics::RepOnce::<super::generics::CharRange::<'0', '9'>, 0u8>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Regular<'i> {
         fn for_each_child_pair(
@@ -94,6 +92,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Regular<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Regular;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -119,32 +123,30 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Atomic;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Atomic<'i> {
-        type Inner = super::generics::Sequence3<
-            super::generics::RepOnce<r#CharRange<'i>, 0u8>,
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Atomic,
+        (),
+        super::Rule,
+        super::Rule::r#Atomic,
+        super::generics::Sequence3::<
+            super::generics::RepOnce::<r#CharRange::<'i>, 0u8>,
             0u8,
-            super::generics::Str<super::wrapper::W1>,
+            super::generics::Str::<super::wrapper::W1>,
             1u8,
-            super::generics::RepOnce<r#CharRange<'i>, 0u8>,
+            super::generics::RepOnce::<r#CharRange::<'i>, 0u8>,
             1u8,
-        >;
-        type Content = super::generics::Sequence3<
-            super::generics::RepOnce<r#CharRange<'i>, 0u8>,
+        >,
+        super::generics::Sequence3::<
+            super::generics::RepOnce::<r#CharRange::<'i>, 0u8>,
             0u8,
-            super::generics::Str<super::wrapper::W1>,
+            super::generics::Str::<super::wrapper::W1>,
             1u8,
-            super::generics::RepOnce<r#CharRange<'i>, 0u8>,
+            super::generics::RepOnce::<r#CharRange::<'i>, 0u8>,
             1u8,
-        >;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+        >,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Atomic<'i> {
         fn for_each_child_pair(
@@ -163,6 +165,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Atomic<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Atomic;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -186,28 +194,26 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#NonAtomic;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#NonAtomic<'i> {
-        type Inner = super::generics::Sequence2<
-            super::generics::Str<super::wrapper::W2>,
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#NonAtomic,
+        (),
+        super::Rule,
+        super::Rule::r#NonAtomic,
+        super::generics::Sequence2::<
+            super::generics::Str::<super::wrapper::W2>,
             0u8,
-            super::generics::Str<super::wrapper::W3>,
+            super::generics::Str::<super::wrapper::W3>,
             2u8,
-        >;
-        type Content = super::generics::Sequence2<
-            super::generics::Str<super::wrapper::W2>,
+        >,
+        super::generics::Sequence2::<
+            super::generics::Str::<super::wrapper::W2>,
             0u8,
-            super::generics::Str<super::wrapper::W3>,
+            super::generics::Str::<super::wrapper::W3>,
             2u8,
-        >;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+        >,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#NonAtomic<'i> {
         fn for_each_child_pair(
@@ -226,6 +232,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#NonAtomic<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#NonAtomic;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -244,18 +256,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ExactString;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#ExactString<'i> {
-        type Inner = super::generics::Str<super::wrapper::W4>;
-        type Content = super::generics::Str<super::wrapper::W4>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#ExactString,
+        (),
+        super::Rule,
+        super::Rule::r#ExactString,
+        super::generics::Str::<super::wrapper::W4>,
+        super::generics::Str::<super::wrapper::W4>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#ExactString<'i> {
         fn for_each_child_pair(
@@ -274,6 +284,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#ExactString<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#ExactString;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -292,18 +308,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#CharRange;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#CharRange<'i> {
-        type Inner = super::generics::CharRange<'0', '9'>;
-        type Content = super::generics::CharRange<'0', '9'>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#CharRange,
+        (),
+        super::Rule,
+        super::Rule::r#CharRange,
+        super::generics::CharRange::<'0', '9'>,
+        super::generics::CharRange::<'0', '9'>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#CharRange<'i> {
         fn for_each_child_pair(
@@ -322,6 +336,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#CharRange<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#CharRange;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -340,18 +360,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Any;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Any<'i> {
-        type Inner = super::generics::r#any;
-        type Content = super::generics::r#any;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Any,
+        (),
+        super::Rule,
+        super::Rule::r#Any,
+        super::generics::r#any,
+        super::generics::r#any,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Any<'i> {
         fn for_each_child_pair(
@@ -370,6 +388,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Any<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Any;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -395,32 +419,30 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Seq;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Seq<'i> {
-        type Inner = super::generics::Sequence3<
-            super::generics::Str<super::wrapper::W5>,
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Seq,
+        (),
+        super::Rule,
+        super::Rule::r#Seq,
+        super::generics::Sequence3::<
+            super::generics::Str::<super::wrapper::W5>,
             0u8,
-            super::generics::CharRange<'2', '9'>,
+            super::generics::CharRange::<'2', '9'>,
             1u8,
-            super::generics::Str<super::wrapper::W6>,
+            super::generics::Str::<super::wrapper::W6>,
             1u8,
-        >;
-        type Content = super::generics::Sequence3<
-            super::generics::Str<super::wrapper::W5>,
+        >,
+        super::generics::Sequence3::<
+            super::generics::Str::<super::wrapper::W5>,
             0u8,
-            super::generics::CharRange<'2', '9'>,
+            super::generics::CharRange::<'2', '9'>,
             1u8,
-            super::generics::Str<super::wrapper::W6>,
+            super::generics::Str::<super::wrapper::W6>,
             1u8,
-        >;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+        >,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Seq<'i> {
         fn for_each_child_pair(
@@ -439,6 +461,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Seq<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Seq;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -483,68 +511,66 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Choice;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Choice<'i> {
-        type Inner = super::generics::Choice9<
-            super::generics::Str<super::wrapper::W7>,
-            super::generics::Sequence2<
-                super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>,
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Choice,
+        (),
+        super::Rule,
+        super::Rule::r#Choice,
+        super::generics::Choice9::<
+            super::generics::Str::<super::wrapper::W7>,
+            super::generics::Sequence2::<
+                super::generics::RepOnce::<super::generics::Str::<super::wrapper::W8>, 0u8>,
                 0u8,
-                r#RepAtLeastOnce<'i>,
+                r#RepAtLeastOnce::<'i>,
                 1u8,
             >,
-            super::generics::Sequence4<
-                super::generics::Positive<super::generics::Str<super::wrapper::W9>>,
+            super::generics::Sequence4::<
+                super::generics::Positive::<super::generics::Str::<super::wrapper::W9>>,
                 0u8,
-                r#Choice<'i>,
+                r#Choice::<'i>,
                 1u8,
-                r#Rep<'i>,
+                r#Rep::<'i>,
                 1u8,
-                r#Opt<'i>,
+                r#Opt::<'i>,
                 1u8,
             >,
-            r#Peek<'i>,
-            r#PeekLeft<'i>,
-            r#PeekRight<'i>,
-            r#PeekLeftRight<'i>,
-            r#Drop<'i>,
-            r#PeekAll<'i>,
-        >;
-        type Content = ::pest3::std::Box<
-            super::generics::Choice9<
-                super::generics::Str<super::wrapper::W7>,
-                super::generics::Sequence2<
-                    super::generics::RepOnce<super::generics::Str<super::wrapper::W8>, 0u8>,
+            r#Peek::<'i>,
+            r#PeekLeft::<'i>,
+            r#PeekRight::<'i>,
+            r#PeekLeftRight::<'i>,
+            r#Drop::<'i>,
+            r#PeekAll::<'i>,
+        >,
+        ::pest3::std::Box<
+            super::generics::Choice9::<
+                super::generics::Str::<super::wrapper::W7>,
+                super::generics::Sequence2::<
+                    super::generics::RepOnce::<super::generics::Str::<super::wrapper::W8>, 0u8>,
                     0u8,
-                    r#RepAtLeastOnce<'i>,
+                    r#RepAtLeastOnce::<'i>,
                     1u8,
                 >,
-                super::generics::Sequence4<
-                    super::generics::Positive<super::generics::Str<super::wrapper::W9>>,
+                super::generics::Sequence4::<
+                    super::generics::Positive::<super::generics::Str::<super::wrapper::W9>>,
                     0u8,
-                    r#Choice<'i>,
+                    r#Choice::<'i>,
                     1u8,
-                    r#Rep<'i>,
+                    r#Rep::<'i>,
                     1u8,
-                    r#Opt<'i>,
+                    r#Opt::<'i>,
                     1u8,
                 >,
-                r#Peek<'i>,
-                r#PeekLeft<'i>,
-                r#PeekRight<'i>,
-                r#PeekLeftRight<'i>,
-                r#Drop<'i>,
-                r#PeekAll<'i>,
+                r#Peek::<'i>,
+                r#PeekLeft::<'i>,
+                r#PeekRight::<'i>,
+                r#PeekLeftRight::<'i>,
+                r#Drop::<'i>,
+                r#PeekAll::<'i>,
             >,
-        >;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+        >,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Choice<'i> {
         fn for_each_child_pair(
@@ -563,6 +589,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Choice<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Choice;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -581,18 +613,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Rep;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Rep<'i> {
-        type Inner = super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0u8>;
-        type Content = super::generics::Rep<super::generics::Str<super::wrapper::W8>, 0u8>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Rep,
+        (),
+        super::Rule,
+        super::Rule::r#Rep,
+        super::generics::Rep::<super::generics::Str::<super::wrapper::W8>, 0u8>,
+        super::generics::Rep::<super::generics::Str::<super::wrapper::W8>, 0u8>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Rep<'i> {
         fn for_each_child_pair(
@@ -611,6 +641,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Rep<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Rep;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -629,18 +665,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepAtLeastOnce;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepAtLeastOnce<'i> {
-        type Inner = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
-        type Content = super::generics::RepOnce<super::generics::CharRange<'0', '9'>, 0u8>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#RepAtLeastOnce,
+        (),
+        super::Rule,
+        super::Rule::r#RepAtLeastOnce,
+        super::generics::RepOnce::<super::generics::CharRange::<'0', '9'>, 0u8>,
+        super::generics::RepOnce::<super::generics::CharRange::<'0', '9'>, 0u8>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepAtLeastOnce<'i> {
         fn for_each_child_pair(
@@ -659,6 +693,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepAtLeastOnce<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#RepAtLeastOnce;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -677,18 +717,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Opt;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Opt<'i> {
-        type Inner = ::pest3::std::Option<super::generics::Str<super::wrapper::W10>>;
-        type Content = ::pest3::std::Option<super::generics::Str<super::wrapper::W10>>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Opt,
+        (),
+        super::Rule,
+        super::Rule::r#Opt,
+        ::pest3::std::Option::<super::generics::Str::<super::wrapper::W10>>,
+        ::pest3::std::Option::<super::generics::Str::<super::wrapper::W10>>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Opt<'i> {
         fn for_each_child_pair(
@@ -707,6 +745,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Opt<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Opt;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -725,18 +769,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepExact;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepExact<'i> {
-        type Inner = super::generics::RepMinMax<r#RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
-        type Content = super::generics::RepMinMax<r#RepAtLeastOnce<'i>, 0u8, 3usize, 3usize>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#RepExact,
+        (),
+        super::Rule,
+        super::Rule::r#RepExact,
+        super::generics::RepMinMax::<r#RepAtLeastOnce::<'i>, 0u8, 3usize, 3usize>,
+        super::generics::RepMinMax::<r#RepAtLeastOnce::<'i>, 0u8, 3usize, 3usize>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepExact<'i> {
         fn for_each_child_pair(
@@ -755,6 +797,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepExact<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#RepExact;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -773,18 +821,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepLeft;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepLeft<'i> {
-        type Inner = super::generics::RepMin<r#RepExact<'i>, 0u8, 1usize>;
-        type Content = super::generics::RepMin<r#RepExact<'i>, 0u8, 1usize>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#RepLeft,
+        (),
+        super::Rule,
+        super::Rule::r#RepLeft,
+        super::generics::RepMin::<r#RepExact::<'i>, 0u8, 1usize>,
+        super::generics::RepMin::<r#RepExact::<'i>, 0u8, 1usize>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepLeft<'i> {
         fn for_each_child_pair(
@@ -803,6 +849,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepLeft<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#RepLeft;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -821,18 +873,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepRight;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepRight<'i> {
-        type Inner = super::generics::RepMax<r#RepLeft<'i>, 0u8, 2usize>;
-        type Content = super::generics::RepMax<r#RepLeft<'i>, 0u8, 2usize>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#RepRight,
+        (),
+        super::Rule,
+        super::Rule::r#RepRight,
+        super::generics::RepMax::<r#RepLeft::<'i>, 0u8, 2usize>,
+        super::generics::RepMax::<r#RepLeft::<'i>, 0u8, 2usize>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepRight<'i> {
         fn for_each_child_pair(
@@ -851,6 +901,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepRight<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#RepRight;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -869,18 +925,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#RepLeftRight;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#RepLeftRight<'i> {
-        type Inner = super::generics::RepMinMax<r#RepRight<'i>, 0u8, 1usize, 2usize>;
-        type Content = super::generics::RepMinMax<r#RepRight<'i>, 0u8, 1usize, 2usize>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#RepLeftRight,
+        (),
+        super::Rule,
+        super::Rule::r#RepLeftRight,
+        super::generics::RepMinMax::<r#RepRight::<'i>, 0u8, 1usize, 2usize>,
+        super::generics::RepMinMax::<r#RepRight::<'i>, 0u8, 1usize, 2usize>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#RepLeftRight<'i> {
         fn for_each_child_pair(
@@ -899,6 +953,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#RepLeftRight<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#RepLeftRight;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -924,32 +984,30 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Pos;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Pos<'i> {
-        type Inner = super::generics::Positive<
-            super::generics::Sequence2<
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Pos,
+        (),
+        super::Rule,
+        super::Rule::r#Pos,
+        super::generics::Positive::<
+            super::generics::Sequence2::<
                 super::generics::r#SOI,
                 0u8,
-                super::generics::RepMinMax<r#RepLeftRight<'i>, 0u8, 2usize, 4usize>,
+                super::generics::RepMinMax::<r#RepLeftRight::<'i>, 0u8, 2usize, 4usize>,
                 1u8,
             >,
-        >;
-        type Content = super::generics::Positive<
-            super::generics::Sequence2<
+        >,
+        super::generics::Positive::<
+            super::generics::Sequence2::<
                 super::generics::r#SOI,
                 0u8,
-                super::generics::RepMinMax<r#RepLeftRight<'i>, 0u8, 2usize, 4usize>,
+                super::generics::RepMinMax::<r#RepLeftRight::<'i>, 0u8, 2usize, 4usize>,
                 1u8,
             >,
-        >;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+        >,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Pos<'i> {
         fn for_each_child_pair(
@@ -968,6 +1026,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Pos<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Pos;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -988,22 +1052,20 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Neg;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Neg<'i> {
-        type Inner = super::generics::Negative<
-            super::generics::Sequence2<super::generics::r#EOI, 0u8, r#Pos<'i>, 1u8>,
-        >;
-        type Content = super::generics::Negative<
-            super::generics::Sequence2<super::generics::r#EOI, 0u8, r#Pos<'i>, 1u8>,
-        >;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Neg,
+        (),
+        super::Rule,
+        super::Rule::r#Neg,
+        super::generics::Negative::<
+            super::generics::Sequence2::<super::generics::r#EOI, 0u8, r#Pos::<'i>, 1u8>,
+        >,
+        super::generics::Negative::<
+            super::generics::Sequence2::<super::generics::r#EOI, 0u8, r#Pos::<'i>, 1u8>,
+        >,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Neg<'i> {
         fn for_each_child_pair(
@@ -1022,6 +1084,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Neg<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Neg;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -1059,54 +1127,52 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Push;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Push<'i> {
-        type Inner = super::generics::r#push<
-            super::generics::Sequence7<
-                super::generics::Rep<r#RepLeft<'i>, 0u8>,
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Push,
+        (),
+        super::Rule,
+        super::Rule::r#Push,
+        super::generics::r#push::<
+            super::generics::Sequence7::<
+                super::generics::Rep::<r#RepLeft::<'i>, 0u8>,
                 0u8,
-                r#Neg<'i>,
+                r#Neg::<'i>,
                 1u8,
-                super::generics::RepOnce<r#ExactString<'i>, 0u8>,
+                super::generics::RepOnce::<r#ExactString::<'i>, 0u8>,
                 1u8,
-                r#Push<'i>,
+                r#Push::<'i>,
                 1u8,
-                r#Pop<'i>,
+                r#Pop::<'i>,
                 1u8,
-                r#Push<'i>,
+                r#Push::<'i>,
                 1u8,
-                r#PopAll<'i>,
+                r#PopAll::<'i>,
                 1u8,
             >,
-        >;
-        type Content = ::pest3::std::Box<
-            super::generics::r#push<
-                super::generics::Sequence7<
-                    super::generics::Rep<r#RepLeft<'i>, 0u8>,
+        >,
+        ::pest3::std::Box<
+            super::generics::r#push::<
+                super::generics::Sequence7::<
+                    super::generics::Rep::<r#RepLeft::<'i>, 0u8>,
                     0u8,
-                    r#Neg<'i>,
+                    r#Neg::<'i>,
                     1u8,
-                    super::generics::RepOnce<r#ExactString<'i>, 0u8>,
+                    super::generics::RepOnce::<r#ExactString::<'i>, 0u8>,
                     1u8,
-                    r#Push<'i>,
+                    r#Push::<'i>,
                     1u8,
-                    r#Pop<'i>,
+                    r#Pop::<'i>,
                     1u8,
-                    r#Push<'i>,
+                    r#Push::<'i>,
                     1u8,
-                    r#PopAll<'i>,
+                    r#PopAll::<'i>,
                     1u8,
                 >,
             >,
-        >;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+        >,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Push<'i> {
         fn for_each_child_pair(
@@ -1125,6 +1191,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Push<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Push;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -1143,18 +1215,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Pop;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Pop<'i> {
-        type Inner = super::generics::r#pop<'i>;
-        type Content = super::generics::r#pop<'i>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Pop,
+        (),
+        super::Rule,
+        super::Rule::r#Pop,
+        super::generics::r#pop::<'i>,
+        super::generics::r#pop::<'i>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Pop<'i> {
         fn for_each_child_pair(
@@ -1173,6 +1243,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Pop<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Pop;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -1191,18 +1267,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PopAll;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PopAll<'i> {
-        type Inner = super::generics::r#pop_all<'i>;
-        type Content = super::generics::r#pop_all<'i>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#PopAll,
+        (),
+        super::Rule,
+        super::Rule::r#PopAll,
+        super::generics::r#pop_all::<'i>,
+        super::generics::r#pop_all::<'i>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PopAll<'i> {
         fn for_each_child_pair(
@@ -1221,6 +1295,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PopAll<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#PopAll;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -1239,18 +1319,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Peek;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Peek<'i> {
-        type Inner = super::generics::r#peek<'i>;
-        type Content = super::generics::r#peek<'i>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Peek,
+        (),
+        super::Rule,
+        super::Rule::r#Peek,
+        super::generics::r#peek::<'i>,
+        super::generics::r#peek::<'i>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Peek<'i> {
         fn for_each_child_pair(
@@ -1269,6 +1347,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Peek<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Peek;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -1287,18 +1371,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekUnlimited;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekUnlimited<'i> {
-        type Inner = super::generics::PeekSlice1<0isize>;
-        type Content = super::generics::PeekSlice1<0isize>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#PeekUnlimited,
+        (),
+        super::Rule,
+        super::Rule::r#PeekUnlimited,
+        super::generics::PeekSlice1::<0isize>,
+        super::generics::PeekSlice1::<0isize>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekUnlimited<'i> {
         fn for_each_child_pair(
@@ -1317,6 +1399,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekUnlimited<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#PeekUnlimited;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -1335,18 +1423,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekLeft;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekLeft<'i> {
-        type Inner = super::generics::PeekSlice1<1isize>;
-        type Content = super::generics::PeekSlice1<1isize>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#PeekLeft,
+        (),
+        super::Rule,
+        super::Rule::r#PeekLeft,
+        super::generics::PeekSlice1::<1isize>,
+        super::generics::PeekSlice1::<1isize>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekLeft<'i> {
         fn for_each_child_pair(
@@ -1365,6 +1451,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekLeft<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#PeekLeft;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -1383,18 +1475,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekRight;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekRight<'i> {
-        type Inner = super::generics::PeekSlice1<0isize>;
-        type Content = super::generics::PeekSlice1<0isize>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#PeekRight,
+        (),
+        super::Rule,
+        super::Rule::r#PeekRight,
+        super::generics::PeekSlice1::<0isize>,
+        super::generics::PeekSlice1::<0isize>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekRight<'i> {
         fn for_each_child_pair(
@@ -1413,6 +1503,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekRight<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#PeekRight;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -1431,18 +1527,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekLeftRight;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekLeftRight<'i> {
-        type Inner = super::generics::PeekSlice2<1isize, 2isize>;
-        type Content = super::generics::PeekSlice2<1isize, 2isize>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#PeekLeftRight,
+        (),
+        super::Rule,
+        super::Rule::r#PeekLeftRight,
+        super::generics::PeekSlice2::<1isize, 2isize>,
+        super::generics::PeekSlice2::<1isize, 2isize>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekLeftRight<'i> {
         fn for_each_child_pair(
@@ -1461,6 +1555,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekLeftRight<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#PeekLeftRight;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -1479,18 +1579,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#Drop;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#Drop<'i> {
-        type Inner = super::generics::r#drop;
-        type Content = super::generics::r#drop;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#Drop,
+        (),
+        super::Rule,
+        super::Rule::r#Drop,
+        super::generics::r#drop,
+        super::generics::r#drop,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#Drop<'i> {
         fn for_each_child_pair(
@@ -1509,6 +1607,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#Drop<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#Drop;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }
@@ -1527,18 +1631,16 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#PeekAll;
     }
-    #[allow(non_camel_case_types)]
-    impl<'i> ::pest3::typed::FullRuleStruct<'i> for r#PeekAll<'i> {
-        type Inner = super::generics::r#peek_all<'i>;
-        type Content = super::generics::r#peek_all<'i>;
-        #[inline]
-        fn new(
-            content: <Self as ::pest3::typed::FullRuleStruct<'i>>::Content,
-            span: ::pest3::Span<'i>,
-        ) -> Self {
-            Self { content, span }
-        }
-    }
+    #[allow(unused_imports)]
+    use pest3::typed::SubRule as _;
+    ::pest3::full_rule_struct!(
+        r#PeekAll,
+        (),
+        super::Rule,
+        super::Rule::r#PeekAll,
+        super::generics::r#peek_all::<'i>,
+        super::generics::r#peek_all::<'i>,
+    );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#PeekAll<'i> {
         fn for_each_child_pair(
@@ -1557,6 +1659,12 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairTree<super::Rule> for r#PeekAll<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3::typed::SubRule as _;
+            let rule = super::Rule::r#PeekAll;
+            rule
+        }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
         }

@@ -19,7 +19,7 @@ pub enum ModuleError<'g> {
     UnexpectedArguments(RuleRef<'g>),
     UnexpectedSliceArgument(Range<isize>, RuleRef<'g>),
     ArgumentCountNotMatch(RuleRef<'g>),
-    CollectionCannotBeCalled,
+    CollectionCannotBeCalled(RuleRef<'g>),
     ExpectedArgcArguments(usize, RuleRef<'g>),
     ExpectedArguments(RuleRef<'g>),
 }
@@ -163,7 +163,7 @@ impl<'g> ModuleNode<'g> {
         args: &Option<ProcessedPathArgs>,
     ) -> Result<Intermediate, ModuleError<'g>> {
         let res = match self {
-            Self::Collection(_map) => Err(ModuleError::CollectionCannotBeCalled)?,
+            Self::Collection(_map) => Err(ModuleError::CollectionCannotBeCalled(rule_ref.clone()))?,
             Self::Absolute(f) => {
                 let empty = match args {
                     None => true,

@@ -8,6 +8,6 @@ pub mod wrapper;
 
 pub use tracker::Tracker;
 pub use traits::{
-    EmptyPairContainer, FullRuleStruct, NeverFailedTypedNode, PairContainer, PairTree, RuleType,
-    SubRule, SuperRule, TypedNode, TypedParser,
+    EmptyPairContainer, NeverFailedTypedNode, PairContainer, PairTree, RuleType, SubRule,
+    SuperRule, TypedNode, TypedParser,
 };
