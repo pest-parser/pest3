@@ -16,6 +16,30 @@ pub struct Pair<R> {
     /// Children pairs.
     pub children: Vec<Self>,
 }
+impl<R: Clone> Pair<R> {
+    /// Convert to a [Pair] with another rule type.
+    pub fn convert<S>(&self, converter: &impl Fn(R) -> S) -> Pair<S> {
+        let Self {
+            rule,
+            start,
+            end,
+            children,
+        } = self;
+        let rule = converter(rule.clone());
+        let start = *start;
+        let end = *end;
+        let children = children
+            .iter()
+            .map(|pair| pair.convert(converter))
+            .collect();
+        Pair {
+            rule,
+            start,
+            end,
+            children,
+        }
+    }
+}
 impl<R: crate::RuleType> Display for Pair<R> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}({}, {}, [", self.rule, self.start, self.end,)?;

@@ -51,14 +51,21 @@ fn generated_sample() {
     );
 }
 
-
 #[test]
 fn generated_import_inline() {
     template(
         "tests/generated_import_inline.rs",
         "tests/expected_import_inline.rs",
         quote! {
-            #[grammar_inline = "use tests::minimal\nx = minimal::x\nxx = x - x"]
+            #[grammar_inline = "
+use tests::minimal
+w  = \"w\"
+x0 = minimal::x
+x1 = minimal::x - w
+x2 = minimal::x - minimal::x
+x3 = minimal::x - \"y\"
+x4 = minimal::x | \"z\"
+"]
             struct Parser;
         },
     );
