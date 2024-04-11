@@ -18,13 +18,14 @@ macro_rules! sequence_type {
         /// - `1`: Optional trivia.
         /// - `2`: Mandatory trivia.
         #[derive(Clone, Debug, Eq, Hash, PartialEq)]
-        pub struct $name<$( $type, const $trivia: ::core::primitive::u8, )*> {
+        pub struct $name<$( $type, $trivia, )*> {
             $(
                 #[doc = ::core::stringify!(Field for $type.)]
                 pub $field: $type,
             )*
+            __trivia: ::core::marker::PhantomData<($($trivia, )*)>,
         }
-        impl<'i, $($type, const $trivia: ::core::primitive::u8, )*>
+        impl<'i, $($type, $trivia, )*>
         $name<$($type, $trivia, )*> {
             /// As a tuple of references.
             pub fn as_tuple(&self) -> ($(&$type, )*) {
@@ -35,12 +36,13 @@ macro_rules! sequence_type {
                 ( $( self.$field, )* )
             }
         }
-        impl<'i, R, $($type, const $trivia: ::core::primitive::u8, )*>
+        impl<'i, R, $($type, $trivia, )*>
         $crate::typed::TypedNode<'i, R> for $name<$($type, $trivia, )*>
         where
             R: $crate::typed::RuleType,
             $(
                 $type: $crate::typed::TypedNode<'i, R>,
+                $trivia: $crate::typed::TypedNode<'i, R>,
             )*
         {
             #[inline]
@@ -53,13 +55,14 @@ macro_rules! sequence_type {
                 $(
                     i += 1;
                     if i > 1 {
-                        input = $crate::typed::template::try_handle_trivia::<R, $trivia>(input, stack, tracker)?;
+                        input = $trivia::check_with_partial(input, stack, tracker)?;
                     }
                     let (next, $field) = $type::try_parse_with_partial(input, stack, tracker)?;
                     input = next;
                 )*
                 let res = Self {
                     $($field, )*
+                    __trivia: ::core::marker::PhantomData,
                 };
                 ::core::option::Option::Some((input, res))
             }
@@ -73,7 +76,7 @@ macro_rules! sequence_type {
                 $(
                     i += 1;
                     if i > 1 {
-                        input = $crate::typed::template::try_handle_trivia::<R, $trivia>(input, stack, tracker)?;
+                        input = $trivia::check_with_partial(input, stack, tracker)?;
                     }
                     let next = $type::check_with_partial(input, stack, tracker)?;
                     input = next;
@@ -81,7 +84,7 @@ macro_rules! sequence_type {
                 ::core::option::Option::Some(input)
             }
         }
-        impl<R, $($type, const $trivia: ::core::primitive::u8, )*>
+        impl<R, $($type, $trivia, )*>
         $crate::typed::PairContainer<R> for $name<$($type, $trivia, )*>
         where
             $(

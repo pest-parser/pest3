@@ -1,4 +1,6 @@
 use a
 use b
 use c
-e = a::a? - b::b* - c::c+
+e = a::a? - b::b~* - c::c^+
+~ = " "*
+^ = ","

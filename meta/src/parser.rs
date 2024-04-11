@@ -189,13 +189,6 @@ impl Trivia {
             Self::Mandatory => "^",
         }
     }
-    pub fn get_code(&self) -> u8 {
-        match self {
-            Self::None => 0,
-            Self::Optional => 1,
-            Self::Mandatory => 2,
-        }
-    }
 }
 
 impl Display for Trivia {

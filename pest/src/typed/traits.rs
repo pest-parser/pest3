@@ -9,10 +9,6 @@ use pest2::{error::Error, Stack};
 pub trait RuleType: Copy + Debug + Eq + Hash + Ord {
     /// End of input.
     const EOI: Self;
-    /// Whitespaces and comments that may exist and be ignored.
-    type OptionalTrivia<'i>: TypedNode<'i, Self>;
-    /// Whitespaces and comments that must exist and be ignored.
-    type MandatoryTrivia<'i>: TypedNode<'i, Self>;
 }
 
 /// Node of a typed syntax tree.

@@ -329,6 +329,14 @@ fn process_expr<'g>(
     mod_sys: &ModuleSystem<'g>,
     root: &TokenStream,
 ) -> Intermediate {
+    fn embed_trivia(trivia: &Trivia) -> TokenStream {
+        let this = pest();
+        match trivia {
+            Trivia::Mandatory => quote! {__MandatoryTrivia::<'i>},
+            Trivia::Optional => quote! {__OptionalTrivia::<'i>},
+            Trivia::None => quote! {#this::typed::template::Empty},
+        }
+    }
     let generics = generics();
     match expr {
         ParseExpr::Str(content) => {
@@ -405,7 +413,7 @@ fn process_expr<'g>(
             }
             let typenames = types.iter().map(|(inter, trivia)| {
                 let typename = &inter.typename;
-                let trivia = trivia.get_code();
+                let trivia = embed_trivia(trivia);
                 quote! {#typename, #trivia}
             });
 
@@ -456,7 +464,7 @@ fn process_expr<'g>(
                 root,
             );
             let inner_name = &inner.typename;
-            let trivia = get_trivia(&inner_node.expr).get_code();
+            let trivia = embed_trivia(&get_trivia(&inner_node.expr));
             let typename = quote! { #root::#generics::Rep::<#inner_name, #trivia> };
             Intermediate { typename }
         }
@@ -471,7 +479,7 @@ fn process_expr<'g>(
                 root,
             );
             let inner_name = &inner.typename;
-            let trivia = get_trivia(&inner_node.expr).get_code();
+            let trivia = embed_trivia(&get_trivia(&inner_node.expr));
             let typename = quote! { #root::#generics::RepOnce::<#inner_name, #trivia> };
             Intermediate { typename }
         }
@@ -487,7 +495,7 @@ fn process_expr<'g>(
             );
             let inner_name = &inner.typename;
             let parser::Range { start, end } = range;
-            let trivia = get_trivia(&inner_node.expr).get_code();
+            let trivia = embed_trivia(&get_trivia(&inner_node.expr));
             let typename = match (start, end) {
                 (Some(start), Some(end)) => {
                     quote! { #root::#generics::RepMinMax::<#inner_name, #trivia, #start, #end> }
@@ -618,27 +626,29 @@ fn process_rules<'g>(
     output
 }
 
-/// `'g` refers to grammar.
-fn collect_used_rule<'g>(
+fn collect_used_rule_without_trivia_into<'g>(
     rule: &'g ParseRule,
-    rule_trivia: Option<&'g ParseRule>,
-    res: &mut BTreeSet<&'g str>,
-) {
+    used: &mut BTreeSet<&'g str>,
+) -> (bool, bool) {
     let mut nodes: Vec<&'g ParseNode> = vec![];
-    let expect_trivia = format!(
-        "Please define trivia with `~ = \"...\"`. It's used in rule `{}`.",
-        rule.name
-    );
+    let mut res = (false, false);
+    let (used_optional_trivia, used_mandatory_trivia) = &mut res;
+    let mut mark = |trivia: &Trivia| match trivia {
+        Trivia::Mandatory => {
+            *used_mandatory_trivia = true;
+        }
+        Trivia::Optional => {
+            *used_optional_trivia = true;
+        }
+        Trivia::None => (),
+    };
     let mut f = |expr: &'g parser::ParseNode, nodes: &mut Vec<&'g ParseNode>| match &expr.expr {
         ParseExpr::Str(_) | ParseExpr::Insens(_) | ParseExpr::Range(_, _) => (),
         ParseExpr::PosPred(node) | ParseExpr::NegPred(node) => nodes.push(node),
         ParseExpr::Seq(lhs, rhs, trivia) => {
             nodes.push(lhs);
             nodes.push(rhs);
-            if let Trivia::Mandatory | Trivia::Optional = trivia {
-                let rule_trivia = rule_trivia.expect(&expect_trivia);
-                nodes.push(&rule_trivia.node);
-            }
+            mark(trivia);
         }
         ParseExpr::Choice(lhs, rhs) => {
             nodes.push(lhs);
@@ -656,15 +666,12 @@ fn collect_used_rule<'g>(
             }
             // Generics from another module is ignored.
             if path.len() == 1 {
-                res.insert(&path[0]);
+                used.insert(&path[0]);
             }
         }
         ParseExpr::Separated(node, trivia) => {
             nodes.push(node);
-            if let Trivia::Mandatory | Trivia::Optional = trivia {
-                let rule_trivia = rule_trivia.expect(&expect_trivia);
-                nodes.push(&rule_trivia.node);
-            }
+            mark(trivia);
         }
     };
     f(&rule.node, &mut nodes);
@@ -674,14 +681,77 @@ fn collect_used_rule<'g>(
         }
         f(expr, &mut nodes);
     }
+    res
+}
+
+/// (Whether optional trivia is used, Whether mandatory trivia is used, Used rules except trivias.)
+fn collect_used_rule_without_trivia<'g>(rule: &'g ParseRule) -> (bool, bool, BTreeSet<&'g str>) {
+    let mut used = BTreeSet::new();
+    let (opt, man) = collect_used_rule_without_trivia_into(rule, &mut used);
+    (opt, man, used)
+}
+
+/// `'g` refers to grammar.
+fn collect_used_rule<'g>(
+    rule: &'g ParseRule,
+    optional_trivia: Option<&BTreeSet<&'g str>>,
+    mandatory_trivia: Option<&BTreeSet<&'g str>>,
+    res: &mut BTreeSet<&'g str>,
+) {
+    let mut nodes: Vec<&'g ParseNode> = vec![];
+    let require_trivia = |trivia: Trivia| {
+        let expect_trivia = {
+            format!(
+                "Please define trivia with `{} = \"...\"`. It's used in rule `{}`.",
+                trivia, rule.name,
+            )
+        };
+        match trivia {
+            Trivia::Mandatory => {
+                mandatory_trivia.expect(&expect_trivia);
+            }
+            Trivia::Optional => {
+                optional_trivia.expect(&expect_trivia);
+            }
+            Trivia::None => (),
+        }
+    };
+    let (opt, man) = collect_used_rule_without_trivia_into(rule, res);
+    if opt {
+        require_trivia(Trivia::Optional);
+    }
+    if man {
+        require_trivia(Trivia::Mandatory);
+    }
+}
+
+fn collect_trivia<'g>(
+    opt: Option<&'g ParseRule>,
+    man: Option<&'g ParseRule>,
+) -> (Option<BTreeSet<&'g str>>, Option<BTreeSet<&'g str>>) {
+    let mut optional = opt.map(collect_used_rule_without_trivia);
+    let mut mandatory = man.map(collect_used_rule_without_trivia);
+    if let (Some(optional), Some(mandatory)) = (&mut optional, &mut mandatory) {
+        if optional.1 {
+            optional.2.extend(mandatory.2.iter());
+        }
+        if mandatory.0 {
+            mandatory.2.extend(optional.2.iter());
+        }
+    }
+    (optional.map(|o| o.2), mandatory.map(|m| m.2))
 }
 
 #[cfg(test)]
 fn collect_used_rules<'s>(rules: &'s [ParseRule]) -> BTreeSet<&'s str> {
     let mut res = BTreeSet::new();
-    let rule_trivia = rules.iter().find(|rule| rule.name == "~");
+    let optional_trivia = rules.iter().find(|rule| rule.name == "~");
+    let mandatory_trivia = rules.iter().find(|rule| rule.name == "^");
+
+    let (optional, mandatory) = collect_trivia(optional_trivia, mandatory_trivia);
+
     for rule in rules {
-        collect_used_rule(rule, rule_trivia, &mut res);
+        collect_used_rule(rule, optional.as_ref(), mandatory.as_ref(), &mut res);
     }
     res
 }
@@ -695,10 +765,14 @@ fn collect_used_rules<'s>(rules: &'s [ParseRule]) -> BTreeSet<&'s str> {
 /// We won't promise anything on which nodes are boxed.
 fn collect_reachability(rules: &[ParseRule]) -> BTreeMap<&str, BTreeSet<&str>> {
     let mut res = BTreeMap::new();
-    let rule_trivia = rules.iter().find(|rule| rule.name == "~");
+    let optional_trivia = rules.iter().find(|rule| rule.name == "~");
+    let mandatory_trivia = rules.iter().find(|rule| rule.name == "^");
+
+    let (optional, mandatory) = collect_trivia(optional_trivia, mandatory_trivia);
+
     for rule in rules {
         let entry = res.entry(rule.name.as_str()).or_default();
-        collect_used_rule(rule, rule_trivia, entry);
+        collect_used_rule(rule, optional.as_ref(), mandatory.as_ref(), entry);
     }
     // Length of any path is no more than `rules.len()`.
     for _ in 0..rules.len() {

@@ -25,9 +25,9 @@ mod tests {
 
     impl RuleType for Rule {
         const EOI: Self = Self::EOI;
-        type OptionalTrivia<'i> = Rep<Choice2<Char<' '>, Char<'\t'>>, 0>;
-        type MandatoryTrivia<'i> = Empty;
     }
+
+    type OptionalTrivia<'i> = Rep<Choice2<Char<' '>, Char<'\t'>>, Empty>;
 
     unicode!(MATH);
 
@@ -75,7 +75,7 @@ mod tests {
 
     #[test]
     fn ignore() {
-        type Trivia<'i> = <Rule as RuleType>::OptionalTrivia<'i>;
+        type Trivia<'i> = OptionalTrivia<'i>;
         let trivia = <Trivia as TypedNode<'static, Rule>>::try_parse(" \t  \t\t").unwrap();
         assert_eq!(
             format!("{:?}", trivia),
@@ -85,7 +85,7 @@ mod tests {
 
     #[test]
     fn repetition() {
-        type R<'i> = Rep<StrFoo, 1>;
+        type R<'i> = Rep<StrFoo, OptionalTrivia<'i>>;
 
         let rep1 = Parser::try_parse::<R>("foofoofoo").unwrap();
         let rep2 = Parser::try_parse::<R>("foo foo foo").unwrap();
@@ -97,7 +97,7 @@ mod tests {
 
     #[test]
     fn repetition_at_least_once() {
-        type R<'i> = RepOnce<Insens<'i, Foo>, 1>;
+        type R<'i> = RepOnce<Insens<'i, Foo>, OptionalTrivia<'i>>;
 
         let rep1 = Parser::try_parse::<R>("fooFoofoo").unwrap();
         let rep2 = Parser::try_parse::<R>("foo Foo foo").unwrap();
