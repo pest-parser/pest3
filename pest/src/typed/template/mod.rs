@@ -416,7 +416,7 @@ impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for Negative<T> {
     ) -> Option<(Position<'i>, Self)> {
         tracker.negative_during(|tracker| {
             stack.snapshot();
-            match T::try_parse_with_partial(input, stack, tracker) {
+            match T::check_with_partial(input, stack, tracker) {
                 Some(_) => {
                     stack.restore();
                     None
@@ -1090,23 +1090,4 @@ pub fn restore_on_none<'i, T>(
         None => stack.restore(),
     }
     res
-}
-
-/// Handle trivia rule defined in [RuleType].
-#[inline]
-pub fn try_handle_trivia<'i, R: RuleType, const TRIVIA: u8>(
-    input: Position<'i>,
-    stack: &mut Stack<Span<'i>>,
-    tracker: &mut Tracker<'i, R>,
-) -> Option<Position<'i>> {
-    let input = match TRIVIA {
-        // None.
-        0 => input,
-        // Optional.
-        1 => R::OptionalTrivia::try_parse_with_partial(input, stack, tracker)?.0,
-        // Mandatory.
-        2 => R::MandatoryTrivia::try_parse_with_partial(input, stack, tracker)?.0,
-        _ => unreachable!(),
-    };
-    Some(input)
 }

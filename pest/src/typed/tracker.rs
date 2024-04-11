@@ -306,8 +306,6 @@ impl<'i, R: RuleType> Tracker<'i, R> {
 
 #[cfg(test)]
 mod tests {
-    use crate::typed::template::{Empty, NONE};
-
     use super::*;
     #[derive(Clone, Copy, Debug, Hash, Eq, Ord, PartialEq, PartialOrd)]
     pub enum Rule {
@@ -319,8 +317,6 @@ mod tests {
     }
     impl RuleType for Rule {
         const EOI: Self = Self::EOI;
-        type OptionalTrivia<'i> = NONE;
-        type MandatoryTrivia<'i> = Empty;
     }
     mod rule_wrappers {
         use super::Rule;
