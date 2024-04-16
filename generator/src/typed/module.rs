@@ -34,7 +34,7 @@ impl<'g> ModuleError<'g> {
 }
 
 #[derive(Clone, Debug)]
-pub(crate) enum RuleGenerics {
+pub enum RuleGenerics {
     /// Defined rule in current module.
     Rule { argc: usize },
     BuiltIn {
