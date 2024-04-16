@@ -256,6 +256,9 @@ fn mod_path_to_fs_path(root: &impl AsRef<Path>, mod_path: &[String]) -> PathBuf 
         .parent()
         .expect("Grammar file path cannot be root.")
         .to_owned();
+    if matches!(path.extension().map(|x| x.to_str()), Some(Some("pest"))) {
+        path.pop();
+    }
     for sec in mod_path {
         let sec = match sec.as_str() {
             "super" => "..",
