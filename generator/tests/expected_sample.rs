@@ -142,8 +142,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#string;
-            rule
+            super::Rule::r#string
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -194,8 +193,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#insensitive;
-            rule
+            super::Rule::r#insensitive
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -246,8 +244,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#range;
-            rule
+            super::Rule::r#range
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -298,8 +295,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#ident;
-            rule
+            super::Rule::r#ident
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -350,8 +346,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#pos_pred;
-            rule
+            super::Rule::r#pos_pred
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -402,8 +397,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#neg_pred;
-            rule
+            super::Rule::r#neg_pred
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -454,8 +448,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#double_neg_pred;
-            rule
+            super::Rule::r#double_neg_pred
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -521,8 +514,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#sequence;
-            rule
+            super::Rule::r#sequence
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -588,8 +580,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#sequence_trivia;
-            rule
+            super::Rule::r#sequence_trivia
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -655,8 +646,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#sequence_trivia_mandatory;
-            rule
+            super::Rule::r#sequence_trivia_mandatory
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -728,8 +718,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#sequence_nested;
-            rule
+            super::Rule::r#sequence_nested
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -780,8 +769,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#choice;
-            rule
+            super::Rule::r#choice
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -832,8 +820,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#choice_trivia;
-            rule
+            super::Rule::r#choice_trivia
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -884,8 +871,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#choice_trivia_mandatory;
-            rule
+            super::Rule::r#choice_trivia_mandatory
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -936,8 +922,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#choice_prefix;
-            rule
+            super::Rule::r#choice_prefix
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -988,8 +973,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#optional;
-            rule
+            super::Rule::r#optional
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1040,8 +1024,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#optional_trivia;
-            rule
+            super::Rule::r#optional_trivia
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1092,8 +1075,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat;
-            rule
+            super::Rule::r#repeat
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1144,8 +1126,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_trivia;
-            rule
+            super::Rule::r#repeat_trivia
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1196,8 +1177,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_trivia_mandatory;
-            rule
+            super::Rule::r#repeat_trivia_mandatory
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1248,8 +1228,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_once;
-            rule
+            super::Rule::r#repeat_once
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1300,8 +1279,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_once_trivia;
-            rule
+            super::Rule::r#repeat_once_trivia
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1352,8 +1330,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_once_trivia_mandatory;
-            rule
+            super::Rule::r#repeat_once_trivia_mandatory
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1409,8 +1386,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_min_max;
-            rule
+            super::Rule::r#repeat_min_max
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1461,8 +1437,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_min_max_trivia;
-            rule
+            super::Rule::r#repeat_min_max_trivia
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1514,8 +1489,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_min_max_trivia_mandatory;
-            rule
+            super::Rule::r#repeat_min_max_trivia_mandatory
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1571,8 +1545,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_exact;
-            rule
+            super::Rule::r#repeat_exact
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1623,8 +1596,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_exact_trivia;
-            rule
+            super::Rule::r#repeat_exact_trivia
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1676,8 +1648,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_exact_trivia_mandatory;
-            rule
+            super::Rule::r#repeat_exact_trivia_mandatory
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1728,8 +1699,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_min;
-            rule
+            super::Rule::r#repeat_min
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1780,8 +1750,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_min_trivia;
-            rule
+            super::Rule::r#repeat_min_trivia
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1832,8 +1801,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_min_trivia_mandatory;
-            rule
+            super::Rule::r#repeat_min_trivia_mandatory
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1884,8 +1852,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_max;
-            rule
+            super::Rule::r#repeat_max
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1936,8 +1903,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_max_trivia;
-            rule
+            super::Rule::r#repeat_max_trivia
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -1988,8 +1954,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_max_trivia_mandatory;
-            rule
+            super::Rule::r#repeat_max_trivia_mandatory
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2083,8 +2048,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#seperated;
-            rule
+            super::Rule::r#seperated
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2135,8 +2099,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#seperated_call;
-            rule
+            super::Rule::r#seperated_call
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2202,8 +2165,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#soi_at_start;
-            rule
+            super::Rule::r#soi_at_start
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2258,8 +2220,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#push;
-            rule
+            super::Rule::r#push
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2347,8 +2308,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#pop_all;
-            rule
+            super::Rule::r#pop_all
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2399,8 +2359,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#drop;
-            rule
+            super::Rule::r#drop
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2451,8 +2410,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#peek;
-            rule
+            super::Rule::r#peek
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2503,8 +2461,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#peek_all;
-            rule
+            super::Rule::r#peek_all
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2555,8 +2512,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#peek_slice;
-            rule
+            super::Rule::r#peek_slice
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2658,8 +2614,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_mutate_stack;
-            rule
+            super::Rule::r#repeat_mutate_stack
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2749,8 +2704,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#repeat_mutate_stack_pop_all;
-            rule
+            super::Rule::r#repeat_mutate_stack_pop_all
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2816,8 +2770,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#will_fail;
-            rule
+            super::Rule::r#will_fail
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2868,8 +2821,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#stack_resume_after_fail;
-            rule
+            super::Rule::r#stack_resume_after_fail
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -2947,8 +2899,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#peek_;
-            rule
+            super::Rule::r#peek_
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3020,8 +2971,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#peek_all_;
-            rule
+            super::Rule::r#peek_all_
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3111,8 +3061,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#peek_slice_23;
-            rule
+            super::Rule::r#peek_slice_23
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3190,8 +3139,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#pop_;
-            rule
+            super::Rule::r#pop_
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3263,8 +3211,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#pop_all_;
-            rule
+            super::Rule::r#pop_all_
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3342,8 +3289,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#pop_fail;
-            rule
+            super::Rule::r#pop_fail
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3478,8 +3424,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#checkpoint_restore;
-            rule
+            super::Rule::r#checkpoint_restore
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3533,8 +3478,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#ascii_digits;
-            rule
+            super::Rule::r#ascii_digits
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3594,8 +3538,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#ascii_nonzero_digits;
-            rule
+            super::Rule::r#ascii_nonzero_digits
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3655,8 +3598,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#ascii_bin_digits;
-            rule
+            super::Rule::r#ascii_bin_digits
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3716,8 +3658,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#ascii_oct_digits;
-            rule
+            super::Rule::r#ascii_oct_digits
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3777,8 +3718,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#ascii_hex_digits;
-            rule
+            super::Rule::r#ascii_hex_digits
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3838,8 +3778,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#ascii_alpha_lowers;
-            rule
+            super::Rule::r#ascii_alpha_lowers
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3899,8 +3838,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#ascii_alpha_uppers;
-            rule
+            super::Rule::r#ascii_alpha_uppers
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -3954,8 +3892,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#ascii_alphas;
-            rule
+            super::Rule::r#ascii_alphas
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -4015,8 +3952,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#ascii_alphanumerics;
-            rule
+            super::Rule::r#ascii_alphanumerics
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -4068,8 +4004,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#asciis;
-            rule
+            super::Rule::r#asciis
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -4121,8 +4056,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#newline;
-            rule
+            super::Rule::r#newline
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -4188,8 +4122,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#unicode;
-            rule
+            super::Rule::r#unicode
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -4240,8 +4173,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#han;
-            rule
+            super::Rule::r#han
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -4293,8 +4225,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#hangul;
-            rule
+            super::Rule::r#hangul
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -4346,8 +4277,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#hiragana;
-            rule
+            super::Rule::r#hiragana
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -4399,8 +4329,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#arabic;
-            rule
+            super::Rule::r#arabic
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -4452,8 +4381,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#emoji;
-            rule
+            super::Rule::r#emoji
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -4504,8 +4432,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#whitespace;
-            rule
+            super::Rule::r#whitespace
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
@@ -4565,8 +4492,7 @@ pub mod rules {
         fn get_rule() -> super::Rule {
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
-            let rule = super::Rule::r#comment;
-            rule
+            super::Rule::r#comment
         }
         fn get_span(&self) -> (::pest3::std::usize, ::pest3::std::usize) {
             (self.span.start(), self.span.end())
