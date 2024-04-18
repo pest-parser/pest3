@@ -274,7 +274,7 @@ impl<'i, R: RuleType> Tracker<'i, R> {
         message
     }
     /// Collect attempts to [`Error<R>`]
-    pub fn collect(self) -> Error<R> {
+    pub fn collect(self) -> Box<Error<R>> {
         let pos = self.position;
         match Position::new(pos.input, pos.pos()).ok_or_else(|| {
             Error::new_from_pos(
@@ -286,9 +286,12 @@ impl<'i, R: RuleType> Tracker<'i, R> {
         }) {
             Ok(pos) => {
                 let message = self.collect_to_message();
-                Error::new_from_pos(ErrorVariant::CustomError { message }, pos.into())
+                Box::new(Error::new_from_pos(
+                    ErrorVariant::CustomError { message },
+                    pos.into(),
+                ))
             }
-            Err(err) => err,
+            Err(err) => Box::new(err),
         }
     }
     /// Finish matching and convert the tracker into recorded information.
