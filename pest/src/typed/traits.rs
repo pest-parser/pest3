@@ -1,7 +1,7 @@
 use super::template::EOI;
-use crate::{token::Pair, typed::tracker::Tracker, Position, Span};
+use crate::{error::Error, token::Pair, typed::tracker::Tracker, Position, Span};
 use core::{fmt::Debug, hash::Hash};
-use pest2::{error::Error, Stack};
+use pest2::Stack;
 
 /// A trait which parser rules must implement.
 ///
@@ -36,7 +36,7 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
     }
     /// Try parsing leading part of string into a node.
     #[inline]
-    fn try_parse_partial(input: &'i str) -> Result<(Position<'i>, Self), Error<R>> {
+    fn try_parse_partial(input: &'i str) -> Result<(Position<'i>, Self), Box<Error<R>>> {
         let mut stack = Stack::new();
         let input = Position::from_start(input);
         let mut tracker = Tracker::new(input);
@@ -45,7 +45,7 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
     }
     /// Try parsing given string into a node.
     #[inline]
-    fn try_parse(input: &'i str) -> Result<Self, Error<R>> {
+    fn try_parse(input: &'i str) -> Result<Self, Box<Error<R>>> {
         let mut stack = Stack::new();
         let input = Position::from_start(input);
         let mut tracker = Tracker::new(input);
@@ -80,7 +80,7 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
     }
     /// Try parsing leading part of string into a node.
     #[inline]
-    fn check_partial(input: &'i str) -> Result<Position<'i>, Error<R>> {
+    fn check_partial(input: &'i str) -> Result<Position<'i>, Box<Error<R>>> {
         let mut stack = Stack::new();
         let input = Position::from_start(input);
         let mut tracker = Tracker::new(input);
@@ -88,7 +88,7 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
     }
     /// Try parsing given string into a node.
     #[inline]
-    fn check(input: &'i str) -> Result<(), Error<R>> {
+    fn check(input: &'i str) -> Result<(), Box<Error<R>>> {
         let mut stack = Stack::new();
         let input = Position::from_start(input);
         let mut tracker = Tracker::new(input);
@@ -279,14 +279,14 @@ pub trait TypedParser<R: RuleType> {
     }
     /// See [TypedNode::try_parse].
     #[inline]
-    fn try_parse<'i, T: TypedNode<'i, R>>(input: &'i str) -> Result<T, Error<R>> {
+    fn try_parse<'i, T: TypedNode<'i, R>>(input: &'i str) -> Result<T, Box<Error<R>>> {
         T::try_parse(input)
     }
     /// See [TypedNode::try_parse_partial].
     #[inline]
     fn try_parse_partial<'i, T: TypedNode<'i, R>>(
         input: &'i str,
-    ) -> Result<(Position<'i>, T), Error<R>> {
+    ) -> Result<(Position<'i>, T), Box<Error<R>>> {
         T::try_parse_partial(input)
     }
 }
