@@ -125,7 +125,7 @@ pub struct RuleRef<'g> {
 }
 impl<'g> RuleRef<'g> {
     /// Create from a [Path](ParseExpr::Path).
-    fn new(path: &'g Vec<String>, args: Option<ProcessedPathArgs>) -> Self {
+    fn new(path: &'g [String], args: Option<ProcessedPathArgs>) -> Self {
         let path = path.iter().map(String::as_str).collect::<Vec<_>>();
         Self { path, args }
     }
@@ -191,7 +191,7 @@ fn create_rule<'g>(
                         super::#(#supers)* Rule
                     };
                     let converts = (0..n).map(|_|quote!{
-                        let rule = rule.cvt_into();
+                        .cvt_into()
                     });
                     quote! {
                         #[allow(non_camel_case_types)]
@@ -209,9 +209,7 @@ fn create_rule<'g>(
                             fn get_rule() -> #rule {
                                 #[allow(unused_imports)]
                                 use #this::typed::SubRule as _;
-                                let rule = #root::Rule::#name;
-                                #(#converts)*
-                                rule
+                                #root::Rule::#name #(#converts)*
                             }
                             fn get_span(&self) -> (#this::std::usize, #this::std::usize) {
                                 (self.span.start(), self.span.end())
@@ -354,12 +352,10 @@ fn process_expr<'g>(
             Intermediate { typename }
         }
         ParseExpr::Path(prefix, args) => {
-            if prefix.len() == 1 {
-                if rule_config.grammar.args.contains(&prefix[0]) {
-                    let ident = format_ident!("r#{}", prefix[0]);
-                    let typename = quote! {#ident};
-                    return Intermediate { typename };
-                }
+            if prefix.len() == 1 && rule_config.grammar.args.contains(&prefix[0]) {
+                let ident = format_ident!("r#{}", prefix[0]);
+                let typename = quote! {#ident};
+                return Intermediate { typename };
             }
             let args = args.as_ref().map(|args| {
                 ProcessedPathArgs::process(
@@ -541,7 +537,7 @@ fn process_rule<'g: 'f, 'f>(
         tracker,
         res,
         config,
-        &mod_sys,
+        mod_sys,
         root,
     );
     match rule.name.as_str() {
@@ -577,7 +573,7 @@ fn process_rules<'g>(
         .filter_map(|module| match module {
             Import::Builtin(name, path) => {
                 new_prefix.push(name.clone());
-                mod_sys.alias(&path, name).unwrap();
+                mod_sys.alias(path, name).unwrap();
                 new_prefix.pop().unwrap();
                 None
             }
@@ -618,7 +614,7 @@ fn process_rules<'g>(
             &reachability,
             config,
             root,
-            &prefix,
+            prefix,
             tracker,
             &mut output,
         );
@@ -659,10 +655,9 @@ fn collect_used_rule_without_trivia_into<'g>(
         | ParseExpr::RepOnce(node)
         | ParseExpr::RepRange(node, _) => nodes.push(node),
         ParseExpr::Path(path, args) => {
-            match args {
+            if let Some(PathArgs::Call(args)) = args {
                 // Normally nodes are linked directly.
-                Some(PathArgs::Call(args)) => nodes.extend(args),
-                _ => (),
+                nodes.extend(args)
             }
             // Generics from another module is ignored.
             if path.len() == 1 {
@@ -685,7 +680,7 @@ fn collect_used_rule_without_trivia_into<'g>(
 }
 
 /// (Whether optional trivia is used, Whether mandatory trivia is used, Used rules except trivias.)
-fn collect_used_rule_without_trivia<'g>(rule: &'g ParseRule) -> (bool, bool, BTreeSet<&'g str>) {
+fn collect_used_rule_without_trivia(rule: &'_ ParseRule) -> (bool, bool, BTreeSet<&'_ str>) {
     let mut used = BTreeSet::new();
     let (opt, man) = collect_used_rule_without_trivia_into(rule, &mut used);
     (opt, man, used)
@@ -805,7 +800,7 @@ fn generate_typed_pair_from_rule<'g>(
 ) -> TokenStream {
     let mut mod_sys = ModuleSystem::new(global.clone());
     let output = process_rules(
-        &module,
+        module,
         &mut mod_sys,
         config,
         global,

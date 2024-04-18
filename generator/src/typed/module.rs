@@ -74,7 +74,7 @@ impl RuleGenerics {
                     Intermediate { typename }
                 }
                 (0, Some(ProcessedPathArgs::Call(args))) => {
-                    if args.len() > 0 {
+                    if !args.is_empty() {
                         Err(ModuleError::UnexpectedArguments(rule_ref.clone()))?
                     } else {
                         let typename = quote! { #(#current)* #name::<'i> };
@@ -89,7 +89,7 @@ impl RuleGenerics {
                     ModuleError::UnexpectedSliceArgument(slice.clone(), rule_ref.clone()),
                 )?,
                 (argc, Some(ProcessedPathArgs::Call(args))) => {
-                    let _ = ModuleError::check_argc(*argc, args.len(), rule_ref)?;
+                    ModuleError::check_argc(*argc, args.len(), rule_ref)?;
                     let typename = quote! { #(#current)* #name::<'i, #(#args, )*> };
                     Intermediate { typename }
                 }
@@ -126,7 +126,7 @@ impl RuleGenerics {
                     let (argc,) =
                         callable.ok_or_else(|| ModuleError::ExpectedArguments(rule_ref.clone()))?;
                     if let Some(argc) = argc {
-                        let _ = ModuleError::check_argc(argc, args.len(), rule_ref)?;
+                        ModuleError::check_argc(argc, args.len(), rule_ref)?;
                     }
                     let typename = quote! { #root::#generics::#name::< #( #args, )* > };
                     Intermediate { typename }
@@ -150,7 +150,7 @@ impl<'g> ModuleNode<'g> {
             Self::Collection(map) => map
                 .get(node)
                 .cloned()
-                .ok_or_else(|| ModuleError::NodeNotFound(&node, map.keys().cloned().collect()))?,
+                .ok_or_else(|| ModuleError::NodeNotFound(node, map.keys().cloned().collect()))?,
             Self::Absolute(_) | Self::Generics(_) => Err(ModuleError::NoChildren)?,
         };
         Ok(res)
@@ -186,7 +186,7 @@ impl<'g> ModuleNode<'g> {
         if let ModuleNode::Collection(root) = self {
             let prev = root.insert(key, Rc::new(ModuleNode::Generics(value)));
             if prev.is_some() {
-                Err(ModuleError::AlreadyDefined(&key))
+                Err(ModuleError::AlreadyDefined(key))
             } else {
                 Ok(())
             }
@@ -199,7 +199,7 @@ impl<'g> ModuleNode<'g> {
             ModuleNode::Collection(collection) => {
                 let res = collection.insert(name, node);
                 if res.is_some() {
-                    Err(ModuleError::AlreadyDefined(&name))?
+                    Err(ModuleError::AlreadyDefined(name))?
                 }
                 Ok(())
             }
@@ -233,7 +233,6 @@ impl<'g> ModuleSystem<'g> {
         static UNICODE_NAMES: OnceLock<Vec<(String, String)>> = OnceLock::new();
         let unicode_names = UNICODE_NAMES.get_or_init(|| {
             unicode_property_names()
-                .into_iter()
                 .map(|name| {
                     // name.is_ascii()
                     (name.to_ascii_lowercase(), name.to_ascii_uppercase())
@@ -366,7 +365,7 @@ impl<'g> ModuleSystem<'g> {
         name: &'g str,
     ) -> Result<(), ModuleError<'g>> {
         let node = self.resolve_node(source)?;
-        Ok(self.root.alias(node, name)?)
+        self.root.alias(node, name)
     }
     pub fn take(self) -> ModuleNode<'g> {
         self.root
