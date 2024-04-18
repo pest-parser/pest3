@@ -53,7 +53,9 @@ pub mod rules {
             #[allow(non_camel_case_types)]
             pub struct r#x<'i> {
                 #[doc = r" Matched structure."]
-                pub content: super::super::super::generics::Str<super::super::super::wrapper::W0>,
+                pub content: ::pest3::std::Box<
+                    super::super::super::generics::Str<super::super::super::wrapper::W0>,
+                >,
                 #[doc = r" Matched span."]
                 pub span: ::pest3::Span<'i>,
             }
@@ -70,7 +72,9 @@ pub mod rules {
                 super::Rule,
                 super::Rule::r#x,
                 super::super::super::generics::Str::<super::super::super::wrapper::W0>,
-                super::super::super::generics::Str::<super::super::super::wrapper::W0>,
+                ::pest3::std::Box<
+                    super::super::super::generics::Str::<super::super::super::wrapper::W0>,
+                >,
             );
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
@@ -80,7 +84,9 @@ pub mod rules {
                 super::super::super::Rule,
                 super::Rule::r#x.cvt_into(),
                 super::super::super::generics::Str::<super::super::super::wrapper::W0>,
-                super::super::super::generics::Str::<super::super::super::wrapper::W0>,
+                ::pest3::std::Box<
+                    super::super::super::generics::Str::<super::super::super::wrapper::W0>,
+                >,
             );
             #[allow(non_camel_case_types)]
             impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#x<'i> {
@@ -149,7 +155,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#w<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Str<super::wrapper::W1>,
+        pub content: ::pest3::std::Box<super::generics::Str<super::wrapper::W1>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -166,7 +172,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#w,
         super::generics::Str::<super::wrapper::W1>,
-        super::generics::Str::<super::wrapper::W1>,
+        ::pest3::std::Box<super::generics::Str::<super::wrapper::W1>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#w<'i> {
@@ -200,7 +206,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#x0<'i> {
         #[doc = r" Matched structure."]
-        pub content: minimal::rules::r#x<'i>,
+        pub content: ::pest3::std::Box<minimal::rules::r#x<'i>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -217,7 +223,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#x0,
         minimal::rules::r#x::<'i>,
-        minimal::rules::r#x::<'i>,
+        ::pest3::std::Box<minimal::rules::r#x::<'i>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#x0<'i> {
@@ -251,11 +257,13 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#x1<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence2<
-            minimal::rules::r#x<'i>,
-            ::pest3::typed::template::Empty,
-            r#w<'i>,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence2<
+                minimal::rules::r#x<'i>,
+                ::pest3::typed::template::Empty,
+                r#w<'i>,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -278,11 +286,13 @@ pub mod rules {
             r#w::<'i>,
             ::pest3::typed::template::Empty,
         >,
-        super::generics::Sequence2::<
-            minimal::rules::r#x::<'i>,
-            ::pest3::typed::template::Empty,
-            r#w::<'i>,
-            ::pest3::typed::template::Empty,
+        ::pest3::std::Box<
+            super::generics::Sequence2::<
+                minimal::rules::r#x::<'i>,
+                ::pest3::typed::template::Empty,
+                r#w::<'i>,
+                ::pest3::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -317,11 +327,13 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#x2<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence2<
-            minimal::rules::r#x<'i>,
-            ::pest3::typed::template::Empty,
-            minimal::rules::r#x<'i>,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence2<
+                minimal::rules::r#x<'i>,
+                ::pest3::typed::template::Empty,
+                minimal::rules::r#x<'i>,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -344,11 +356,13 @@ pub mod rules {
             minimal::rules::r#x::<'i>,
             ::pest3::typed::template::Empty,
         >,
-        super::generics::Sequence2::<
-            minimal::rules::r#x::<'i>,
-            ::pest3::typed::template::Empty,
-            minimal::rules::r#x::<'i>,
-            ::pest3::typed::template::Empty,
+        ::pest3::std::Box<
+            super::generics::Sequence2::<
+                minimal::rules::r#x::<'i>,
+                ::pest3::typed::template::Empty,
+                minimal::rules::r#x::<'i>,
+                ::pest3::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -383,11 +397,13 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#x3<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence2<
-            minimal::rules::r#x<'i>,
-            ::pest3::typed::template::Empty,
-            super::generics::Str<super::wrapper::W2>,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence2<
+                minimal::rules::r#x<'i>,
+                ::pest3::typed::template::Empty,
+                super::generics::Str<super::wrapper::W2>,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -410,11 +426,13 @@ pub mod rules {
             super::generics::Str::<super::wrapper::W2>,
             ::pest3::typed::template::Empty,
         >,
-        super::generics::Sequence2::<
-            minimal::rules::r#x::<'i>,
-            ::pest3::typed::template::Empty,
-            super::generics::Str::<super::wrapper::W2>,
-            ::pest3::typed::template::Empty,
+        ::pest3::std::Box<
+            super::generics::Sequence2::<
+                minimal::rules::r#x::<'i>,
+                ::pest3::typed::template::Empty,
+                super::generics::Str::<super::wrapper::W2>,
+                ::pest3::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -449,9 +467,11 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#x4<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Choice2<
-            minimal::rules::r#x<'i>,
-            super::generics::Str<super::wrapper::W3>,
+        pub content: ::pest3::std::Box<
+            super::generics::Choice2<
+                minimal::rules::r#x<'i>,
+                super::generics::Str<super::wrapper::W3>,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -472,9 +492,11 @@ pub mod rules {
             minimal::rules::r#x::<'i>,
             super::generics::Str::<super::wrapper::W3>,
         >,
-        super::generics::Choice2::<
-            minimal::rules::r#x::<'i>,
-            super::generics::Str::<super::wrapper::W3>,
+        ::pest3::std::Box<
+            super::generics::Choice2::<
+                minimal::rules::r#x::<'i>,
+                super::generics::Str::<super::wrapper::W3>,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
