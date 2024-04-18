@@ -22,7 +22,7 @@ impl<T> Default for Phantom<T> {
 }
 impl<T> Clone for Phantom<T> {
     fn clone(&self) -> Self {
-        Self(PhantomData)
+        *self
     }
 }
 impl<T> Copy for Phantom<T> {}

@@ -300,7 +300,7 @@ fn _parse<P: AsRef<Path>>(
                     end: span_path2.end(),
                 };
                 let (mod_path, args) = parse_path_raw(path_pair, &span_path, &PrattParser::new())?;
-                if !args.is_none() {
+                if args.is_some() {
                     todo!("import module node with arguments.")
                 }
                 let (mut fs_path, mut alias) = (None, None);
@@ -406,7 +406,7 @@ impl FromIterator<Arc<GrammarModule>> for GrammarModule {
 pub fn parse<P: AsRef<Path>>(input: &str, root: &P) -> Result<Arc<GrammarModule>, Error<Rule>> {
     let mut cache = Default::default();
 
-    Ok(_parse(input, root, &mut cache)?)
+    _parse(input, root, &mut cache)
 }
 
 fn parse_rule(rule: Pair<'_, Rule>, path: PathBuf) -> Result<ParseRule, Error<Rule>> {
@@ -505,7 +505,7 @@ fn parse_path_raw(
                 pairs.next().unwrap(); // opening_paren
 
                 while let Some(Rule::expression) = pairs.peek().map(|pair| pair.as_rule()) {
-                    args.push(parse_node(pairs.next().unwrap(), &span, pratt_parser)?);
+                    args.push(parse_node(pairs.next().unwrap(), span, pratt_parser)?);
                     skip(Rule::comma, &mut pairs);
                 }
 

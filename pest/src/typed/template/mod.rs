@@ -264,7 +264,7 @@ fn constrain_idx(index: isize, len: usize) -> Option<usize> {
     } else if index >= 0 {
         Some(index as usize)
     } else if index >= -(len as isize) {
-        Some(((index as isize) + (len as isize)) as usize)
+        Some((index + (len as isize)) as usize)
     } else {
         None
     }
@@ -661,16 +661,11 @@ impl<'i, R: RuleType> TypedNode<'i, R> for NEWLINE {
         _stack: &mut Stack<Span<'i>>,
         _tracker: &mut Tracker<'i, R>,
     ) -> Option<Position<'i>> {
-        let input = if input.match_string("\r\n") {
-            input
-        } else if input.match_string("\n") {
-            input
-        } else if input.match_string("\r") {
-            input
+        if input.match_string("\r\n") || input.match_string("\n") || input.match_string("\r") {
+            Some(input)
         } else {
-            return None;
-        };
-        Some(input)
+            None
+        }
     }
 }
 impl Debug for NEWLINE {
