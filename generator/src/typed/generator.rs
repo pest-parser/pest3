@@ -48,9 +48,9 @@ impl<'g> RuleInfo<'g> {
         reachability: &BTreeMap<&str, BTreeSet<&str>>,
     ) -> Self {
         let rule_name = rule.name.as_str();
-        let boxed = match config.box_all_rules {
-            true => true,
-            false => !reachability.contains_key(rule_name),
+        let boxed = match config.box_rules_only_if_needed {
+            true => !reachability.contains_key(rule_name),
+            false => true,
         };
         let rule_id = format_ident!("r#{}", rule_name);
         let silent = rule.silent;
