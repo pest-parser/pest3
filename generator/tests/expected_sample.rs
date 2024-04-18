@@ -102,7 +102,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#string<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Str<super::wrapper::W0>,
+        pub content: ::pest3::std::Box<super::generics::Str<super::wrapper::W0>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -119,7 +119,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#string,
         super::generics::Str::<super::wrapper::W0>,
-        super::generics::Str::<super::wrapper::W0>,
+        ::pest3::std::Box<super::generics::Str::<super::wrapper::W0>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#string<'i> {
@@ -153,7 +153,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#insensitive<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Insens<'i, super::wrapper::W0>,
+        pub content: ::pest3::std::Box<super::generics::Insens<'i, super::wrapper::W0>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -170,7 +170,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#insensitive,
         super::generics::Insens::<'i, super::wrapper::W0>,
-        super::generics::Insens::<'i, super::wrapper::W0>,
+        ::pest3::std::Box<super::generics::Insens::<'i, super::wrapper::W0>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#insensitive<'i> {
@@ -204,7 +204,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#range<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::CharRange<'0', '9'>,
+        pub content: ::pest3::std::Box<super::generics::CharRange<'0', '9'>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -221,7 +221,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#range,
         super::generics::CharRange::<'0', '9'>,
-        super::generics::CharRange::<'0', '9'>,
+        ::pest3::std::Box<super::generics::CharRange::<'0', '9'>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#range<'i> {
@@ -255,7 +255,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#ident<'i> {
         #[doc = r" Matched structure."]
-        pub content: r#string<'i>,
+        pub content: ::pest3::std::Box<r#string<'i>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -272,7 +272,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#ident,
         r#string::<'i>,
-        r#string::<'i>,
+        ::pest3::std::Box<r#string::<'i>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#ident<'i> {
@@ -306,7 +306,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#pos_pred<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Positive<r#string<'i>>,
+        pub content: ::pest3::std::Box<super::generics::Positive<r#string<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -323,7 +323,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#pos_pred,
         super::generics::Positive::<r#string::<'i>>,
-        super::generics::Positive::<r#string::<'i>>,
+        ::pest3::std::Box<super::generics::Positive::<r#string::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#pos_pred<'i> {
@@ -357,7 +357,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#neg_pred<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Negative<r#string<'i>>,
+        pub content: ::pest3::std::Box<super::generics::Negative<r#string<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -374,7 +374,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#neg_pred,
         super::generics::Negative::<r#string::<'i>>,
-        super::generics::Negative::<r#string::<'i>>,
+        ::pest3::std::Box<super::generics::Negative::<r#string::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#neg_pred<'i> {
@@ -408,7 +408,8 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#double_neg_pred<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Negative<super::generics::Negative<r#string<'i>>>,
+        pub content:
+            ::pest3::std::Box<super::generics::Negative<super::generics::Negative<r#string<'i>>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -425,7 +426,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#double_neg_pred,
         super::generics::Negative::<super::generics::Negative::<r#string::<'i>>>,
-        super::generics::Negative::<super::generics::Negative::<r#string::<'i>>>,
+        ::pest3::std::Box<super::generics::Negative::<super::generics::Negative::<r#string::<'i>>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#double_neg_pred<'i> {
@@ -459,11 +460,13 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#sequence<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence2<
-            r#string<'i>,
-            ::pest3::typed::template::Empty,
-            r#string<'i>,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence2<
+                r#string<'i>,
+                ::pest3::typed::template::Empty,
+                r#string<'i>,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -486,11 +489,13 @@ pub mod rules {
             r#string::<'i>,
             ::pest3::typed::template::Empty,
         >,
-        super::generics::Sequence2::<
-            r#string::<'i>,
-            ::pest3::typed::template::Empty,
-            r#string::<'i>,
-            ::pest3::typed::template::Empty,
+        ::pest3::std::Box<
+            super::generics::Sequence2::<
+                r#string::<'i>,
+                ::pest3::typed::template::Empty,
+                r#string::<'i>,
+                ::pest3::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -525,11 +530,13 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#sequence_trivia<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence2<
-            r#string<'i>,
-            ::pest3::typed::template::Empty,
-            r#string<'i>,
-            __OptionalTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence2<
+                r#string<'i>,
+                ::pest3::typed::template::Empty,
+                r#string<'i>,
+                __OptionalTrivia<'i>,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -552,11 +559,13 @@ pub mod rules {
             r#string::<'i>,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence2::<
-            r#string::<'i>,
-            ::pest3::typed::template::Empty,
-            r#string::<'i>,
-            __OptionalTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Sequence2::<
+                r#string::<'i>,
+                ::pest3::typed::template::Empty,
+                r#string::<'i>,
+                __OptionalTrivia::<'i>,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -591,11 +600,13 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#sequence_trivia_mandatory<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence2<
-            r#string<'i>,
-            ::pest3::typed::template::Empty,
-            r#string<'i>,
-            __MandatoryTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence2<
+                r#string<'i>,
+                ::pest3::typed::template::Empty,
+                r#string<'i>,
+                __MandatoryTrivia<'i>,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -618,11 +629,13 @@ pub mod rules {
             r#string::<'i>,
             __MandatoryTrivia::<'i>,
         >,
-        super::generics::Sequence2::<
-            r#string::<'i>,
-            ::pest3::typed::template::Empty,
-            r#string::<'i>,
-            __MandatoryTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Sequence2::<
+                r#string::<'i>,
+                ::pest3::typed::template::Empty,
+                r#string::<'i>,
+                __MandatoryTrivia::<'i>,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -657,12 +670,14 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#sequence_nested<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Negative<
-            super::generics::Sequence2<
-                r#string<'i>,
-                ::pest3::typed::template::Empty,
-                r#string<'i>,
-                __OptionalTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Negative<
+                super::generics::Sequence2<
+                    r#string<'i>,
+                    ::pest3::typed::template::Empty,
+                    r#string<'i>,
+                    __OptionalTrivia<'i>,
+                >,
             >,
         >,
         #[doc = r" Matched span."]
@@ -688,12 +703,14 @@ pub mod rules {
                 __OptionalTrivia::<'i>,
             >,
         >,
-        super::generics::Negative::<
-            super::generics::Sequence2::<
-                r#string::<'i>,
-                ::pest3::typed::template::Empty,
-                r#string::<'i>,
-                __OptionalTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Negative::<
+                super::generics::Sequence2::<
+                    r#string::<'i>,
+                    ::pest3::typed::template::Empty,
+                    r#string::<'i>,
+                    __OptionalTrivia::<'i>,
+                >,
             >,
         >,
     );
@@ -729,7 +746,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#choice<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Choice2<r#string<'i>, r#range<'i>>,
+        pub content: ::pest3::std::Box<super::generics::Choice2<r#string<'i>, r#range<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -746,7 +763,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#choice,
         super::generics::Choice2::<r#string::<'i>, r#range::<'i>>,
-        super::generics::Choice2::<r#string::<'i>, r#range::<'i>>,
+        ::pest3::std::Box<super::generics::Choice2::<r#string::<'i>, r#range::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#choice<'i> {
@@ -780,7 +797,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#choice_trivia<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Choice2<r#string<'i>, r#range<'i>>,
+        pub content: ::pest3::std::Box<super::generics::Choice2<r#string<'i>, r#range<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -797,7 +814,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#choice_trivia,
         super::generics::Choice2::<r#string::<'i>, r#range::<'i>>,
-        super::generics::Choice2::<r#string::<'i>, r#range::<'i>>,
+        ::pest3::std::Box<super::generics::Choice2::<r#string::<'i>, r#range::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#choice_trivia<'i> {
@@ -831,7 +848,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#choice_trivia_mandatory<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Choice2<r#string<'i>, r#range<'i>>,
+        pub content: ::pest3::std::Box<super::generics::Choice2<r#string<'i>, r#range<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -848,7 +865,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#choice_trivia_mandatory,
         super::generics::Choice2::<r#string::<'i>, r#range::<'i>>,
-        super::generics::Choice2::<r#string::<'i>, r#range::<'i>>,
+        ::pest3::std::Box<super::generics::Choice2::<r#string::<'i>, r#range::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#choice_trivia_mandatory<'i> {
@@ -882,7 +899,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#choice_prefix<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Choice2<r#string<'i>, r#range<'i>>,
+        pub content: ::pest3::std::Box<super::generics::Choice2<r#string<'i>, r#range<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -899,7 +916,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#choice_prefix,
         super::generics::Choice2::<r#string::<'i>, r#range::<'i>>,
-        super::generics::Choice2::<r#string::<'i>, r#range::<'i>>,
+        ::pest3::std::Box<super::generics::Choice2::<r#string::<'i>, r#range::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#choice_prefix<'i> {
@@ -933,7 +950,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#optional<'i> {
         #[doc = r" Matched structure."]
-        pub content: ::pest3::std::Option<r#string<'i>>,
+        pub content: ::pest3::std::Box<::pest3::std::Option<r#string<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -950,7 +967,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#optional,
         ::pest3::std::Option::<r#string::<'i>>,
-        ::pest3::std::Option::<r#string::<'i>>,
+        ::pest3::std::Box<::pest3::std::Option::<r#string::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#optional<'i> {
@@ -984,7 +1001,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#optional_trivia<'i> {
         #[doc = r" Matched structure."]
-        pub content: ::pest3::std::Option<r#string<'i>>,
+        pub content: ::pest3::std::Box<::pest3::std::Option<r#string<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1001,7 +1018,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#optional_trivia,
         ::pest3::std::Option::<r#string::<'i>>,
-        ::pest3::std::Option::<r#string::<'i>>,
+        ::pest3::std::Box<::pest3::std::Option::<r#string::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#optional_trivia<'i> {
@@ -1035,7 +1052,8 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Rep<r#string<'i>, ::pest3::typed::template::Empty>,
+        pub content:
+            ::pest3::std::Box<super::generics::Rep<r#string<'i>, ::pest3::typed::template::Empty>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1052,7 +1070,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat,
         super::generics::Rep::<r#string::<'i>, ::pest3::typed::template::Empty>,
-        super::generics::Rep::<r#string::<'i>, ::pest3::typed::template::Empty>,
+        ::pest3::std::Box<super::generics::Rep::<r#string::<'i>, ::pest3::typed::template::Empty>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat<'i> {
@@ -1086,7 +1104,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_trivia<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Rep<r#string<'i>, __OptionalTrivia<'i>>,
+        pub content: ::pest3::std::Box<super::generics::Rep<r#string<'i>, __OptionalTrivia<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1103,7 +1121,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_trivia,
         super::generics::Rep::<r#string::<'i>, __OptionalTrivia::<'i>>,
-        super::generics::Rep::<r#string::<'i>, __OptionalTrivia::<'i>>,
+        ::pest3::std::Box<super::generics::Rep::<r#string::<'i>, __OptionalTrivia::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_trivia<'i> {
@@ -1137,7 +1155,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_trivia_mandatory<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Rep<r#string<'i>, __MandatoryTrivia<'i>>,
+        pub content: ::pest3::std::Box<super::generics::Rep<r#string<'i>, __MandatoryTrivia<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1154,7 +1172,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_trivia_mandatory,
         super::generics::Rep::<r#string::<'i>, __MandatoryTrivia::<'i>>,
-        super::generics::Rep::<r#string::<'i>, __MandatoryTrivia::<'i>>,
+        ::pest3::std::Box<super::generics::Rep::<r#string::<'i>, __MandatoryTrivia::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_trivia_mandatory<'i> {
@@ -1188,7 +1206,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_once<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<r#string<'i>, ::pest3::typed::template::Empty>,
+        pub content: ::pest3::std::Box<
+            super::generics::RepOnce<r#string<'i>, ::pest3::typed::template::Empty>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1205,7 +1225,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_once,
         super::generics::RepOnce::<r#string::<'i>, ::pest3::typed::template::Empty>,
-        super::generics::RepOnce::<r#string::<'i>, ::pest3::typed::template::Empty>,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<r#string::<'i>, ::pest3::typed::template::Empty>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_once<'i> {
@@ -1239,7 +1261,8 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_once_trivia<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<r#string<'i>, __OptionalTrivia<'i>>,
+        pub content:
+            ::pest3::std::Box<super::generics::RepOnce<r#string<'i>, __OptionalTrivia<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1256,7 +1279,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_once_trivia,
         super::generics::RepOnce::<r#string::<'i>, __OptionalTrivia::<'i>>,
-        super::generics::RepOnce::<r#string::<'i>, __OptionalTrivia::<'i>>,
+        ::pest3::std::Box<super::generics::RepOnce::<r#string::<'i>, __OptionalTrivia::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_once_trivia<'i> {
@@ -1290,7 +1313,8 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_once_trivia_mandatory<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<r#string<'i>, __MandatoryTrivia<'i>>,
+        pub content:
+            ::pest3::std::Box<super::generics::RepOnce<r#string<'i>, __MandatoryTrivia<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1307,7 +1331,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_once_trivia_mandatory,
         super::generics::RepOnce::<r#string::<'i>, __MandatoryTrivia::<'i>>,
-        super::generics::RepOnce::<r#string::<'i>, __MandatoryTrivia::<'i>>,
+        ::pest3::std::Box<super::generics::RepOnce::<r#string::<'i>, __MandatoryTrivia::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_once_trivia_mandatory<'i> {
@@ -1341,11 +1365,13 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_min_max<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMinMax<
-            r#string<'i>,
-            ::pest3::typed::template::Empty,
-            2usize,
-            3usize,
+        pub content: ::pest3::std::Box<
+            super::generics::RepMinMax<
+                r#string<'i>,
+                ::pest3::typed::template::Empty,
+                2usize,
+                3usize,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -1363,7 +1389,14 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_min_max,
         super::generics::RepMinMax::<r#string::<'i>, ::pest3::typed::template::Empty, 2usize, 3usize>,
-        super::generics::RepMinMax::<r#string::<'i>, ::pest3::typed::template::Empty, 2usize, 3usize>,
+        ::pest3::std::Box<
+            super::generics::RepMinMax::<
+                r#string::<'i>,
+                ::pest3::typed::template::Empty,
+                2usize,
+                3usize,
+            >,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_min_max<'i> {
@@ -1397,7 +1430,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_min_max_trivia<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMinMax<r#string<'i>, __OptionalTrivia<'i>, 2usize, 3usize>,
+        pub content: ::pest3::std::Box<
+            super::generics::RepMinMax<r#string<'i>, __OptionalTrivia<'i>, 2usize, 3usize>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1414,7 +1449,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_min_max_trivia,
         super::generics::RepMinMax::<r#string::<'i>, __OptionalTrivia::<'i>, 2usize, 3usize>,
-        super::generics::RepMinMax::<r#string::<'i>, __OptionalTrivia::<'i>, 2usize, 3usize>,
+        ::pest3::std::Box<
+            super::generics::RepMinMax::<r#string::<'i>, __OptionalTrivia::<'i>, 2usize, 3usize>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_min_max_trivia<'i> {
@@ -1448,8 +1485,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_min_max_trivia_mandatory<'i> {
         #[doc = r" Matched structure."]
-        pub content:
+        pub content: ::pest3::std::Box<
             super::generics::RepMinMax<r#string<'i>, __MandatoryTrivia<'i>, 2usize, 3usize>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1466,7 +1504,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_min_max_trivia_mandatory,
         super::generics::RepMinMax::<r#string::<'i>, __MandatoryTrivia::<'i>, 2usize, 3usize>,
-        super::generics::RepMinMax::<r#string::<'i>, __MandatoryTrivia::<'i>, 2usize, 3usize>,
+        ::pest3::std::Box<
+            super::generics::RepMinMax::<r#string::<'i>, __MandatoryTrivia::<'i>, 2usize, 3usize>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_min_max_trivia_mandatory<'i> {
@@ -1500,11 +1540,13 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_exact<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMinMax<
-            r#string<'i>,
-            ::pest3::typed::template::Empty,
-            2usize,
-            2usize,
+        pub content: ::pest3::std::Box<
+            super::generics::RepMinMax<
+                r#string<'i>,
+                ::pest3::typed::template::Empty,
+                2usize,
+                2usize,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -1522,7 +1564,14 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_exact,
         super::generics::RepMinMax::<r#string::<'i>, ::pest3::typed::template::Empty, 2usize, 2usize>,
-        super::generics::RepMinMax::<r#string::<'i>, ::pest3::typed::template::Empty, 2usize, 2usize>,
+        ::pest3::std::Box<
+            super::generics::RepMinMax::<
+                r#string::<'i>,
+                ::pest3::typed::template::Empty,
+                2usize,
+                2usize,
+            >,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_exact<'i> {
@@ -1556,7 +1605,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_exact_trivia<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMinMax<r#string<'i>, __OptionalTrivia<'i>, 2usize, 2usize>,
+        pub content: ::pest3::std::Box<
+            super::generics::RepMinMax<r#string<'i>, __OptionalTrivia<'i>, 2usize, 2usize>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1573,7 +1624,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_exact_trivia,
         super::generics::RepMinMax::<r#string::<'i>, __OptionalTrivia::<'i>, 2usize, 2usize>,
-        super::generics::RepMinMax::<r#string::<'i>, __OptionalTrivia::<'i>, 2usize, 2usize>,
+        ::pest3::std::Box<
+            super::generics::RepMinMax::<r#string::<'i>, __OptionalTrivia::<'i>, 2usize, 2usize>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_exact_trivia<'i> {
@@ -1607,8 +1660,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_exact_trivia_mandatory<'i> {
         #[doc = r" Matched structure."]
-        pub content:
+        pub content: ::pest3::std::Box<
             super::generics::RepMinMax<r#string<'i>, __MandatoryTrivia<'i>, 2usize, 2usize>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1625,7 +1679,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_exact_trivia_mandatory,
         super::generics::RepMinMax::<r#string::<'i>, __MandatoryTrivia::<'i>, 2usize, 2usize>,
-        super::generics::RepMinMax::<r#string::<'i>, __MandatoryTrivia::<'i>, 2usize, 2usize>,
+        ::pest3::std::Box<
+            super::generics::RepMinMax::<r#string::<'i>, __MandatoryTrivia::<'i>, 2usize, 2usize>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_exact_trivia_mandatory<'i> {
@@ -1659,7 +1715,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_min<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMin<r#string<'i>, ::pest3::typed::template::Empty, 2usize>,
+        pub content: ::pest3::std::Box<
+            super::generics::RepMin<r#string<'i>, ::pest3::typed::template::Empty, 2usize>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1676,7 +1734,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_min,
         super::generics::RepMin::<r#string::<'i>, ::pest3::typed::template::Empty, 2usize>,
-        super::generics::RepMin::<r#string::<'i>, ::pest3::typed::template::Empty, 2usize>,
+        ::pest3::std::Box<
+            super::generics::RepMin::<r#string::<'i>, ::pest3::typed::template::Empty, 2usize>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_min<'i> {
@@ -1710,7 +1770,8 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_min_trivia<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMin<r#string<'i>, __OptionalTrivia<'i>, 2usize>,
+        pub content:
+            ::pest3::std::Box<super::generics::RepMin<r#string<'i>, __OptionalTrivia<'i>, 2usize>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1727,7 +1788,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_min_trivia,
         super::generics::RepMin::<r#string::<'i>, __OptionalTrivia::<'i>, 2usize>,
-        super::generics::RepMin::<r#string::<'i>, __OptionalTrivia::<'i>, 2usize>,
+        ::pest3::std::Box<
+            super::generics::RepMin::<r#string::<'i>, __OptionalTrivia::<'i>, 2usize>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_min_trivia<'i> {
@@ -1761,7 +1824,8 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_min_trivia_mandatory<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMin<r#string<'i>, __MandatoryTrivia<'i>, 2usize>,
+        pub content:
+            ::pest3::std::Box<super::generics::RepMin<r#string<'i>, __MandatoryTrivia<'i>, 2usize>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1778,7 +1842,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_min_trivia_mandatory,
         super::generics::RepMin::<r#string::<'i>, __MandatoryTrivia::<'i>, 2usize>,
-        super::generics::RepMin::<r#string::<'i>, __MandatoryTrivia::<'i>, 2usize>,
+        ::pest3::std::Box<
+            super::generics::RepMin::<r#string::<'i>, __MandatoryTrivia::<'i>, 2usize>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_min_trivia_mandatory<'i> {
@@ -1812,7 +1878,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_max<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMax<r#string<'i>, ::pest3::typed::template::Empty, 2usize>,
+        pub content: ::pest3::std::Box<
+            super::generics::RepMax<r#string<'i>, ::pest3::typed::template::Empty, 2usize>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1829,7 +1897,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_max,
         super::generics::RepMax::<r#string::<'i>, ::pest3::typed::template::Empty, 2usize>,
-        super::generics::RepMax::<r#string::<'i>, ::pest3::typed::template::Empty, 2usize>,
+        ::pest3::std::Box<
+            super::generics::RepMax::<r#string::<'i>, ::pest3::typed::template::Empty, 2usize>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_max<'i> {
@@ -1863,7 +1933,8 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_max_trivia<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMax<r#string<'i>, __OptionalTrivia<'i>, 2usize>,
+        pub content:
+            ::pest3::std::Box<super::generics::RepMax<r#string<'i>, __OptionalTrivia<'i>, 2usize>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1880,7 +1951,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_max_trivia,
         super::generics::RepMax::<r#string::<'i>, __OptionalTrivia::<'i>, 2usize>,
-        super::generics::RepMax::<r#string::<'i>, __OptionalTrivia::<'i>, 2usize>,
+        ::pest3::std::Box<
+            super::generics::RepMax::<r#string::<'i>, __OptionalTrivia::<'i>, 2usize>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_max_trivia<'i> {
@@ -1914,7 +1987,8 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_max_trivia_mandatory<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepMax<r#string<'i>, __MandatoryTrivia<'i>, 2usize>,
+        pub content:
+            ::pest3::std::Box<super::generics::RepMax<r#string<'i>, __MandatoryTrivia<'i>, 2usize>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -1931,7 +2005,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#repeat_max_trivia_mandatory,
         super::generics::RepMax::<r#string::<'i>, __MandatoryTrivia::<'i>, 2usize>,
-        super::generics::RepMax::<r#string::<'i>, __MandatoryTrivia::<'i>, 2usize>,
+        ::pest3::std::Box<
+            super::generics::RepMax::<r#string::<'i>, __MandatoryTrivia::<'i>, 2usize>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#repeat_max_trivia_mandatory<'i> {
@@ -1965,19 +2041,21 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#seperated<'i, r#e> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence2<
-            r#e,
-            ::pest3::typed::template::Empty,
-            super::generics::Rep<
-                super::generics::Sequence2<
-                    super::generics::Str<super::wrapper::W1>,
-                    ::pest3::typed::template::Empty,
-                    r#e,
-                    __OptionalTrivia<'i>,
-                >,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence2<
+                r#e,
                 ::pest3::typed::template::Empty,
+                super::generics::Rep<
+                    super::generics::Sequence2<
+                        super::generics::Str<super::wrapper::W1>,
+                        ::pest3::typed::template::Empty,
+                        r#e,
+                        __OptionalTrivia<'i>,
+                    >,
+                    ::pest3::typed::template::Empty,
+                >,
+                __OptionalTrivia<'i>,
             >,
-            __OptionalTrivia<'i>,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -2008,19 +2086,21 @@ pub mod rules {
             >,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence2::<
-            r#e,
-            ::pest3::typed::template::Empty,
-            super::generics::Rep::<
-                super::generics::Sequence2::<
-                    super::generics::Str::<super::wrapper::W1>,
-                    ::pest3::typed::template::Empty,
-                    r#e,
-                    __OptionalTrivia::<'i>,
-                >,
+        ::pest3::std::Box<
+            super::generics::Sequence2::<
+                r#e,
                 ::pest3::typed::template::Empty,
+                super::generics::Rep::<
+                    super::generics::Sequence2::<
+                        super::generics::Str::<super::wrapper::W1>,
+                        ::pest3::typed::template::Empty,
+                        r#e,
+                        __OptionalTrivia::<'i>,
+                    >,
+                    ::pest3::typed::template::Empty,
+                >,
+                __OptionalTrivia::<'i>,
             >,
-            __OptionalTrivia::<'i>,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -2059,7 +2139,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#seperated_call<'i> {
         #[doc = r" Matched structure."]
-        pub content: r#seperated<'i, r#string<'i>>,
+        pub content: ::pest3::std::Box<r#seperated<'i, r#string<'i>>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -2076,7 +2156,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#seperated_call,
         r#seperated::<'i, r#string::<'i>>,
-        r#seperated::<'i, r#string::<'i>>,
+        ::pest3::std::Box<r#seperated::<'i, r#string::<'i>>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#seperated_call<'i> {
@@ -2110,11 +2190,13 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#soi_at_start<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence2<
-            super::generics::r#soi,
-            ::pest3::typed::template::Empty,
-            r#string<'i>,
-            __OptionalTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence2<
+                super::generics::r#soi,
+                ::pest3::typed::template::Empty,
+                r#string<'i>,
+                __OptionalTrivia<'i>,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -2137,11 +2219,13 @@ pub mod rules {
             r#string::<'i>,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence2::<
-            super::generics::r#soi,
-            ::pest3::typed::template::Empty,
-            r#string::<'i>,
-            __OptionalTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Sequence2::<
+                super::generics::r#soi,
+                ::pest3::typed::template::Empty,
+                r#string::<'i>,
+                __OptionalTrivia::<'i>,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -2176,7 +2260,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#push<'i, r#exp> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::r#push<r#exp>,
+        pub content: ::pest3::std::Box<super::generics::r#push<r#exp>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -2193,7 +2277,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#push,
         super::generics::r#push::<r#exp>,
-        super::generics::r#push::<r#exp>,
+        ::pest3::std::Box<super::generics::r#push::<r#exp>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i, r#exp: ::pest3::typed::PairContainer<super::Rule>>
@@ -2231,7 +2315,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#pop<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::r#pop<'i>,
+        pub content: ::pest3::std::Box<super::generics::r#pop<'i>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -2248,7 +2332,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#pop,
         super::generics::r#pop::<'i>,
-        super::generics::r#pop::<'i>,
+        ::pest3::std::Box<super::generics::r#pop::<'i>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#pop<'i> {
@@ -2268,7 +2352,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#pop_all<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::r#pop_all<'i>,
+        pub content: ::pest3::std::Box<super::generics::r#pop_all<'i>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -2285,7 +2369,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#pop_all,
         super::generics::r#pop_all::<'i>,
-        super::generics::r#pop_all::<'i>,
+        ::pest3::std::Box<super::generics::r#pop_all::<'i>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#pop_all<'i> {
@@ -2319,7 +2403,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#drop<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::r#drop,
+        pub content: ::pest3::std::Box<super::generics::r#drop>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -2336,7 +2420,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#drop,
         super::generics::r#drop,
-        super::generics::r#drop,
+        ::pest3::std::Box<super::generics::r#drop>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#drop<'i> {
@@ -2370,7 +2454,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#peek<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::r#peek<'i>,
+        pub content: ::pest3::std::Box<super::generics::r#peek<'i>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -2387,7 +2471,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#peek,
         super::generics::r#peek::<'i>,
-        super::generics::r#peek::<'i>,
+        ::pest3::std::Box<super::generics::r#peek::<'i>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#peek<'i> {
@@ -2421,7 +2505,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#peek_all<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::r#peek_all<'i>,
+        pub content: ::pest3::std::Box<super::generics::r#peek_all<'i>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -2438,7 +2522,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#peek_all,
         super::generics::r#peek_all::<'i>,
-        super::generics::r#peek_all::<'i>,
+        ::pest3::std::Box<super::generics::r#peek_all::<'i>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#peek_all<'i> {
@@ -2472,7 +2556,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#peek_slice<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::PeekSlice2<1isize, -2isize>,
+        pub content: ::pest3::std::Box<super::generics::PeekSlice2<1isize, -2isize>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -2489,7 +2573,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#peek_slice,
         super::generics::PeekSlice2::<1isize, -2isize>,
-        super::generics::PeekSlice2::<1isize, -2isize>,
+        ::pest3::std::Box<super::generics::PeekSlice2::<1isize, -2isize>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#peek_slice<'i> {
@@ -2523,23 +2607,25 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_mutate_stack<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence4<
-            super::generics::Rep<
-                super::generics::Sequence2<
-                    r#push<'i, super::generics::CharRange<'a', 'c'>>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence4<
+                super::generics::Rep<
+                    super::generics::Sequence2<
+                        r#push<'i, super::generics::CharRange<'a', 'c'>>,
+                        ::pest3::typed::template::Empty,
+                        super::generics::Str<super::wrapper::W1>,
+                        __OptionalTrivia<'i>,
+                    >,
                     ::pest3::typed::template::Empty,
-                    super::generics::Str<super::wrapper::W1>,
-                    __OptionalTrivia<'i>,
                 >,
                 ::pest3::typed::template::Empty,
+                r#pop<'i>,
+                __OptionalTrivia<'i>,
+                r#pop<'i>,
+                __OptionalTrivia<'i>,
+                r#pop<'i>,
+                __OptionalTrivia<'i>,
             >,
-            ::pest3::typed::template::Empty,
-            r#pop<'i>,
-            __OptionalTrivia<'i>,
-            r#pop<'i>,
-            __OptionalTrivia<'i>,
-            r#pop<'i>,
-            __OptionalTrivia<'i>,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -2574,23 +2660,25 @@ pub mod rules {
             r#pop::<'i>,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence4::<
-            super::generics::Rep::<
-                super::generics::Sequence2::<
-                    r#push::<'i, super::generics::CharRange::<'a', 'c'>>,
+        ::pest3::std::Box<
+            super::generics::Sequence4::<
+                super::generics::Rep::<
+                    super::generics::Sequence2::<
+                        r#push::<'i, super::generics::CharRange::<'a', 'c'>>,
+                        ::pest3::typed::template::Empty,
+                        super::generics::Str::<super::wrapper::W1>,
+                        __OptionalTrivia::<'i>,
+                    >,
                     ::pest3::typed::template::Empty,
-                    super::generics::Str::<super::wrapper::W1>,
-                    __OptionalTrivia::<'i>,
                 >,
                 ::pest3::typed::template::Empty,
+                r#pop::<'i>,
+                __OptionalTrivia::<'i>,
+                r#pop::<'i>,
+                __OptionalTrivia::<'i>,
+                r#pop::<'i>,
+                __OptionalTrivia::<'i>,
             >,
-            ::pest3::typed::template::Empty,
-            r#pop::<'i>,
-            __OptionalTrivia::<'i>,
-            r#pop::<'i>,
-            __OptionalTrivia::<'i>,
-            r#pop::<'i>,
-            __OptionalTrivia::<'i>,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -2625,19 +2713,21 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#repeat_mutate_stack_pop_all<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence2<
-            super::generics::Rep<
-                super::generics::Sequence2<
-                    r#push<'i, super::generics::CharRange<'a', 'c'>>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence2<
+                super::generics::Rep<
+                    super::generics::Sequence2<
+                        r#push<'i, super::generics::CharRange<'a', 'c'>>,
+                        ::pest3::typed::template::Empty,
+                        super::generics::Str<super::wrapper::W1>,
+                        __OptionalTrivia<'i>,
+                    >,
                     ::pest3::typed::template::Empty,
-                    super::generics::Str<super::wrapper::W1>,
-                    __OptionalTrivia<'i>,
                 >,
                 ::pest3::typed::template::Empty,
+                r#pop_all<'i>,
+                __OptionalTrivia<'i>,
             >,
-            ::pest3::typed::template::Empty,
-            r#pop_all<'i>,
-            __OptionalTrivia<'i>,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -2668,19 +2758,21 @@ pub mod rules {
             r#pop_all::<'i>,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence2::<
-            super::generics::Rep::<
-                super::generics::Sequence2::<
-                    r#push::<'i, super::generics::CharRange::<'a', 'c'>>,
+        ::pest3::std::Box<
+            super::generics::Sequence2::<
+                super::generics::Rep::<
+                    super::generics::Sequence2::<
+                        r#push::<'i, super::generics::CharRange::<'a', 'c'>>,
+                        ::pest3::typed::template::Empty,
+                        super::generics::Str::<super::wrapper::W1>,
+                        __OptionalTrivia::<'i>,
+                    >,
                     ::pest3::typed::template::Empty,
-                    super::generics::Str::<super::wrapper::W1>,
-                    __OptionalTrivia::<'i>,
                 >,
                 ::pest3::typed::template::Empty,
+                r#pop_all::<'i>,
+                __OptionalTrivia::<'i>,
             >,
-            ::pest3::typed::template::Empty,
-            r#pop_all::<'i>,
-            __OptionalTrivia::<'i>,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -2715,11 +2807,13 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#will_fail<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence2<
-            r#repeat_mutate_stack_pop_all<'i>,
-            ::pest3::typed::template::Empty,
-            super::generics::Str<super::wrapper::W2>,
-            __OptionalTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence2<
+                r#repeat_mutate_stack_pop_all<'i>,
+                ::pest3::typed::template::Empty,
+                super::generics::Str<super::wrapper::W2>,
+                __OptionalTrivia<'i>,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -2742,11 +2836,13 @@ pub mod rules {
             super::generics::Str::<super::wrapper::W2>,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence2::<
-            r#repeat_mutate_stack_pop_all::<'i>,
-            ::pest3::typed::template::Empty,
-            super::generics::Str::<super::wrapper::W2>,
-            __OptionalTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Sequence2::<
+                r#repeat_mutate_stack_pop_all::<'i>,
+                ::pest3::typed::template::Empty,
+                super::generics::Str::<super::wrapper::W2>,
+                __OptionalTrivia::<'i>,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -2781,7 +2877,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#stack_resume_after_fail<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Choice2<r#will_fail<'i>, r#repeat_mutate_stack_pop_all<'i>>,
+        pub content: ::pest3::std::Box<
+            super::generics::Choice2<r#will_fail<'i>, r#repeat_mutate_stack_pop_all<'i>>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -2798,7 +2896,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#stack_resume_after_fail,
         super::generics::Choice2::<r#will_fail::<'i>, r#repeat_mutate_stack_pop_all::<'i>>,
-        super::generics::Choice2::<r#will_fail::<'i>, r#repeat_mutate_stack_pop_all::<'i>>,
+        ::pest3::std::Box<
+            super::generics::Choice2::<r#will_fail::<'i>, r#repeat_mutate_stack_pop_all::<'i>>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#stack_resume_after_fail<'i> {
@@ -2832,15 +2932,17 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#peek_<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence4<
-            r#push<'i, r#range<'i>>,
-            ::pest3::typed::template::Empty,
-            r#push<'i, r#range<'i>>,
-            __OptionalTrivia<'i>,
-            r#peek<'i>,
-            __OptionalTrivia<'i>,
-            r#peek<'i>,
-            __OptionalTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence4<
+                r#push<'i, r#range<'i>>,
+                ::pest3::typed::template::Empty,
+                r#push<'i, r#range<'i>>,
+                __OptionalTrivia<'i>,
+                r#peek<'i>,
+                __OptionalTrivia<'i>,
+                r#peek<'i>,
+                __OptionalTrivia<'i>,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -2867,15 +2969,17 @@ pub mod rules {
             r#peek::<'i>,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence4::<
-            r#push::<'i, r#range::<'i>>,
-            ::pest3::typed::template::Empty,
-            r#push::<'i, r#range::<'i>>,
-            __OptionalTrivia::<'i>,
-            r#peek::<'i>,
-            __OptionalTrivia::<'i>,
-            r#peek::<'i>,
-            __OptionalTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Sequence4::<
+                r#push::<'i, r#range::<'i>>,
+                ::pest3::typed::template::Empty,
+                r#push::<'i, r#range::<'i>>,
+                __OptionalTrivia::<'i>,
+                r#peek::<'i>,
+                __OptionalTrivia::<'i>,
+                r#peek::<'i>,
+                __OptionalTrivia::<'i>,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -2910,13 +3014,15 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#peek_all_<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence3<
-            r#push<'i, r#range<'i>>,
-            ::pest3::typed::template::Empty,
-            r#push<'i, r#range<'i>>,
-            __OptionalTrivia<'i>,
-            r#peek_all<'i>,
-            __OptionalTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence3<
+                r#push<'i, r#range<'i>>,
+                ::pest3::typed::template::Empty,
+                r#push<'i, r#range<'i>>,
+                __OptionalTrivia<'i>,
+                r#peek_all<'i>,
+                __OptionalTrivia<'i>,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -2941,13 +3047,15 @@ pub mod rules {
             r#peek_all::<'i>,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence3::<
-            r#push::<'i, r#range::<'i>>,
-            ::pest3::typed::template::Empty,
-            r#push::<'i, r#range::<'i>>,
-            __OptionalTrivia::<'i>,
-            r#peek_all::<'i>,
-            __OptionalTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Sequence3::<
+                r#push::<'i, r#range::<'i>>,
+                ::pest3::typed::template::Empty,
+                r#push::<'i, r#range::<'i>>,
+                __OptionalTrivia::<'i>,
+                r#peek_all::<'i>,
+                __OptionalTrivia::<'i>,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -2982,19 +3090,21 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#peek_slice_23<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence6<
-            r#push<'i, r#range<'i>>,
-            ::pest3::typed::template::Empty,
-            r#push<'i, r#range<'i>>,
-            __OptionalTrivia<'i>,
-            r#push<'i, r#range<'i>>,
-            __OptionalTrivia<'i>,
-            r#push<'i, r#range<'i>>,
-            __OptionalTrivia<'i>,
-            r#push<'i, r#range<'i>>,
-            __OptionalTrivia<'i>,
-            r#peek_slice<'i>,
-            __OptionalTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence6<
+                r#push<'i, r#range<'i>>,
+                ::pest3::typed::template::Empty,
+                r#push<'i, r#range<'i>>,
+                __OptionalTrivia<'i>,
+                r#push<'i, r#range<'i>>,
+                __OptionalTrivia<'i>,
+                r#push<'i, r#range<'i>>,
+                __OptionalTrivia<'i>,
+                r#push<'i, r#range<'i>>,
+                __OptionalTrivia<'i>,
+                r#peek_slice<'i>,
+                __OptionalTrivia<'i>,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3025,19 +3135,21 @@ pub mod rules {
             r#peek_slice::<'i>,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence6::<
-            r#push::<'i, r#range::<'i>>,
-            ::pest3::typed::template::Empty,
-            r#push::<'i, r#range::<'i>>,
-            __OptionalTrivia::<'i>,
-            r#push::<'i, r#range::<'i>>,
-            __OptionalTrivia::<'i>,
-            r#push::<'i, r#range::<'i>>,
-            __OptionalTrivia::<'i>,
-            r#push::<'i, r#range::<'i>>,
-            __OptionalTrivia::<'i>,
-            r#peek_slice::<'i>,
-            __OptionalTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Sequence6::<
+                r#push::<'i, r#range::<'i>>,
+                ::pest3::typed::template::Empty,
+                r#push::<'i, r#range::<'i>>,
+                __OptionalTrivia::<'i>,
+                r#push::<'i, r#range::<'i>>,
+                __OptionalTrivia::<'i>,
+                r#push::<'i, r#range::<'i>>,
+                __OptionalTrivia::<'i>,
+                r#push::<'i, r#range::<'i>>,
+                __OptionalTrivia::<'i>,
+                r#peek_slice::<'i>,
+                __OptionalTrivia::<'i>,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -3072,15 +3184,17 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#pop_<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence4<
-            r#push<'i, r#range<'i>>,
-            ::pest3::typed::template::Empty,
-            r#push<'i, r#range<'i>>,
-            __OptionalTrivia<'i>,
-            r#pop<'i>,
-            __OptionalTrivia<'i>,
-            r#pop<'i>,
-            __OptionalTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence4<
+                r#push<'i, r#range<'i>>,
+                ::pest3::typed::template::Empty,
+                r#push<'i, r#range<'i>>,
+                __OptionalTrivia<'i>,
+                r#pop<'i>,
+                __OptionalTrivia<'i>,
+                r#pop<'i>,
+                __OptionalTrivia<'i>,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3107,15 +3221,17 @@ pub mod rules {
             r#pop::<'i>,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence4::<
-            r#push::<'i, r#range::<'i>>,
-            ::pest3::typed::template::Empty,
-            r#push::<'i, r#range::<'i>>,
-            __OptionalTrivia::<'i>,
-            r#pop::<'i>,
-            __OptionalTrivia::<'i>,
-            r#pop::<'i>,
-            __OptionalTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Sequence4::<
+                r#push::<'i, r#range::<'i>>,
+                ::pest3::typed::template::Empty,
+                r#push::<'i, r#range::<'i>>,
+                __OptionalTrivia::<'i>,
+                r#pop::<'i>,
+                __OptionalTrivia::<'i>,
+                r#pop::<'i>,
+                __OptionalTrivia::<'i>,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -3150,13 +3266,15 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#pop_all_<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence3<
-            r#push<'i, r#range<'i>>,
-            ::pest3::typed::template::Empty,
-            r#push<'i, r#range<'i>>,
-            __OptionalTrivia<'i>,
-            r#pop_all<'i>,
-            __OptionalTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence3<
+                r#push<'i, r#range<'i>>,
+                ::pest3::typed::template::Empty,
+                r#push<'i, r#range<'i>>,
+                __OptionalTrivia<'i>,
+                r#pop_all<'i>,
+                __OptionalTrivia<'i>,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3181,13 +3299,15 @@ pub mod rules {
             r#pop_all::<'i>,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence3::<
-            r#push::<'i, r#range::<'i>>,
-            ::pest3::typed::template::Empty,
-            r#push::<'i, r#range::<'i>>,
-            __OptionalTrivia::<'i>,
-            r#pop_all::<'i>,
-            __OptionalTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Sequence3::<
+                r#push::<'i, r#range::<'i>>,
+                ::pest3::typed::template::Empty,
+                r#push::<'i, r#range::<'i>>,
+                __OptionalTrivia::<'i>,
+                r#pop_all::<'i>,
+                __OptionalTrivia::<'i>,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -3222,15 +3342,17 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#pop_fail<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence4<
-            r#push<'i, r#range<'i>>,
-            ::pest3::typed::template::Empty,
-            super::generics::Negative<r#pop<'i>>,
-            __OptionalTrivia<'i>,
-            r#range<'i>,
-            __OptionalTrivia<'i>,
-            r#pop<'i>,
-            __OptionalTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence4<
+                r#push<'i, r#range<'i>>,
+                ::pest3::typed::template::Empty,
+                super::generics::Negative<r#pop<'i>>,
+                __OptionalTrivia<'i>,
+                r#range<'i>,
+                __OptionalTrivia<'i>,
+                r#pop<'i>,
+                __OptionalTrivia<'i>,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3257,15 +3379,17 @@ pub mod rules {
             r#pop::<'i>,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence4::<
-            r#push::<'i, r#range::<'i>>,
-            ::pest3::typed::template::Empty,
-            super::generics::Negative::<r#pop::<'i>>,
-            __OptionalTrivia::<'i>,
-            r#range::<'i>,
-            __OptionalTrivia::<'i>,
-            r#pop::<'i>,
-            __OptionalTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Sequence4::<
+                r#push::<'i, r#range::<'i>>,
+                ::pest3::typed::template::Empty,
+                super::generics::Negative::<r#pop::<'i>>,
+                __OptionalTrivia::<'i>,
+                r#range::<'i>,
+                __OptionalTrivia::<'i>,
+                r#pop::<'i>,
+                __OptionalTrivia::<'i>,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -3300,34 +3424,36 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#checkpoint_restore<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence3<
-            r#push<'i, super::generics::Str<super::wrapper::W3>>,
-            ::pest3::typed::template::Empty,
-            super::generics::Choice3<
-                super::generics::Sequence3<
-                    r#push<'i, super::generics::Str<super::wrapper::W4>>,
-                    ::pest3::typed::template::Empty,
-                    super::generics::Str<super::wrapper::W5>,
-                    __OptionalTrivia<'i>,
-                    r#pop<'i>,
-                    __OptionalTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence3<
+                r#push<'i, super::generics::Str<super::wrapper::W3>>,
+                ::pest3::typed::template::Empty,
+                super::generics::Choice3<
+                    super::generics::Sequence3<
+                        r#push<'i, super::generics::Str<super::wrapper::W4>>,
+                        ::pest3::typed::template::Empty,
+                        super::generics::Str<super::wrapper::W5>,
+                        __OptionalTrivia<'i>,
+                        r#pop<'i>,
+                        __OptionalTrivia<'i>,
+                    >,
+                    super::generics::Sequence2<
+                        r#drop<'i>,
+                        ::pest3::typed::template::Empty,
+                        super::generics::Str<super::wrapper::W5>,
+                        __OptionalTrivia<'i>,
+                    >,
+                    super::generics::Sequence2<
+                        r#pop<'i>,
+                        ::pest3::typed::template::Empty,
+                        super::generics::Str<super::wrapper::W4>,
+                        __OptionalTrivia<'i>,
+                    >,
                 >,
-                super::generics::Sequence2<
-                    r#drop<'i>,
-                    ::pest3::typed::template::Empty,
-                    super::generics::Str<super::wrapper::W5>,
-                    __OptionalTrivia<'i>,
-                >,
-                super::generics::Sequence2<
-                    r#pop<'i>,
-                    ::pest3::typed::template::Empty,
-                    super::generics::Str<super::wrapper::W4>,
-                    __OptionalTrivia<'i>,
-                >,
+                __OptionalTrivia<'i>,
+                super::generics::r#eoi,
+                __OptionalTrivia<'i>,
             >,
-            __OptionalTrivia<'i>,
-            super::generics::r#eoi,
-            __OptionalTrivia<'i>,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3373,34 +3499,36 @@ pub mod rules {
             super::generics::r#eoi,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence3::<
-            r#push::<'i, super::generics::Str::<super::wrapper::W3>>,
-            ::pest3::typed::template::Empty,
-            super::generics::Choice3::<
-                super::generics::Sequence3::<
-                    r#push::<'i, super::generics::Str::<super::wrapper::W4>>,
-                    ::pest3::typed::template::Empty,
-                    super::generics::Str::<super::wrapper::W5>,
-                    __OptionalTrivia::<'i>,
-                    r#pop::<'i>,
-                    __OptionalTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Sequence3::<
+                r#push::<'i, super::generics::Str::<super::wrapper::W3>>,
+                ::pest3::typed::template::Empty,
+                super::generics::Choice3::<
+                    super::generics::Sequence3::<
+                        r#push::<'i, super::generics::Str::<super::wrapper::W4>>,
+                        ::pest3::typed::template::Empty,
+                        super::generics::Str::<super::wrapper::W5>,
+                        __OptionalTrivia::<'i>,
+                        r#pop::<'i>,
+                        __OptionalTrivia::<'i>,
+                    >,
+                    super::generics::Sequence2::<
+                        r#drop::<'i>,
+                        ::pest3::typed::template::Empty,
+                        super::generics::Str::<super::wrapper::W5>,
+                        __OptionalTrivia::<'i>,
+                    >,
+                    super::generics::Sequence2::<
+                        r#pop::<'i>,
+                        ::pest3::typed::template::Empty,
+                        super::generics::Str::<super::wrapper::W4>,
+                        __OptionalTrivia::<'i>,
+                    >,
                 >,
-                super::generics::Sequence2::<
-                    r#drop::<'i>,
-                    ::pest3::typed::template::Empty,
-                    super::generics::Str::<super::wrapper::W5>,
-                    __OptionalTrivia::<'i>,
-                >,
-                super::generics::Sequence2::<
-                    r#pop::<'i>,
-                    ::pest3::typed::template::Empty,
-                    super::generics::Str::<super::wrapper::W4>,
-                    __OptionalTrivia::<'i>,
-                >,
+                __OptionalTrivia::<'i>,
+                super::generics::r#eoi,
+                __OptionalTrivia::<'i>,
             >,
-            __OptionalTrivia::<'i>,
-            super::generics::r#eoi,
-            __OptionalTrivia::<'i>,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -3435,9 +3563,11 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#ascii_digits<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<
-            super::generics::r#ascii_digit,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::RepOnce<
+                super::generics::r#ascii_digit,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3455,7 +3585,12 @@ pub mod rules {
         super::Rule,
         super::Rule::r#ascii_digits,
         super::generics::RepOnce::<super::generics::r#ascii_digit, ::pest3::typed::template::Empty>,
-        super::generics::RepOnce::<super::generics::r#ascii_digit, ::pest3::typed::template::Empty>,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<
+                super::generics::r#ascii_digit,
+                ::pest3::typed::template::Empty,
+            >,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#ascii_digits<'i> {
@@ -3489,9 +3624,11 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#ascii_nonzero_digits<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<
-            super::generics::r#ascii_nonzero_digit,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::RepOnce<
+                super::generics::r#ascii_nonzero_digit,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3512,9 +3649,11 @@ pub mod rules {
             super::generics::r#ascii_nonzero_digit,
             ::pest3::typed::template::Empty,
         >,
-        super::generics::RepOnce::<
-            super::generics::r#ascii_nonzero_digit,
-            ::pest3::typed::template::Empty,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<
+                super::generics::r#ascii_nonzero_digit,
+                ::pest3::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -3549,9 +3688,11 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#ascii_bin_digits<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<
-            super::generics::r#ascii_bin_digit,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::RepOnce<
+                super::generics::r#ascii_bin_digit,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3572,9 +3713,11 @@ pub mod rules {
             super::generics::r#ascii_bin_digit,
             ::pest3::typed::template::Empty,
         >,
-        super::generics::RepOnce::<
-            super::generics::r#ascii_bin_digit,
-            ::pest3::typed::template::Empty,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<
+                super::generics::r#ascii_bin_digit,
+                ::pest3::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -3609,9 +3752,11 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#ascii_oct_digits<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<
-            super::generics::r#ascii_oct_digit,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::RepOnce<
+                super::generics::r#ascii_oct_digit,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3632,9 +3777,11 @@ pub mod rules {
             super::generics::r#ascii_oct_digit,
             ::pest3::typed::template::Empty,
         >,
-        super::generics::RepOnce::<
-            super::generics::r#ascii_oct_digit,
-            ::pest3::typed::template::Empty,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<
+                super::generics::r#ascii_oct_digit,
+                ::pest3::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -3669,9 +3816,11 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#ascii_hex_digits<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<
-            super::generics::r#ascii_hex_digit,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::RepOnce<
+                super::generics::r#ascii_hex_digit,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3692,9 +3841,11 @@ pub mod rules {
             super::generics::r#ascii_hex_digit,
             ::pest3::typed::template::Empty,
         >,
-        super::generics::RepOnce::<
-            super::generics::r#ascii_hex_digit,
-            ::pest3::typed::template::Empty,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<
+                super::generics::r#ascii_hex_digit,
+                ::pest3::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -3729,9 +3880,11 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#ascii_alpha_lowers<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<
-            super::generics::r#ascii_alpha_lower,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::RepOnce<
+                super::generics::r#ascii_alpha_lower,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3752,9 +3905,11 @@ pub mod rules {
             super::generics::r#ascii_alpha_lower,
             ::pest3::typed::template::Empty,
         >,
-        super::generics::RepOnce::<
-            super::generics::r#ascii_alpha_lower,
-            ::pest3::typed::template::Empty,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<
+                super::generics::r#ascii_alpha_lower,
+                ::pest3::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -3789,9 +3944,11 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#ascii_alpha_uppers<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<
-            super::generics::r#ascii_alpha_upper,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::RepOnce<
+                super::generics::r#ascii_alpha_upper,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3812,9 +3969,11 @@ pub mod rules {
             super::generics::r#ascii_alpha_upper,
             ::pest3::typed::template::Empty,
         >,
-        super::generics::RepOnce::<
-            super::generics::r#ascii_alpha_upper,
-            ::pest3::typed::template::Empty,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<
+                super::generics::r#ascii_alpha_upper,
+                ::pest3::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -3849,9 +4008,11 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#ascii_alphas<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<
-            super::generics::r#ascii_alpha,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::RepOnce<
+                super::generics::r#ascii_alpha,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3869,7 +4030,12 @@ pub mod rules {
         super::Rule,
         super::Rule::r#ascii_alphas,
         super::generics::RepOnce::<super::generics::r#ascii_alpha, ::pest3::typed::template::Empty>,
-        super::generics::RepOnce::<super::generics::r#ascii_alpha, ::pest3::typed::template::Empty>,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<
+                super::generics::r#ascii_alpha,
+                ::pest3::typed::template::Empty,
+            >,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#ascii_alphas<'i> {
@@ -3903,9 +4069,11 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#ascii_alphanumerics<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<
-            super::generics::r#ascii_alphanumeric,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::RepOnce<
+                super::generics::r#ascii_alphanumeric,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -3926,9 +4094,11 @@ pub mod rules {
             super::generics::r#ascii_alphanumeric,
             ::pest3::typed::template::Empty,
         >,
-        super::generics::RepOnce::<
-            super::generics::r#ascii_alphanumeric,
-            ::pest3::typed::template::Empty,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<
+                super::generics::r#ascii_alphanumeric,
+                ::pest3::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -3963,8 +4133,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#asciis<'i> {
         #[doc = r" Matched structure."]
-        pub content:
+        pub content: ::pest3::std::Box<
             super::generics::RepOnce<super::generics::r#ascii, ::pest3::typed::template::Empty>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -3981,7 +4152,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#asciis,
         super::generics::RepOnce::<super::generics::r#ascii, ::pest3::typed::template::Empty>,
-        super::generics::RepOnce::<super::generics::r#ascii, ::pest3::typed::template::Empty>,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<super::generics::r#ascii, ::pest3::typed::template::Empty>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#asciis<'i> {
@@ -4015,8 +4188,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#newline<'i> {
         #[doc = r" Matched structure."]
-        pub content:
+        pub content: ::pest3::std::Box<
             super::generics::RepOnce<super::generics::r#newline, ::pest3::typed::template::Empty>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -4033,7 +4207,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#newline,
         super::generics::RepOnce::<super::generics::r#newline, ::pest3::typed::template::Empty>,
-        super::generics::RepOnce::<super::generics::r#newline, ::pest3::typed::template::Empty>,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<super::generics::r#newline, ::pest3::typed::template::Empty>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#newline<'i> {
@@ -4067,11 +4243,13 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#unicode<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Sequence2<
-            super::unicode::XID_START,
-            ::pest3::typed::template::Empty,
-            super::generics::Rep<super::unicode::XID_CONTINUE, ::pest3::typed::template::Empty>,
-            __OptionalTrivia<'i>,
+        pub content: ::pest3::std::Box<
+            super::generics::Sequence2<
+                super::unicode::XID_START,
+                ::pest3::typed::template::Empty,
+                super::generics::Rep<super::unicode::XID_CONTINUE, ::pest3::typed::template::Empty>,
+                __OptionalTrivia<'i>,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -4094,11 +4272,13 @@ pub mod rules {
             super::generics::Rep::<super::unicode::XID_CONTINUE, ::pest3::typed::template::Empty>,
             __OptionalTrivia::<'i>,
         >,
-        super::generics::Sequence2::<
-            super::unicode::XID_START,
-            ::pest3::typed::template::Empty,
-            super::generics::Rep::<super::unicode::XID_CONTINUE, ::pest3::typed::template::Empty>,
-            __OptionalTrivia::<'i>,
+        ::pest3::std::Box<
+            super::generics::Sequence2::<
+                super::unicode::XID_START,
+                ::pest3::typed::template::Empty,
+                super::generics::Rep::<super::unicode::XID_CONTINUE, ::pest3::typed::template::Empty>,
+                __OptionalTrivia::<'i>,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -4133,7 +4313,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#han<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<super::unicode::HAN, ::pest3::typed::template::Empty>,
+        pub content: ::pest3::std::Box<
+            super::generics::RepOnce<super::unicode::HAN, ::pest3::typed::template::Empty>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -4150,7 +4332,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#han,
         super::generics::RepOnce::<super::unicode::HAN, ::pest3::typed::template::Empty>,
-        super::generics::RepOnce::<super::unicode::HAN, ::pest3::typed::template::Empty>,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<super::unicode::HAN, ::pest3::typed::template::Empty>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#han<'i> {
@@ -4184,8 +4368,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#hangul<'i> {
         #[doc = r" Matched structure."]
-        pub content:
+        pub content: ::pest3::std::Box<
             super::generics::RepOnce<super::unicode::HANGUL, ::pest3::typed::template::Empty>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -4202,7 +4387,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#hangul,
         super::generics::RepOnce::<super::unicode::HANGUL, ::pest3::typed::template::Empty>,
-        super::generics::RepOnce::<super::unicode::HANGUL, ::pest3::typed::template::Empty>,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<super::unicode::HANGUL, ::pest3::typed::template::Empty>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#hangul<'i> {
@@ -4236,8 +4423,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#hiragana<'i> {
         #[doc = r" Matched structure."]
-        pub content:
+        pub content: ::pest3::std::Box<
             super::generics::RepOnce<super::unicode::HIRAGANA, ::pest3::typed::template::Empty>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -4254,7 +4442,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#hiragana,
         super::generics::RepOnce::<super::unicode::HIRAGANA, ::pest3::typed::template::Empty>,
-        super::generics::RepOnce::<super::unicode::HIRAGANA, ::pest3::typed::template::Empty>,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<super::unicode::HIRAGANA, ::pest3::typed::template::Empty>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#hiragana<'i> {
@@ -4288,8 +4478,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#arabic<'i> {
         #[doc = r" Matched structure."]
-        pub content:
+        pub content: ::pest3::std::Box<
             super::generics::RepOnce<super::unicode::ARABIC, ::pest3::typed::template::Empty>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -4306,7 +4497,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#arabic,
         super::generics::RepOnce::<super::unicode::ARABIC, ::pest3::typed::template::Empty>,
-        super::generics::RepOnce::<super::unicode::ARABIC, ::pest3::typed::template::Empty>,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<super::unicode::ARABIC, ::pest3::typed::template::Empty>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#arabic<'i> {
@@ -4340,8 +4533,9 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#emoji<'i> {
         #[doc = r" Matched structure."]
-        pub content:
+        pub content: ::pest3::std::Box<
             super::generics::RepOnce<super::unicode::EMOJI, ::pest3::typed::template::Empty>,
+        >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -4358,7 +4552,9 @@ pub mod rules {
         super::Rule,
         super::Rule::r#emoji,
         super::generics::RepOnce::<super::unicode::EMOJI, ::pest3::typed::template::Empty>,
-        super::generics::RepOnce::<super::unicode::EMOJI, ::pest3::typed::template::Empty>,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<super::unicode::EMOJI, ::pest3::typed::template::Empty>,
+        >,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#emoji<'i> {
@@ -4392,7 +4588,7 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#whitespace<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::Str<super::wrapper::W6>,
+        pub content: ::pest3::std::Box<super::generics::Str<super::wrapper::W6>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -4409,7 +4605,7 @@ pub mod rules {
         super::Rule,
         super::Rule::r#whitespace,
         super::generics::Str::<super::wrapper::W6>,
-        super::generics::Str::<super::wrapper::W6>,
+        ::pest3::std::Box<super::generics::Str::<super::wrapper::W6>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#whitespace<'i> {
@@ -4443,9 +4639,11 @@ pub mod rules {
     #[allow(non_camel_case_types)]
     pub struct r#comment<'i> {
         #[doc = r" Matched structure."]
-        pub content: super::generics::RepOnce<
-            super::generics::Str<super::wrapper::W7>,
-            ::pest3::typed::template::Empty,
+        pub content: ::pest3::std::Box<
+            super::generics::RepOnce<
+                super::generics::Str<super::wrapper::W7>,
+                ::pest3::typed::template::Empty,
+            >,
         >,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
@@ -4466,9 +4664,11 @@ pub mod rules {
             super::generics::Str::<super::wrapper::W7>,
             ::pest3::typed::template::Empty,
         >,
-        super::generics::RepOnce::<
-            super::generics::Str::<super::wrapper::W7>,
-            ::pest3::typed::template::Empty,
+        ::pest3::std::Box<
+            super::generics::RepOnce::<
+                super::generics::Str::<super::wrapper::W7>,
+                ::pest3::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
