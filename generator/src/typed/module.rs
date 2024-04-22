@@ -1,6 +1,6 @@
 use super::{
-    accesser::Accesser,
     generator::{Intermediate, ProcessedPathArgs, RuleRef},
+    getter::GetterByName,
     output::generics,
 };
 use pest3::unicode::unicode_property_names;
@@ -72,16 +72,16 @@ impl RuleGenerics {
             Self::Rule { argc } => match (argc, args) {
                 (0, None) => {
                     let typename = quote! { #(#current)* #name::<'i> };
-                    let accesser = Accesser::from_rule(&typename, name_str);
-                    Intermediate { typename, accesser }
+                    let getter = GetterByName::from_rule(&typename, name_str);
+                    Intermediate { typename, getter }
                 }
                 (0, Some(ProcessedPathArgs::Call(args))) => {
                     if !args.is_empty() {
                         Err(ModuleError::UnexpectedArguments(rule_ref.clone()))?
                     } else {
                         let typename = quote! { #(#current)* #name::<'i> };
-                        let accesser = Accesser::from_rule(&typename, name_str);
-                        Intermediate { typename, accesser }
+                        let getter = GetterByName::from_rule(&typename, name_str);
+                        Intermediate { typename, getter }
                     }
                 }
                 (0, Some(ProcessedPathArgs::Slice(slice))) => Err(
@@ -94,8 +94,8 @@ impl RuleGenerics {
                 (argc, Some(ProcessedPathArgs::Call(args))) => {
                     ModuleError::check_argc(*argc, args.len(), rule_ref)?;
                     let typename = quote! { #(#current)* #name::<'i, #(#args, )*> };
-                    let accesser = Accesser::from_rule(&typename, name_str);
-                    Intermediate { typename, accesser }
+                    let getter = GetterByName::from_rule(&typename, name_str);
+                    Intermediate { typename, getter }
                 }
             },
             Self::BuiltIn {
@@ -110,8 +110,8 @@ impl RuleGenerics {
                         true => quote! { #root::#generics::#name::<'i> },
                         false => quote! { #root::#generics::#name },
                     };
-                    let accesser = Accesser::from_rule(&typename, name_str);
-                    Intermediate { typename, accesser }
+                    let getter = GetterByName::from_rule(&typename, name_str);
+                    Intermediate { typename, getter }
                 }
                 Some(ProcessedPathArgs::Slice(range)) => {
                     let (slice1, slice2) = slice
@@ -125,8 +125,8 @@ impl RuleGenerics {
                         Some(end) => quote! { #root::#generics::#slice2::<#start, #end> },
                         None => quote! { #root::#generics::#slice1::<#start> },
                     };
-                    let accesser = Accesser::from_rule(&typename, name_str);
-                    Intermediate { typename, accesser }
+                    let getter = GetterByName::from_rule(&typename, name_str);
+                    Intermediate { typename, getter }
                 }
                 Some(ProcessedPathArgs::Call(args)) => {
                     let (argc,) =
@@ -135,8 +135,8 @@ impl RuleGenerics {
                         ModuleError::check_argc(argc, args.len(), rule_ref)?;
                     }
                     let typename = quote! { #root::#generics::#name::< #( #args, )* > };
-                    let accesser = Accesser::from_rule(&typename, name_str);
-                    Intermediate { typename, accesser }
+                    let getter = GetterByName::from_rule(&typename, name_str);
+                    Intermediate { typename, getter }
                 }
             },
         };
@@ -297,8 +297,8 @@ impl<'g> ModuleSystem<'g> {
                     let ident = format_ident!("{}", upper);
                     let node = ModuleNode::Absolute(Box::new(move |root| {
                         let typename = quote! { #root::unicode::#ident};
-                        let accesser = Accesser::from_rule(&typename, name);
-                        Intermediate { typename, accesser }
+                        let getter = GetterByName::from_rule(&typename, name);
+                        Intermediate { typename, getter }
                     }));
                     let node = Rc::new(node);
                     (name, node)
