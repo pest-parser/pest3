@@ -1,3 +1,7 @@
+#[allow(non_upper_case_globals)]
+const _PEST_GRAMMAR_Parser: [&'static ::core::primitive::str; 1usize] = [include_str!(
+    "/Users/huangboyi/Projects/pest3/generator/tests/syntax.pest"
+)];
 #[doc = "For compatibility."]
 #[allow(
     dead_code,
