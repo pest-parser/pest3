@@ -1,14 +1,14 @@
 use super::{
-    accesser::Accesser,
     attr::parse_derive,
     config::Config,
+    getter::GetterByName,
     module::{ModuleNode, ModuleSystem},
     output::{generics, Output, Tracker},
 };
 use crate::{
     common::generate_include,
     config::collect_data,
-    typed::accesser,
+    typed::getter,
     types::{option_type, pest},
 };
 use pest3_meta::{
@@ -25,7 +25,6 @@ use std::{
     fmt::Display,
     path::PathBuf,
     rc::Rc,
-    thread::AccessError,
 };
 use syn::{DeriveInput, Generics};
 
@@ -47,7 +46,7 @@ pub struct RuleInfo<'g> {
     pub rule_name: &'g str,
     pub silent: bool,
     pub boxed: bool,
-    pub accesser: bool,
+    pub getter: bool,
 }
 impl<'g> RuleInfo<'g> {
     fn new(
@@ -59,13 +58,13 @@ impl<'g> RuleInfo<'g> {
         let boxed = !config.box_rules_only_if_needed || !reachability.contains_key(rule_name);
         let rule_id = format_ident!("r#{}", rule_name);
         let silent = rule.silent;
-        let accesser = !config.no_accesser;
+        let getter = !config.no_getter;
         Self {
             rule_id,
             rule_name,
             boxed,
             silent,
-            accesser,
+            getter,
         }
     }
 }
@@ -234,8 +233,8 @@ fn create_rule<'g>(
     } else {
         inner_type.clone()
     };
-    let accesser_impl = if rule_info.accesser {
-        inner.accesser.collect(&root, rule_config, rule_info)
+    let getter_impl = if rule_info.getter {
+        inner.getter.collect(&root, rule_config, rule_info)
     } else {
         quote! {}
     };
@@ -274,7 +273,7 @@ fn create_rule<'g>(
         }
         #[allow(non_camel_case_types)]
         impl<'i, #(#args, )*> #name<'i, #(#args, )*> {
-            #accesser_impl
+            #getter_impl
         }
         #typed_node
         #pair_api
@@ -284,7 +283,7 @@ fn create_rule<'g>(
 #[derive(Clone, Debug)]
 pub struct Intermediate<'g> {
     pub typename: TokenStream,
-    pub accesser: Accesser<'g>,
+    pub getter: GetterByName<'g>,
 }
 
 impl Display for Intermediate<'_> {
@@ -356,26 +355,38 @@ fn process_expr<'g>(
         ParseExpr::Str(content) => {
             let wrapper = tracker.insert_string_wrapper(content.as_str());
             let typename = quote! {#root::#generics::Str::<#root::#wrapper>};
-            let accesser = Accesser::default();
-            Intermediate { typename, accesser }
+            let getter = GetterByName::default();
+            Intermediate {
+                typename,
+                getter,
+            }
         }
         ParseExpr::Insens(content) => {
             let wrapper = tracker.insert_string_wrapper(content.as_str());
             let typename = quote! {#root::#generics::Insens::<'i, #root::#wrapper>};
-            let accesser = Accesser::default();
-            Intermediate { typename, accesser }
+            let getter = GetterByName::default();
+            Intermediate {
+                typename,
+                getter,
+            }
         }
         ParseExpr::Range(start, end) => {
             let typename = quote! {#root::#generics::CharRange::<#start, #end>};
-            let accesser = Accesser::default();
-            Intermediate { typename, accesser }
+            let getter = GetterByName::default();
+            Intermediate {
+                typename,
+                getter,
+            }
         }
         ParseExpr::Path(prefix, args) => {
             if prefix.len() == 1 && rule_config.grammar.args.contains(&prefix[0]) {
                 let ident = format_ident!("r#{}", prefix[0]);
                 let typename = quote! {#ident};
-                let accesser = Accesser::from_generics_arg(&prefix[0]);
-                return Intermediate { typename, accesser };
+                let getter = GetterByName::from_generics_arg(&prefix[0]);
+                return Intermediate {
+                    typename,
+                    getter,
+                };
             }
             let args = args.as_ref().map(|args| {
                 ProcessedPathArgs::process(
@@ -403,8 +414,11 @@ fn process_expr<'g>(
             );
             let inner_typename = &inner.typename;
             let typename = quote! {#root::#generics::Positive::<#inner_typename>};
-            let accesser = inner.accesser;
-            Intermediate { typename, accesser }
+            let getter = inner.getter;
+            Intermediate {
+                typename,
+                getter,
+            }
         }
         ParseExpr::NegPred(node) => {
             // Impossible to access inner tokens.
@@ -419,17 +433,20 @@ fn process_expr<'g>(
             );
             let inner_typename = &inner.typename;
             let typename = quote! {#root::#generics::Negative::<#inner_typename>};
-            let accesser = Accesser::default();
-            Intermediate { typename, accesser }
+            let getter = GetterByName::default();
+            Intermediate {
+                typename,
+                getter,
+            }
         }
         ParseExpr::Seq(left, right, trivia) => {
             let vec = collect_sequence(&left.expr, &right.expr, trivia.clone());
             let mut types = Vec::with_capacity(vec.len());
-            let mut accesser = Accesser::default();
+            let mut getter = GetterByName::default();
             for (i, (trivia, expr)) in vec.into_iter().enumerate() {
                 let child = process_expr(expr, rule_config, tracker, output, config, mod_sys, root);
                 types.push((child.typename, trivia));
-                accesser = accesser.join(child.accesser.content_i(i));
+                getter = getter.join(child.getter.content_i(i));
             }
             let typenames = types.iter().map(|(inter, trivia)| {
                 let typename = inter;
@@ -441,16 +458,19 @@ fn process_expr<'g>(
             tracker.record_seq(types.len());
 
             let typename = quote! { #root::#generics::#seq::<#(#typenames, )*> };
-            Intermediate { typename, accesser }
+            Intermediate {
+                typename,
+                getter,
+            }
         }
         ParseExpr::Choice(left, right) => {
             let vec = collect_choices(&left.expr, &right.expr);
             let mut types = vec![];
-            let mut accesser = Accesser::default();
+            let mut getter = GetterByName::default();
             for (i, expr) in vec.into_iter().enumerate() {
                 let child = process_expr(expr, rule_config, tracker, output, config, mod_sys, root);
                 types.push(child.typename);
-                accesser = accesser.join(child.accesser.choice(i));
+                getter = getter.join(child.getter.choice(i));
             }
             let typenames = types.iter();
 
@@ -458,7 +478,10 @@ fn process_expr<'g>(
             tracker.record_choice(types.len());
 
             let typename = quote! { #root::#generics::#choice::<#(#typenames, )*> };
-            Intermediate { typename, accesser }
+            Intermediate {
+                typename,
+                getter,
+            }
         }
         ParseExpr::Opt(inner) => {
             let inner = process_expr(
@@ -473,8 +496,11 @@ fn process_expr<'g>(
             let option = option_type();
             let inner_name = &inner.typename;
             let typename = quote! {#option::<#inner_name>};
-            let accesser = inner.accesser.optional();
-            Intermediate { typename, accesser }
+            let getter = inner.getter.optional();
+            Intermediate {
+                typename,
+                getter,
+            }
         }
         ParseExpr::Rep(inner_node) => {
             let inner = process_expr(
@@ -489,8 +515,11 @@ fn process_expr<'g>(
             let inner_name = &inner.typename;
             let trivia = embed_trivia(&get_trivia(&inner_node.expr));
             let typename = quote! { #root::#generics::Rep::<#inner_name, #trivia> };
-            let accesser = inner.accesser.contents();
-            Intermediate { typename, accesser }
+            let getter = inner.getter.contents();
+            Intermediate {
+                typename,
+                getter,
+            }
         }
         ParseExpr::RepOnce(inner_node) => {
             let inner = process_expr(
@@ -505,8 +534,11 @@ fn process_expr<'g>(
             let inner_name = &inner.typename;
             let trivia = embed_trivia(&get_trivia(&inner_node.expr));
             let typename = quote! { #root::#generics::RepOnce::<#inner_name, #trivia> };
-            let accesser = inner.accesser.contents();
-            Intermediate { typename, accesser }
+            let getter = inner.getter.contents();
+            Intermediate {
+                typename,
+                getter,
+            }
         }
         ParseExpr::RepRange(inner_node, range) => {
             let inner = process_expr(
@@ -535,8 +567,11 @@ fn process_expr<'g>(
                     quote! { #root::#generics::Rep::<#inner_name, #trivia> }
                 }
             };
-            let accesser = inner.accesser.contents();
-            Intermediate { typename, accesser }
+            let getter = inner.getter.contents();
+            Intermediate {
+                typename,
+                getter,
+            }
         }
         ParseExpr::Separated(inner, _trivia) => process_expr(
             &inner.expr,

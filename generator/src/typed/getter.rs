@@ -176,28 +176,28 @@ impl<'g> Node<'g> {
 
 /// `'g` stands for the lifetime of rules.
 #[derive(Clone, Debug)]
-pub struct Accesser<'g> {
+pub struct GetterByName<'g> {
     /// name -> (path, type)
-    accessers: BTreeMap<&'g str, Node<'g>>,
+    nodes: BTreeMap<&'g str, Node<'g>>,
 }
-impl<'g> Default for Accesser<'g> {
+impl<'g> Default for GetterByName<'g> {
     fn default() -> Self {
         Self::new()
     }
 }
-impl<'g> Accesser<'g> {
+impl<'g> GetterByName<'g> {
     pub fn new() -> Self {
         Self {
-            accessers: BTreeMap::new(),
+            nodes: BTreeMap::new(),
         }
     }
     pub fn from_rule(tokens: &TokenStream, name: &'g str) -> Self {
         let res = BTreeMap::from([(name, Node::from_rule(tokens.clone()))]);
-        Self { accessers: res }
+        Self { nodes: res }
     }
     pub fn from_generics_arg(name: &'g str) -> Self {
         let res = BTreeMap::from([(name, Node::from_generics_arg(name))]);
-        Self { accessers: res }
+        Self { nodes: res }
     }
     pub fn content(self) -> Self {
         self.prepend(Edge::Content)
@@ -216,16 +216,16 @@ impl<'g> Accesser<'g> {
     }
     #[inline]
     fn prepend(mut self, edge: Edge) -> Self {
-        for (_, node) in self.accessers.iter_mut() {
+        for (_, node) in self.nodes.iter_mut() {
             // TODO: Ellide clone here.
             *node = node.clone().wrap(edge.clone());
         }
         self
     }
-    /// Join two accesser forest in the same level.
-    pub fn join_mut(&mut self, other: Accesser<'g>) {
-        other.accessers.into_iter().for_each(|(name, tree)| {
-            let entry = self.accessers.entry(name);
+    /// Join two getter forest in the same level.
+    pub fn join_mut(&mut self, other: GetterByName<'g>) {
+        other.nodes.into_iter().for_each(|(name, tree)| {
+            let entry = self.nodes.entry(name);
             match entry {
                 Entry::Vacant(entry) => {
                     entry.insert(tree);
@@ -238,8 +238,8 @@ impl<'g> Accesser<'g> {
             }
         });
     }
-    /// Join two accesser forest in the same level.
-    pub fn join(mut self, other: Accesser<'g>) -> Self {
+    /// Join two getter forest in the same level.
+    pub fn join(mut self, other: GetterByName<'g>) -> Self {
         self.join_mut(other);
         self
     }
@@ -249,7 +249,7 @@ impl<'g> Accesser<'g> {
         config: &RuleConfig<'g>,
         rule_info: &RuleInfo<'g>,
     ) -> TokenStream {
-        let accessers = self.accessers.iter().map(|(name, node)| {
+        let getters = self.nodes.iter().map(|(name, node)| {
             let id = format_ident!("r#{}", name);
             let (paths, types) = node.expand(root, config);
             let deref = if rule_info.boxed {
@@ -272,7 +272,7 @@ impl<'g> Accesser<'g> {
             }
         });
         quote! {
-            #(#accessers)*
+            #(#getters)*
         }
     }
 }
