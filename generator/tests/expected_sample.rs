@@ -115,6 +115,8 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#string;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#string<'i> {}
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -166,6 +168,8 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#insensitive;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#insensitive<'i> {}
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -217,6 +221,8 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#range;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#range<'i> {}
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -267,6 +273,15 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#ident<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ident;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#ident<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> &'s r#string<'i> {
+            let res = &*self.content;
+            res
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -319,6 +334,15 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#pos_pred;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#pos_pred<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> &'s r#string<'i> {
+            let res = &*self.content;
+            res
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -370,6 +394,8 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#neg_pred;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#neg_pred<'i> {}
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -422,6 +448,8 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#double_neg_pred;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#double_neg_pred<'i> {}
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -479,6 +507,27 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#sequence<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#sequence;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#sequence<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> (&'s r#string<'i>, &'s r#string<'i>) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_0;
+                        res
+                    },
+                    {
+                        let res = &res.field_1;
+                        res
+                    },
+                );
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -550,6 +599,27 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#sequence_trivia;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#sequence_trivia<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> (&'s r#string<'i>, &'s r#string<'i>) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_0;
+                        res
+                    },
+                    {
+                        let res = &res.field_1;
+                        res
+                    },
+                );
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -619,6 +689,27 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#sequence_trivia_mandatory<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#sequence_trivia_mandatory;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#sequence_trivia_mandatory<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> (&'s r#string<'i>, &'s r#string<'i>) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_0;
+                        res
+                    },
+                    {
+                        let res = &res.field_1;
+                        res
+                    },
+                );
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -692,6 +783,8 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#sequence_nested;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#sequence_nested<'i> {}
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -759,6 +852,27 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#choice;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#choice<'i> {
+        #[doc = "A helper function to access [`range`]."]
+        #[allow(non_snake_case)]
+        pub fn r#range<'s>(&'s self) -> ::pest3::std::Option<&'s r#range<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.choice_1().map(|res| res);
+                res
+            }
+        }
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Option<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.choice_0().map(|res| res);
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -809,6 +923,27 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#choice_trivia<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#choice_trivia;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#choice_trivia<'i> {
+        #[doc = "A helper function to access [`range`]."]
+        #[allow(non_snake_case)]
+        pub fn r#range<'s>(&'s self) -> ::pest3::std::Option<&'s r#range<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.choice_1().map(|res| res);
+                res
+            }
+        }
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Option<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.choice_0().map(|res| res);
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -861,6 +996,27 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#choice_trivia_mandatory;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#choice_trivia_mandatory<'i> {
+        #[doc = "A helper function to access [`range`]."]
+        #[allow(non_snake_case)]
+        pub fn r#range<'s>(&'s self) -> ::pest3::std::Option<&'s r#range<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.choice_1().map(|res| res);
+                res
+            }
+        }
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Option<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.choice_0().map(|res| res);
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -911,6 +1067,27 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#choice_prefix<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#choice_prefix;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#choice_prefix<'i> {
+        #[doc = "A helper function to access [`range`]."]
+        #[allow(non_snake_case)]
+        pub fn r#range<'s>(&'s self) -> ::pest3::std::Option<&'s r#range<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.choice_1().map(|res| res);
+                res
+            }
+        }
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Option<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.choice_0().map(|res| res);
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -963,6 +1140,18 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#optional;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#optional<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Option<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.as_ref().map(|res| res);
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -1013,6 +1202,18 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#optional_trivia<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#optional_trivia;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#optional_trivia<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Option<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.as_ref().map(|res| res);
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -1066,6 +1267,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -1117,6 +1334,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_trivia;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_trivia<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -1167,6 +1400,22 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#repeat_trivia_mandatory<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_trivia_mandatory;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_trivia_mandatory<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -1220,6 +1469,22 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#repeat_once<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_once;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_once<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -1275,6 +1540,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_once_trivia;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_once_trivia<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -1326,6 +1607,22 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#repeat_once_trivia_mandatory<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_once_trivia_mandatory;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_once_trivia_mandatory<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -1384,6 +1681,22 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#repeat_min_max<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_min_max;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_min_max<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -1445,6 +1758,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_min_max_trivia;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_min_max_trivia<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -1499,6 +1828,22 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#repeat_min_max_trivia_mandatory<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_min_max_trivia_mandatory;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_min_max_trivia_mandatory<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -1560,6 +1905,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_exact;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_exact<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -1620,6 +1981,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_exact_trivia;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_exact_trivia<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -1674,6 +2051,22 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#repeat_exact_trivia_mandatory<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_exact_trivia_mandatory;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_exact_trivia_mandatory<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -1730,6 +2123,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_min;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_min<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -1784,6 +2193,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_min_trivia;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_min_trivia<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -1837,6 +2262,22 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#repeat_min_trivia_mandatory<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_min_trivia_mandatory;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_min_trivia_mandatory<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -1893,6 +2334,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_max;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_max<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -1947,6 +2404,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_max_trivia;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_max_trivia<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -2000,6 +2473,22 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#repeat_max_trivia_mandatory<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_max_trivia_mandatory;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_max_trivia_mandatory<'i> {
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> ::pest3::std::Vec<&'s r#string<'i>> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -2068,6 +2557,37 @@ pub mod rules {
     impl<'i, r#e> ::pest3::typed::wrapper::Rule for r#seperated<'i, r#e> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#seperated;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i, r#e> r#seperated<'i, r#e> {
+        #[doc = "A helper function to access [`e`]."]
+        #[allow(non_snake_case)]
+        pub fn r#e<'s>(&'s self) -> (&'s r#e, ::pest3::std::Vec<&'s r#e>) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_0;
+                        res
+                    },
+                    {
+                        let res = &res.field_1;
+                        {
+                            let res = res
+                                .content
+                                .iter()
+                                .map(|res| {
+                                    let res = &res.field_1;
+                                    res
+                                })
+                                .collect::<::pest3::std::Vec<_>>();
+                            res
+                        }
+                    },
+                );
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -2152,6 +2672,15 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#seperated_call;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#seperated_call<'i> {
+        #[doc = "A helper function to access [`seperated`]."]
+        #[allow(non_snake_case)]
+        pub fn r#seperated<'s>(&'s self) -> &'s r#seperated<'i, r#string<'i>> {
+            let res = &*self.content;
+            res
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -2209,6 +2738,27 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#soi_at_start<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#soi_at_start;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#soi_at_start<'i> {
+        #[doc = "A helper function to access [`soi`]."]
+        #[allow(non_snake_case)]
+        pub fn r#soi<'s>(&'s self) -> &'s super::generics::r#soi {
+            let res = &*self.content;
+            {
+                let res = &res.field_0;
+                res
+            }
+        }
+        #[doc = "A helper function to access [`string`]."]
+        #[allow(non_snake_case)]
+        pub fn r#string<'s>(&'s self) -> &'s r#string<'i> {
+            let res = &*self.content;
+            {
+                let res = &res.field_1;
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -2273,6 +2823,15 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#push;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i, r#exp> r#push<'i, r#exp> {
+        #[doc = "A helper function to access [`push`]."]
+        #[allow(non_snake_case)]
+        pub fn r#push<'s>(&'s self) -> &'s super::generics::r#push<r#exp> {
+            let res = &*self.content;
+            res
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -2328,6 +2887,15 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#pop;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#pop<'i> {
+        #[doc = "A helper function to access [`pop`]."]
+        #[allow(non_snake_case)]
+        pub fn r#pop<'s>(&'s self) -> &'s super::generics::r#pop<'i> {
+            let res = &*self.content;
+            res
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -2364,6 +2932,15 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#pop_all<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#pop_all;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#pop_all<'i> {
+        #[doc = "A helper function to access [`pop_all`]."]
+        #[allow(non_snake_case)]
+        pub fn r#pop_all<'s>(&'s self) -> &'s super::generics::r#pop_all<'i> {
+            let res = &*self.content;
+            res
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -2416,6 +2993,15 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#drop;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#drop<'i> {
+        #[doc = "A helper function to access [`drop`]."]
+        #[allow(non_snake_case)]
+        pub fn r#drop<'s>(&'s self) -> &'s super::generics::r#drop {
+            let res = &*self.content;
+            res
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -2466,6 +3052,15 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#peek<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#peek;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#peek<'i> {
+        #[doc = "A helper function to access [`peek`]."]
+        #[allow(non_snake_case)]
+        pub fn r#peek<'s>(&'s self) -> &'s super::generics::r#peek<'i> {
+            let res = &*self.content;
+            res
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -2518,6 +3113,15 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#peek_all;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#peek_all<'i> {
+        #[doc = "A helper function to access [`peek_all`]."]
+        #[allow(non_snake_case)]
+        pub fn r#peek_all<'s>(&'s self) -> &'s super::generics::r#peek_all<'i> {
+            let res = &*self.content;
+            res
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -2568,6 +3172,15 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#peek_slice<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#peek_slice;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#peek_slice<'i> {
+        #[doc = "A helper function to access [`peek`]."]
+        #[allow(non_snake_case)]
+        pub fn r#peek<'s>(&'s self) -> &'s super::generics::PeekSlice2<1isize, -2isize> {
+            let res = &*self.content;
+            res
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -2638,6 +3251,52 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#repeat_mutate_stack<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_mutate_stack;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_mutate_stack<'i> {
+        #[doc = "A helper function to access [`pop`]."]
+        #[allow(non_snake_case)]
+        pub fn r#pop<'s>(&'s self) -> (&'s r#pop<'i>, &'s r#pop<'i>, &'s r#pop<'i>) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_1;
+                        res
+                    },
+                    {
+                        let res = &res.field_2;
+                        res
+                    },
+                    {
+                        let res = &res.field_3;
+                        res
+                    },
+                );
+                res
+            }
+        }
+        #[doc = "A helper function to access [`push`]."]
+        #[allow(non_snake_case)]
+        pub fn r#push<'s>(
+            &'s self,
+        ) -> ::pest3::std::Vec<&'s r#push<'i, super::generics::CharRange<'a', 'c'>>> {
+            let res = &*self.content;
+            {
+                let res = &res.field_0;
+                {
+                    let res = res
+                        .content
+                        .iter()
+                        .map(|res| {
+                            let res = &res.field_0;
+                            res
+                        })
+                        .collect::<::pest3::std::Vec<_>>();
+                    res
+                }
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -2741,6 +3400,39 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#repeat_mutate_stack_pop_all;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#repeat_mutate_stack_pop_all<'i> {
+        #[doc = "A helper function to access [`pop_all`]."]
+        #[allow(non_snake_case)]
+        pub fn r#pop_all<'s>(&'s self) -> &'s r#pop_all<'i> {
+            let res = &*self.content;
+            {
+                let res = &res.field_1;
+                res
+            }
+        }
+        #[doc = "A helper function to access [`push`]."]
+        #[allow(non_snake_case)]
+        pub fn r#push<'s>(
+            &'s self,
+        ) -> ::pest3::std::Vec<&'s r#push<'i, super::generics::CharRange<'a', 'c'>>> {
+            let res = &*self.content;
+            {
+                let res = &res.field_0;
+                {
+                    let res = res
+                        .content
+                        .iter()
+                        .map(|res| {
+                            let res = &res.field_0;
+                            res
+                        })
+                        .collect::<::pest3::std::Vec<_>>();
+                    res
+                }
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -2827,6 +3519,20 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#will_fail;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#will_fail<'i> {
+        #[doc = "A helper function to access [`repeat_mutate_stack_pop_all`]."]
+        #[allow(non_snake_case)]
+        pub fn r#repeat_mutate_stack_pop_all<'s>(
+            &'s self,
+        ) -> &'s r#repeat_mutate_stack_pop_all<'i> {
+            let res = &*self.content;
+            {
+                let res = &res.field_0;
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -2892,6 +3598,29 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#stack_resume_after_fail;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#stack_resume_after_fail<'i> {
+        #[doc = "A helper function to access [`repeat_mutate_stack_pop_all`]."]
+        #[allow(non_snake_case)]
+        pub fn r#repeat_mutate_stack_pop_all<'s>(
+            &'s self,
+        ) -> ::pest3::std::Option<&'s r#repeat_mutate_stack_pop_all<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.choice_1().map(|res| res);
+                res
+            }
+        }
+        #[doc = "A helper function to access [`will_fail`]."]
+        #[allow(non_snake_case)]
+        pub fn r#will_fail<'s>(&'s self) -> ::pest3::std::Option<&'s r#will_fail<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.choice_0().map(|res| res);
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -2955,6 +3684,45 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#peek_<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#peek_;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#peek_<'i> {
+        #[doc = "A helper function to access [`peek`]."]
+        #[allow(non_snake_case)]
+        pub fn r#peek<'s>(&'s self) -> (&'s r#peek<'i>, &'s r#peek<'i>) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_2;
+                        res
+                    },
+                    {
+                        let res = &res.field_3;
+                        res
+                    },
+                );
+                res
+            }
+        }
+        #[doc = "A helper function to access [`push`]."]
+        #[allow(non_snake_case)]
+        pub fn r#push<'s>(&'s self) -> (&'s r#push<'i, r#range<'i>>, &'s r#push<'i, r#range<'i>>) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_0;
+                        res
+                    },
+                    {
+                        let res = &res.field_1;
+                        res
+                    },
+                );
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -3035,6 +3803,36 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#peek_all_<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#peek_all_;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#peek_all_<'i> {
+        #[doc = "A helper function to access [`peek_all`]."]
+        #[allow(non_snake_case)]
+        pub fn r#peek_all<'s>(&'s self) -> &'s r#peek_all<'i> {
+            let res = &*self.content;
+            {
+                let res = &res.field_2;
+                res
+            }
+        }
+        #[doc = "A helper function to access [`push`]."]
+        #[allow(non_snake_case)]
+        pub fn r#push<'s>(&'s self) -> (&'s r#push<'i, r#range<'i>>, &'s r#push<'i, r#range<'i>>) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_0;
+                        res
+                    },
+                    {
+                        let res = &res.field_1;
+                        res
+                    },
+                );
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -3117,6 +3915,56 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#peek_slice_23<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#peek_slice_23;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#peek_slice_23<'i> {
+        #[doc = "A helper function to access [`peek_slice`]."]
+        #[allow(non_snake_case)]
+        pub fn r#peek_slice<'s>(&'s self) -> &'s r#peek_slice<'i> {
+            let res = &*self.content;
+            {
+                let res = &res.field_5;
+                res
+            }
+        }
+        #[doc = "A helper function to access [`push`]."]
+        #[allow(non_snake_case)]
+        pub fn r#push<'s>(
+            &'s self,
+        ) -> (
+            &'s r#push<'i, r#range<'i>>,
+            &'s r#push<'i, r#range<'i>>,
+            &'s r#push<'i, r#range<'i>>,
+            &'s r#push<'i, r#range<'i>>,
+            &'s r#push<'i, r#range<'i>>,
+        ) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_0;
+                        res
+                    },
+                    {
+                        let res = &res.field_1;
+                        res
+                    },
+                    {
+                        let res = &res.field_2;
+                        res
+                    },
+                    {
+                        let res = &res.field_3;
+                        res
+                    },
+                    {
+                        let res = &res.field_4;
+                        res
+                    },
+                );
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -3208,6 +4056,45 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#pop_;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#pop_<'i> {
+        #[doc = "A helper function to access [`pop`]."]
+        #[allow(non_snake_case)]
+        pub fn r#pop<'s>(&'s self) -> (&'s r#pop<'i>, &'s r#pop<'i>) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_2;
+                        res
+                    },
+                    {
+                        let res = &res.field_3;
+                        res
+                    },
+                );
+                res
+            }
+        }
+        #[doc = "A helper function to access [`push`]."]
+        #[allow(non_snake_case)]
+        pub fn r#push<'s>(&'s self) -> (&'s r#push<'i, r#range<'i>>, &'s r#push<'i, r#range<'i>>) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_0;
+                        res
+                    },
+                    {
+                        let res = &res.field_1;
+                        res
+                    },
+                );
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -3288,6 +4175,36 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#pop_all_;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#pop_all_<'i> {
+        #[doc = "A helper function to access [`pop_all`]."]
+        #[allow(non_snake_case)]
+        pub fn r#pop_all<'s>(&'s self) -> &'s r#pop_all<'i> {
+            let res = &*self.content;
+            {
+                let res = &res.field_2;
+                res
+            }
+        }
+        #[doc = "A helper function to access [`push`]."]
+        #[allow(non_snake_case)]
+        pub fn r#push<'s>(&'s self) -> (&'s r#push<'i, r#range<'i>>, &'s r#push<'i, r#range<'i>>) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_0;
+                        res
+                    },
+                    {
+                        let res = &res.field_1;
+                        res
+                    },
+                );
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -3365,6 +4282,36 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#pop_fail<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#pop_fail;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#pop_fail<'i> {
+        #[doc = "A helper function to access [`pop`]."]
+        #[allow(non_snake_case)]
+        pub fn r#pop<'s>(&'s self) -> &'s r#pop<'i> {
+            let res = &*self.content;
+            {
+                let res = &res.field_3;
+                res
+            }
+        }
+        #[doc = "A helper function to access [`push`]."]
+        #[allow(non_snake_case)]
+        pub fn r#push<'s>(&'s self) -> &'s r#push<'i, r#range<'i>> {
+            let res = &*self.content;
+            {
+                let res = &res.field_0;
+                res
+            }
+        }
+        #[doc = "A helper function to access [`range`]."]
+        #[allow(non_snake_case)]
+        pub fn r#range<'s>(&'s self) -> &'s r#range<'i> {
+            let res = &*self.content;
+            {
+                let res = &res.field_2;
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -3466,6 +4413,94 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#checkpoint_restore<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#checkpoint_restore;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#checkpoint_restore<'i> {
+        #[doc = "A helper function to access [`drop`]."]
+        #[allow(non_snake_case)]
+        pub fn r#drop<'s>(&'s self) -> ::pest3::std::Option<&'s r#drop<'i>> {
+            let res = &*self.content;
+            {
+                let res = &res.field_1;
+                {
+                    let res = res.choice_1().map(|res| {
+                        let res = &res.field_0;
+                        res
+                    });
+                    res
+                }
+            }
+        }
+        #[doc = "A helper function to access [`eoi`]."]
+        #[allow(non_snake_case)]
+        pub fn r#eoi<'s>(&'s self) -> &'s super::generics::r#eoi {
+            let res = &*self.content;
+            {
+                let res = &res.field_2;
+                res
+            }
+        }
+        #[doc = "A helper function to access [`pop`]."]
+        #[allow(non_snake_case)]
+        pub fn r#pop<'s>(
+            &'s self,
+        ) -> (
+            ::pest3::std::Option<&'s r#pop<'i>>,
+            ::pest3::std::Option<&'s r#pop<'i>>,
+        ) {
+            let res = &*self.content;
+            {
+                let res = &res.field_1;
+                {
+                    let res = (
+                        {
+                            let res = res.choice_0().map(|res| {
+                                let res = &res.field_2;
+                                res
+                            });
+                            res
+                        },
+                        {
+                            let res = res.choice_2().map(|res| {
+                                let res = &res.field_0;
+                                res
+                            });
+                            res
+                        },
+                    );
+                    res
+                }
+            }
+        }
+        #[doc = "A helper function to access [`push`]."]
+        #[allow(non_snake_case)]
+        pub fn r#push<'s>(
+            &'s self,
+        ) -> (
+            &'s r#push<'i, super::generics::Str<super::wrapper::W3>>,
+            ::pest3::std::Option<&'s r#push<'i, super::generics::Str<super::wrapper::W4>>>,
+        ) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_0;
+                        res
+                    },
+                    {
+                        let res = &res.field_1;
+                        {
+                            let res = res.choice_0().map(|res| {
+                                let res = &res.field_0;
+                                res
+                            });
+                            res
+                        }
+                    },
+                );
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -3581,6 +4616,24 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ascii_digits;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#ascii_digits<'i> {
+        #[doc = "A helper function to access [`ascii_digit`]."]
+        #[allow(non_snake_case)]
+        pub fn r#ascii_digit<'s>(
+            &'s self,
+        ) -> ::pest3::std::Vec<&'s super::generics::r#ascii_digit> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -3641,6 +4694,24 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#ascii_nonzero_digits<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ascii_nonzero_digits;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#ascii_nonzero_digits<'i> {
+        #[doc = "A helper function to access [`ascii_nonzero_digit`]."]
+        #[allow(non_snake_case)]
+        pub fn r#ascii_nonzero_digit<'s>(
+            &'s self,
+        ) -> ::pest3::std::Vec<&'s super::generics::r#ascii_nonzero_digit> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -3706,6 +4777,24 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ascii_bin_digits;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#ascii_bin_digits<'i> {
+        #[doc = "A helper function to access [`ascii_bin_digit`]."]
+        #[allow(non_snake_case)]
+        pub fn r#ascii_bin_digit<'s>(
+            &'s self,
+        ) -> ::pest3::std::Vec<&'s super::generics::r#ascii_bin_digit> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -3769,6 +4858,24 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#ascii_oct_digits<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ascii_oct_digits;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#ascii_oct_digits<'i> {
+        #[doc = "A helper function to access [`ascii_oct_digit`]."]
+        #[allow(non_snake_case)]
+        pub fn r#ascii_oct_digit<'s>(
+            &'s self,
+        ) -> ::pest3::std::Vec<&'s super::generics::r#ascii_oct_digit> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -3834,6 +4941,24 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ascii_hex_digits;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#ascii_hex_digits<'i> {
+        #[doc = "A helper function to access [`ascii_hex_digit`]."]
+        #[allow(non_snake_case)]
+        pub fn r#ascii_hex_digit<'s>(
+            &'s self,
+        ) -> ::pest3::std::Vec<&'s super::generics::r#ascii_hex_digit> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -3897,6 +5022,24 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#ascii_alpha_lowers<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ascii_alpha_lowers;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#ascii_alpha_lowers<'i> {
+        #[doc = "A helper function to access [`ascii_alpha_lower`]."]
+        #[allow(non_snake_case)]
+        pub fn r#ascii_alpha_lower<'s>(
+            &'s self,
+        ) -> ::pest3::std::Vec<&'s super::generics::r#ascii_alpha_lower> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -3962,6 +5105,24 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ascii_alpha_uppers;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#ascii_alpha_uppers<'i> {
+        #[doc = "A helper function to access [`ascii_alpha_upper`]."]
+        #[allow(non_snake_case)]
+        pub fn r#ascii_alpha_upper<'s>(
+            &'s self,
+        ) -> ::pest3::std::Vec<&'s super::generics::r#ascii_alpha_upper> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -4026,6 +5187,24 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ascii_alphas;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#ascii_alphas<'i> {
+        #[doc = "A helper function to access [`ascii_alpha`]."]
+        #[allow(non_snake_case)]
+        pub fn r#ascii_alpha<'s>(
+            &'s self,
+        ) -> ::pest3::std::Vec<&'s super::generics::r#ascii_alpha> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -4086,6 +5265,24 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#ascii_alphanumerics<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#ascii_alphanumerics;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#ascii_alphanumerics<'i> {
+        #[doc = "A helper function to access [`ascii_alphanumeric`]."]
+        #[allow(non_snake_case)]
+        pub fn r#ascii_alphanumeric<'s>(
+            &'s self,
+        ) -> ::pest3::std::Vec<&'s super::generics::r#ascii_alphanumeric> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -4148,6 +5345,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#asciis;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#asciis<'i> {
+        #[doc = "A helper function to access [`ascii`]."]
+        #[allow(non_snake_case)]
+        pub fn r#ascii<'s>(&'s self) -> ::pest3::std::Vec<&'s super::generics::r#ascii> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -4202,6 +5415,22 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#newline<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#newline;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#newline<'i> {
+        #[doc = "A helper function to access [`newline`]."]
+        #[allow(non_snake_case)]
+        pub fn r#newline<'s>(&'s self) -> ::pest3::std::Vec<&'s super::generics::r#newline> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -4262,6 +5491,34 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#unicode<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#unicode;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#unicode<'i> {
+        #[doc = "A helper function to access [`xid_continue`]."]
+        #[allow(non_snake_case)]
+        pub fn r#xid_continue<'s>(&'s self) -> ::pest3::std::Vec<&'s super::unicode::XID_CONTINUE> {
+            let res = &*self.content;
+            {
+                let res = &res.field_1;
+                {
+                    let res = res
+                        .content
+                        .iter()
+                        .map(|res| res)
+                        .collect::<::pest3::std::Vec<_>>();
+                    res
+                }
+            }
+        }
+        #[doc = "A helper function to access [`xid_start`]."]
+        #[allow(non_snake_case)]
+        pub fn r#xid_start<'s>(&'s self) -> &'s super::unicode::XID_START {
+            let res = &*self.content;
+            {
+                let res = &res.field_0;
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -4328,6 +5585,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#han;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#han<'i> {
+        #[doc = "A helper function to access [`han`]."]
+        #[allow(non_snake_case)]
+        pub fn r#han<'s>(&'s self) -> ::pest3::std::Vec<&'s super::unicode::HAN> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -4382,6 +5655,22 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#hangul<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#hangul;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#hangul<'i> {
+        #[doc = "A helper function to access [`hangul`]."]
+        #[allow(non_snake_case)]
+        pub fn r#hangul<'s>(&'s self) -> ::pest3::std::Vec<&'s super::unicode::HANGUL> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -4438,6 +5727,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#hiragana;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#hiragana<'i> {
+        #[doc = "A helper function to access [`hiragana`]."]
+        #[allow(non_snake_case)]
+        pub fn r#hiragana<'s>(&'s self) -> ::pest3::std::Vec<&'s super::unicode::HIRAGANA> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -4492,6 +5797,22 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#arabic<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#arabic;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#arabic<'i> {
+        #[doc = "A helper function to access [`arabic`]."]
+        #[allow(non_snake_case)]
+        pub fn r#arabic<'s>(&'s self) -> ::pest3::std::Vec<&'s super::unicode::ARABIC> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -4548,6 +5869,22 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#emoji;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#emoji<'i> {
+        #[doc = "A helper function to access [`emoji`]."]
+        #[allow(non_snake_case)]
+        pub fn r#emoji<'s>(&'s self) -> ::pest3::std::Vec<&'s super::unicode::EMOJI> {
+            let res = &*self.content;
+            {
+                let res = res
+                    .content
+                    .iter()
+                    .map(|res| res)
+                    .collect::<::pest3::std::Vec<_>>();
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -4601,6 +5938,8 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#whitespace;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#whitespace<'i> {}
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -4657,6 +5996,8 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#comment;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#comment<'i> {}
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(

@@ -68,6 +68,8 @@ pub mod rules {
                 type Rule = super::Rule;
                 const RULE: super::Rule = super::Rule::r#x;
             }
+            #[allow(non_camel_case_types)]
+            impl<'i> r#x<'i> {}
             #[allow(unused_imports)]
             use pest3::typed::SubRule as _;
             ::pest3::full_rule_struct!(
@@ -168,6 +170,8 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#w;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#w<'i> {}
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -218,6 +222,15 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#x0<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#x0;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#x0<'i> {
+        #[doc = "A helper function to access [`x`]."]
+        #[allow(non_snake_case)]
+        pub fn r#x<'s>(&'s self) -> &'s minimal::rules::r#x<'i> {
+            let res = &*self.content;
+            res
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -276,6 +289,27 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#x1<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#x1;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#x1<'i> {
+        #[doc = "A helper function to access [`w`]."]
+        #[allow(non_snake_case)]
+        pub fn r#w<'s>(&'s self) -> &'s r#w<'i> {
+            let res = &*self.content;
+            {
+                let res = &res.field_1;
+                res
+            }
+        }
+        #[doc = "A helper function to access [`x`]."]
+        #[allow(non_snake_case)]
+        pub fn r#x<'s>(&'s self) -> &'s minimal::rules::r#x<'i> {
+            let res = &*self.content;
+            {
+                let res = &res.field_0;
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
@@ -347,6 +381,27 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#x2;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#x2<'i> {
+        #[doc = "A helper function to access [`x`]."]
+        #[allow(non_snake_case)]
+        pub fn r#x<'s>(&'s self) -> (&'s minimal::rules::r#x<'i>, &'s minimal::rules::r#x<'i>) {
+            let res = &*self.content;
+            {
+                let res = (
+                    {
+                        let res = &res.field_0;
+                        res
+                    },
+                    {
+                        let res = &res.field_1;
+                        res
+                    },
+                );
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -417,6 +472,18 @@ pub mod rules {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#x3;
     }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#x3<'i> {
+        #[doc = "A helper function to access [`x`]."]
+        #[allow(non_snake_case)]
+        pub fn r#x<'s>(&'s self) -> &'s minimal::rules::r#x<'i> {
+            let res = &*self.content;
+            {
+                let res = &res.field_0;
+                res
+            }
+        }
+    }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
     ::pest3::full_rule_struct!(
@@ -484,6 +551,18 @@ pub mod rules {
     impl<'i> ::pest3::typed::wrapper::Rule for r#x4<'i> {
         type Rule = super::Rule;
         const RULE: super::Rule = super::Rule::r#x4;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#x4<'i> {
+        #[doc = "A helper function to access [`x`]."]
+        #[allow(non_snake_case)]
+        pub fn r#x<'s>(&'s self) -> ::pest3::std::Option<&'s minimal::rules::r#x<'i>> {
+            let res = &*self.content;
+            {
+                let res = res.choice_0().map(|res| res);
+                res
+            }
+        }
     }
     #[allow(unused_imports)]
     use pest3::typed::SubRule as _;
