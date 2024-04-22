@@ -1,6 +1,6 @@
 use a
-use b
-use c
-e = a::a? - b::b~* - c::c^+
+use b as _b
+use c as c
+e = a::a? - _b::b~* - c::c^+
 ~ = " "*
 ^ = ","
