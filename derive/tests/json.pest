@@ -5,7 +5,7 @@
 //! Created by [Tomas Tauber](https://github.com/tomtau).
 //! Modified by [Boyi Huang](https://github.com/TheVeryDarkness).
 
-// FIXME: should be under pest::*
+// FIXME: some should be under pest::*
 use common::base as p
 
 json = pest::SOI ~ value ~ pest::EOI
