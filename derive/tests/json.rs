@@ -9,6 +9,8 @@ pub mod json {
     /// JSON parser.
     #[derive(Parser)]
     #[grammar = "tests/json.pest"]
+    #[no_getter]
+    #[no_span]
     pub struct JsonParser;
 }
 

@@ -1,12 +1,3 @@
-#[allow(non_upper_case_globals)]
-const _PEST_GRAMMAR_Parser: [&'static ::core::primitive::str; 6usize] = [
-    include_str!("/Users/huangboyi/Projects/pest3/generator/tests/dag/a.pest"),
-    include_str!("/Users/huangboyi/Projects/pest3/generator/tests/dag/b.pest"),
-    include_str!("/Users/huangboyi/Projects/pest3/generator/tests/dag/c.pest"),
-    include_str!("/Users/huangboyi/Projects/pest3/generator/tests/dag/d.pest"),
-    include_str!("/Users/huangboyi/Projects/pest3/generator/tests/dag/e.pest"),
-    include_str!("/Users/huangboyi/Projects/pest3/generator/tests/dag/f.pest"),
-];
 #[allow(
     dead_code,
     missing_docs,
@@ -17,11 +8,11 @@ const _PEST_GRAMMAR_Parser: [&'static ::core::primitive::str; 6usize] = [
 pub enum Rule {
     EOI,
     r#main,
-    r#f(rules::r#f::Rule),
+    r#dag(rules::r#dag::Rule),
 }
-impl ::pest3::typed::SuperRule<rules::r#f::Rule> for Rule {
-    fn cvt_from(rule: rules::r#f::Rule) -> Self {
-        Self::r#f(rule)
+impl ::pest3::typed::SuperRule<rules::r#dag::Rule> for Rule {
+    fn cvt_from(rule: rules::r#dag::Rule) -> Self {
+        Self::r#dag(rule)
     }
 }
 impl ::pest3::typed::RuleType for Rule {
@@ -31,7 +22,7 @@ impl ::pest3::typed::RuleType for Rule {
 pub mod rules {
     pub type __OptionalTrivia<'i> = ::pest3::typed::template::Empty;
     pub type __MandatoryTrivia<'i> = ::pest3::typed::template::Empty;
-    pub mod f {
+    pub mod dag {
         #[allow(
             dead_code,
             missing_docs,
@@ -1164,7 +1155,7 @@ pub mod rules {
                     EOI,
                     r#e,
                     r#a(rules::r#a::Rule),
-                    r#b(rules::r#b::Rule),
+                    r#_b(rules::r#_b::Rule),
                     r#c(rules::r#c::Rule),
                 }
                 impl ::pest3::typed::SuperRule<rules::r#a::Rule> for Rule {
@@ -1172,9 +1163,9 @@ pub mod rules {
                         Self::r#a(rule)
                     }
                 }
-                impl ::pest3::typed::SuperRule<rules::r#b::Rule> for Rule {
-                    fn cvt_from(rule: rules::r#b::Rule) -> Self {
-                        Self::r#b(rule)
+                impl ::pest3::typed::SuperRule<rules::r#_b::Rule> for Rule {
+                    fn cvt_from(rule: rules::r#_b::Rule) -> Self {
+                        Self::r#_b(rule)
                     }
                 }
                 impl ::pest3::typed::SuperRule<rules::r#c::Rule> for Rule {
@@ -1393,7 +1384,7 @@ pub mod rules {
                             super::Rule::a(self)
                         }
                     }
-                    pub mod b {
+                    pub mod _b {
                         #[allow(
                             dead_code,
                             missing_docs,
@@ -1582,10 +1573,10 @@ pub mod rules {
                             }
                         }
                     }
-                    impl ::pest3::typed::SubRule for b::Rule {
+                    impl ::pest3::typed::SubRule for _b::Rule {
                         type Super = super::Rule;
                         fn cvt_into(self) -> Self::Super {
-                            super::Rule::b(self)
+                            super::Rule::_b(self)
                         }
                     }
                     pub mod c {
@@ -2247,7 +2238,7 @@ pub mod rules {
                             super::Rule::c(self)
                         }
                     }
-                    #[doc = "Generated for rule `e`. Grammar: `(a::a? - (b::b~* - c::c^+))`."]
+                    #[doc = "Generated for rule `e`. Grammar: `(a::a? - (_b::b~* - c::c^+))`."]
                     #[derive(Clone, Debug, Eq, PartialEq)]
                     #[allow(non_camel_case_types)]
                     pub struct r#e<'i> {
@@ -2257,7 +2248,7 @@ pub mod rules {
                                 ::pest3::std::Option<a::rules::r#a<'i>>,
                                 ::pest3::typed::template::Empty,
                                 super::super::super::super::super::generics::Rep<
-                                    b::rules::r#b<'i>,
+                                    _b::rules::r#b<'i>,
                                     __OptionalTrivia<'i>,
                                 >,
                                 ::pest3::typed::template::Empty,
@@ -2292,7 +2283,7 @@ pub mod rules {
                         }
                         #[doc = "A helper function to access [`b`]."]
                         #[allow(non_snake_case)]
-                        pub fn r#b<'s>(&'s self) -> ::pest3::std::Vec<&'s b::rules::r#b<'i>> {
+                        pub fn r#b<'s>(&'s self) -> ::pest3::std::Vec<&'s _b::rules::r#b<'i>> {
                             let res = &*self.content;
                             {
                                 let res = &res.field_1;
@@ -2334,7 +2325,7 @@ pub mod rules {
                             ::pest3::std::Option::<a::rules::r#a::<'i>>,
                             ::pest3::typed::template::Empty,
                             super::super::super::super::super::generics::Rep::<
-                                b::rules::r#b::<'i>,
+                                _b::rules::r#b::<'i>,
                                 __OptionalTrivia::<'i>,
                             >,
                             ::pest3::typed::template::Empty,
@@ -2349,7 +2340,7 @@ pub mod rules {
                                 ::pest3::std::Option::<a::rules::r#a::<'i>>,
                                 ::pest3::typed::template::Empty,
                                 super::super::super::super::super::generics::Rep::<
-                                    b::rules::r#b::<'i>,
+                                    _b::rules::r#b::<'i>,
                                     __OptionalTrivia::<'i>,
                                 >,
                                 ::pest3::typed::template::Empty,
@@ -2372,7 +2363,7 @@ pub mod rules {
                             ::pest3::std::Option::<a::rules::r#a::<'i>>,
                             ::pest3::typed::template::Empty,
                             super::super::super::super::super::generics::Rep::<
-                                b::rules::r#b::<'i>,
+                                _b::rules::r#b::<'i>,
                                 __OptionalTrivia::<'i>,
                             >,
                             ::pest3::typed::template::Empty,
@@ -2387,7 +2378,7 @@ pub mod rules {
                                 ::pest3::std::Option::<a::rules::r#a::<'i>>,
                                 ::pest3::typed::template::Empty,
                                 super::super::super::super::super::generics::Rep::<
-                                    b::rules::r#b::<'i>,
+                                    _b::rules::r#b::<'i>,
                                     __OptionalTrivia::<'i>,
                                 >,
                                 ::pest3::typed::template::Empty,
@@ -2410,7 +2401,7 @@ pub mod rules {
                             ::pest3::std::Option::<a::rules::r#a::<'i>>,
                             ::pest3::typed::template::Empty,
                             super::super::super::super::super::generics::Rep::<
-                                b::rules::r#b::<'i>,
+                                _b::rules::r#b::<'i>,
                                 __OptionalTrivia::<'i>,
                             >,
                             ::pest3::typed::template::Empty,
@@ -2425,7 +2416,7 @@ pub mod rules {
                                 ::pest3::std::Option::<a::rules::r#a::<'i>>,
                                 ::pest3::typed::template::Empty,
                                 super::super::super::super::super::generics::Rep::<
-                                    b::rules::r#b::<'i>,
+                                    _b::rules::r#b::<'i>,
                                     __OptionalTrivia::<'i>,
                                 >,
                                 ::pest3::typed::template::Empty,
@@ -2657,18 +2648,18 @@ pub mod rules {
             }
         }
     }
-    impl ::pest3::typed::SubRule for f::Rule {
+    impl ::pest3::typed::SubRule for dag::Rule {
         type Super = super::Rule;
         fn cvt_into(self) -> Self::Super {
-            super::Rule::f(self)
+            super::Rule::dag(self)
         }
     }
-    #[doc = "Generated for rule `main`. Grammar: `f::f`."]
+    #[doc = "Generated for rule `main`. Grammar: `dag::f`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     #[allow(non_camel_case_types)]
     pub struct r#main<'i> {
         #[doc = r" Matched structure."]
-        pub content: ::pest3::std::Box<f::rules::r#f<'i>>,
+        pub content: ::pest3::std::Box<dag::rules::r#f<'i>>,
         #[doc = r" Matched span."]
         pub span: ::pest3::Span<'i>,
     }
@@ -2681,7 +2672,7 @@ pub mod rules {
     impl<'i> r#main<'i> {
         #[doc = "A helper function to access [`f`]."]
         #[allow(non_snake_case)]
-        pub fn r#f<'s>(&'s self) -> &'s f::rules::r#f<'i> {
+        pub fn r#f<'s>(&'s self) -> &'s dag::rules::r#f<'i> {
             let res = &*self.content;
             res
         }
@@ -2693,8 +2684,8 @@ pub mod rules {
         (),
         super::Rule,
         super::Rule::r#main,
-        f::rules::r#f::<'i>,
-        ::pest3::std::Box<f::rules::r#f::<'i>>,
+        dag::rules::r#f::<'i>,
+        ::pest3::std::Box<dag::rules::r#f::<'i>>,
     );
     #[allow(non_camel_case_types)]
     impl<'i> ::pest3::typed::PairContainer<super::Rule> for r#main<'i> {

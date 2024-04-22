@@ -8,9 +8,11 @@ use proc_macro::TokenStream;
     attributes(
         grammar,
         grammar_inline,
-        emit_rule_reference,
-        do_not_emit_span,
+        no_pair,
+        no_span,
         no_warnings,
+        box_rules_only_if_needed,
+        no_getter,
     )
 )]
 /// Derive typed parser from given grammar.

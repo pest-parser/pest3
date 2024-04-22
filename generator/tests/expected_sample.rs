@@ -1,7 +1,3 @@
-#[allow(non_upper_case_globals)]
-const _PEST_GRAMMAR_Parser: [&'static ::core::primitive::str; 1usize] = [include_str!(
-    "/Users/huangboyi/Projects/pest3/generator/../meta/tests/pest3sample.pest"
-)];
 #[doc = "This is a grammar test written by [Tomas Tauber](https://github.com/tomtau)."]
 #[allow(
     dead_code,
