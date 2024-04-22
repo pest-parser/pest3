@@ -42,7 +42,12 @@ pub(crate) fn generate_include(name: &Ident, paths: Vec<PathBuf>) -> TokenStream
 
 pub(crate) fn generate_rule_enum(module: &GrammarModule) -> TokenStream {
     let this = pest();
-    let GrammarModule(rules, doc, imports) = module;
+    let GrammarModule {
+        rules,
+        doc,
+        imports,
+        ..
+    } = module;
     let rules = rules
         .iter()
         .filter(|rule| rule.name != "~" && rule.name != "^")

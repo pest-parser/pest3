@@ -1,3 +1,12 @@
+#[allow(non_upper_case_globals)]
+const _PEST_GRAMMAR_Parser: [&'static ::core::primitive::str; 6usize] = [
+    include_str!("/Users/huangboyi/Projects/pest3/generator/tests/dag/a.pest"),
+    include_str!("/Users/huangboyi/Projects/pest3/generator/tests/dag/b.pest"),
+    include_str!("/Users/huangboyi/Projects/pest3/generator/tests/dag/c.pest"),
+    include_str!("/Users/huangboyi/Projects/pest3/generator/tests/dag/d.pest"),
+    include_str!("/Users/huangboyi/Projects/pest3/generator/tests/dag/e.pest"),
+    include_str!("/Users/huangboyi/Projects/pest3/generator/tests/dag/f.pest"),
+];
 #[allow(
     dead_code,
     missing_docs,

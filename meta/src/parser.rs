@@ -1,7 +1,7 @@
 #![allow(clippy::result_large_err)]
 use std::{
     char,
-    collections::HashMap,
+    collections::{BTreeSet, HashMap},
     fmt::Display,
     fs::read_to_string,
     mem,
@@ -284,7 +284,12 @@ fn _parse<P: AsRef<Path>>(
     cache: &mut HashMap<PathBuf, Arc<GrammarModule>>,
 ) -> Result<Arc<GrammarModule>, Error<Rule>> {
     let mut res = GrammarModule::default();
-    let GrammarModule(rules, doc, imports) = &mut res;
+    let GrammarModule {
+        rules,
+        doc,
+        imports,
+        dependencies,
+    } = &mut res;
     let pairs = grammar::Parser::parse(Rule::grammar_rules, input)?;
 
     for pair in pairs {
@@ -332,6 +337,7 @@ fn _parse<P: AsRef<Path>>(
                         let module = match cache.get(&path) {
                             Some(module) => module.clone(),
                             None => {
+                                dependencies.insert(path.clone());
                                 let module = _parse(
                                     &read_to_string(&path).map_err(|err| {
                                         Error::new_from_span(
@@ -349,6 +355,7 @@ fn _parse<P: AsRef<Path>>(
                                 )
                                 .unwrap_or_else(|err| panic!("{}", err));
                                 cache.insert(path, module.clone());
+                                dependencies.extend(module.dependencies.iter().cloned());
                                 module
                             }
                         };
@@ -369,36 +376,45 @@ fn _parse<P: AsRef<Path>>(
 }
 
 /// Parsed grammar module.
-#[derive(Debug, Default)]
-pub struct GrammarModule(pub Vec<ParseRule>, pub DocComment, pub Vec<Import>);
+///
+/// Fields:
+///
+/// - Rules.
+/// - Document comments.
+/// - Imports.
+/// - Dependencies.
+#[derive(Clone, Debug, Default)]
+pub struct GrammarModule {
+    pub dependencies: BTreeSet<PathBuf>,
+    pub rules: Vec<ParseRule>,
+    pub doc: DocComment,
+    pub imports: Vec<Import>,
+}
 
 impl FromIterator<GrammarModule> for GrammarModule {
     fn from_iter<T: IntoIterator<Item = GrammarModule>>(iter: T) -> Self {
         let mut rules = Vec::default();
         let mut doc = DocComment::default();
         let mut imports = Vec::default();
+        let mut dependencies = BTreeSet::default();
         for item in iter.into_iter() {
-            let Self(r, d, i) = item;
-            rules.extend(r);
-            doc.grammar_doc.extend(d.grammar_doc);
-            imports.extend(i);
+            rules.extend(item.rules);
+            doc.grammar_doc.extend(item.doc.grammar_doc);
+            imports.extend(item.imports);
+            dependencies.extend(item.dependencies);
         }
-        Self(rules, doc, imports)
+        Self {
+            rules,
+            doc,
+            imports,
+            dependencies,
+        }
     }
 }
 
 impl FromIterator<Arc<GrammarModule>> for GrammarModule {
     fn from_iter<T: IntoIterator<Item = Arc<GrammarModule>>>(iter: T) -> Self {
-        let mut rules = Vec::default();
-        let mut doc = DocComment::default();
-        let mut imports = Vec::default();
-        for item in iter.into_iter() {
-            let Self(r, d, i) = item.as_ref();
-            rules.extend(r.iter().cloned());
-            doc.grammar_doc.extend(d.grammar_doc.iter().cloned());
-            imports.extend(i.iter().cloned());
-        }
-        Self(rules, doc, imports)
+        Self::from_iter(iter.into_iter().map(|item| item.as_ref().clone()))
     }
 }
 
@@ -910,9 +926,9 @@ mod tests {
             Ok(parsed) => parsed,
             Err(err) => panic!("{err}"),
         };
-        let GrammarModule(rules, doc_comment, _) = module.as_ref();
+        let GrammarModule { rules, doc, .. } = module.as_ref();
         assert_ne!(rules.len(), 0);
-        assert_ne!(doc_comment.grammar_doc.len(), 0);
+        assert_ne!(doc.grammar_doc.len(), 0);
     }
 
     #[test]

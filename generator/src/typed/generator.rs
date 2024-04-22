@@ -563,7 +563,12 @@ fn process_rules<'g>(
     root: &TokenStream,
     tracker: &mut Tracker<'g>,
 ) -> Output<'g> {
-    let GrammarModule(rules, _doc, imports) = module;
+    let GrammarModule {
+        rules,
+        doc,
+        imports,
+        dependencies: _,
+    } = module;
     let mut new_prefix = prefix.to_owned();
     let modules = imports
         .iter()
@@ -813,12 +818,13 @@ fn generate_typed_pair_from_rule<'g>(
 fn generate_typed(
     name: Ident,
     generics: &Generics,
-    paths: Vec<PathBuf>,
+    mut paths: Vec<PathBuf>,
     module: GrammarModule,
     include_grammar: bool,
     impl_parser: bool,
     config: Config,
 ) -> TokenStream {
+    paths.extend(module.dependencies.clone());
     let include_fix = if include_grammar {
         generate_include(&name, paths)
     } else {
@@ -917,7 +923,7 @@ b = "b"+
             &file!(),
         )
         .unwrap();
-        let GrammarModule(rules, _, _) = module.as_ref();
+        let GrammarModule { rules, .. } = module.as_ref();
         let used = collect_used_rules(&rules);
         assert_eq!(used, BTreeSet::from(["a", "b"]));
     }
@@ -934,7 +940,7 @@ c = a+
             &file!(),
         )
         .unwrap();
-        let GrammarModule(rules, _, _) = module.as_ref();
+        let GrammarModule { rules, .. } = module.as_ref();
         let used = collect_used_rules(&rules);
         assert_eq!(used, BTreeSet::from(["a", "b", "c"]));
         let graph = collect_reachability(&rules);
