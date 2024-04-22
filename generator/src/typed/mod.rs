@@ -5,6 +5,7 @@
 //! - Root module, in which the derived structure is.
 //!
 
+mod accesser;
 mod attr;
 mod config;
 mod generator;

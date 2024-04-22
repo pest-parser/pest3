@@ -1,4 +1,5 @@
 use super::{
+    accesser::Accesser,
     generator::{Intermediate, ProcessedPathArgs, RuleRef},
     output::generics,
 };
@@ -12,7 +13,7 @@ use std::{collections::HashMap, rc::Rc, sync::OnceLock};
 #[derive(Clone, Debug)]
 pub enum ModuleError<'g> {
     EmptyPath,
-    NodeNotFound(&'g str, Vec<&'g str>),
+    NodeNotFound(String, Vec<&'g str>),
     AlreadyDefined(&'g str),
     NotMutable,
     NoChildren,
@@ -56,13 +57,13 @@ pub enum RuleGenerics {
 impl RuleGenerics {
     pub fn call<'g>(
         &self,
-        name: &str,
+        name_str: &'g str,
         rule_ref: &RuleRef<'g>,
-        args: Option<&ProcessedPathArgs>,
+        args: Option<&ProcessedPathArgs<'g>>,
         root: &TokenStream,
-    ) -> Result<Intermediate, ModuleError<'g>> {
+    ) -> Result<Intermediate<'g>, ModuleError<'g>> {
         let generics = generics();
-        let name = format_ident!("r#{}", name);
+        let name = format_ident!("r#{}", name_str);
         let current = rule_ref.path[0..rule_ref.path.len() - 1].iter().map(|sec| {
             let sec = format_ident!("{}", sec);
             quote! {#sec::rules::}
@@ -71,14 +72,16 @@ impl RuleGenerics {
             Self::Rule { argc } => match (argc, args) {
                 (0, None) => {
                     let typename = quote! { #(#current)* #name::<'i> };
-                    Intermediate { typename }
+                    let accesser = Accesser::from_rule(&typename, name_str);
+                    Intermediate { typename, accesser }
                 }
                 (0, Some(ProcessedPathArgs::Call(args))) => {
                     if !args.is_empty() {
                         Err(ModuleError::UnexpectedArguments(rule_ref.clone()))?
                     } else {
                         let typename = quote! { #(#current)* #name::<'i> };
-                        Intermediate { typename }
+                        let accesser = Accesser::from_rule(&typename, name_str);
+                        Intermediate { typename, accesser }
                     }
                 }
                 (0, Some(ProcessedPathArgs::Slice(slice))) => Err(
@@ -91,7 +94,8 @@ impl RuleGenerics {
                 (argc, Some(ProcessedPathArgs::Call(args))) => {
                     ModuleError::check_argc(*argc, args.len(), rule_ref)?;
                     let typename = quote! { #(#current)* #name::<'i, #(#args, )*> };
-                    Intermediate { typename }
+                    let accesser = Accesser::from_rule(&typename, name_str);
+                    Intermediate { typename, accesser }
                 }
             },
             Self::BuiltIn {
@@ -106,7 +110,8 @@ impl RuleGenerics {
                         true => quote! { #root::#generics::#name::<'i> },
                         false => quote! { #root::#generics::#name },
                     };
-                    Intermediate { typename }
+                    let accesser = Accesser::from_rule(&typename, name_str);
+                    Intermediate { typename, accesser }
                 }
                 Some(ProcessedPathArgs::Slice(range)) => {
                     let (slice1, slice2) = slice
@@ -120,7 +125,8 @@ impl RuleGenerics {
                         Some(end) => quote! { #root::#generics::#slice2::<#start, #end> },
                         None => quote! { #root::#generics::#slice1::<#start> },
                     };
-                    Intermediate { typename }
+                    let accesser = Accesser::from_rule(&typename, name_str);
+                    Intermediate { typename, accesser }
                 }
                 Some(ProcessedPathArgs::Call(args)) => {
                     let (argc,) =
@@ -129,7 +135,8 @@ impl RuleGenerics {
                         ModuleError::check_argc(argc, args.len(), rule_ref)?;
                     }
                     let typename = quote! { #root::#generics::#name::< #( #args, )* > };
-                    Intermediate { typename }
+                    let accesser = Accesser::from_rule(&typename, name_str);
+                    Intermediate { typename, accesser }
                 }
             },
         };
@@ -140,17 +147,16 @@ impl RuleGenerics {
 pub enum ModuleNode<'g> {
     Collection(HashMap<&'g str, Rc<ModuleNode<'g>>>),
     Generics(RuleGenerics),
-    Absolute(Box<dyn Fn(&TokenStream) -> Intermediate>),
+    Absolute(Box<dyn Fn(&TokenStream) -> Intermediate<'g>>),
 }
 
 impl<'g> ModuleNode<'g> {
     /// [Err] here is actually not an error.
-    fn child(&self, node: &'g str) -> Result<Rc<Self>, ModuleError<'g>> {
+    fn child(&self, node: &'_ str) -> Result<Rc<Self>, ModuleError<'g>> {
         let res = match self {
-            Self::Collection(map) => map
-                .get(node)
-                .cloned()
-                .ok_or_else(|| ModuleError::NodeNotFound(node, map.keys().cloned().collect()))?,
+            Self::Collection(map) => map.get(node).cloned().ok_or_else(|| {
+                ModuleError::NodeNotFound(node.to_owned(), map.keys().cloned().collect())
+            })?,
             Self::Absolute(_) | Self::Generics(_) => Err(ModuleError::NoChildren)?,
         };
         Ok(res)
@@ -160,8 +166,8 @@ impl<'g> ModuleNode<'g> {
         root: &TokenStream,
         node: &'g str,
         rule_ref: &RuleRef<'g>,
-        args: &Option<ProcessedPathArgs>,
-    ) -> Result<Intermediate, ModuleError<'g>> {
+        args: &Option<ProcessedPathArgs<'g>>,
+    ) -> Result<Intermediate<'g>, ModuleError<'g>> {
         let res = match self {
             Self::Collection(_map) => Err(ModuleError::CollectionCannotBeCalled(rule_ref.clone()))?,
             Self::Absolute(f) => {
@@ -206,9 +212,9 @@ impl<'g> ModuleNode<'g> {
             _ => Err(ModuleError::NotMutable),
         }
     }
-    pub fn resolve_node(
+    pub fn resolve_node<'s>(
         &self,
-        mut iter: impl Iterator<Item = &'g str>,
+        mut iter: impl Iterator<Item = &'s str>,
     ) -> Result<Rc<Self>, ModuleError<'g>> {
         let r = self;
         let first = iter.next().ok_or_else(|| ModuleError::EmptyPath)?;
@@ -291,7 +297,8 @@ impl<'g> ModuleSystem<'g> {
                     let ident = format_ident!("{}", upper);
                     let node = ModuleNode::Absolute(Box::new(move |root| {
                         let typename = quote! { #root::unicode::#ident};
-                        Intermediate { typename }
+                        let accesser = Accesser::from_rule(&typename, name);
+                        Intermediate { typename, accesser }
                     }));
                     let node = Rc::new(node);
                     (name, node)
@@ -339,7 +346,7 @@ impl<'g> ModuleSystem<'g> {
     }
     pub fn resolve_node(
         &self,
-        iter: &'g [impl AsRef<str>],
+        iter: &'_ [impl AsRef<str>],
     ) -> Result<Rc<ModuleNode<'g>>, ModuleError<'g>> {
         self.pest
             .resolve_node(iter.iter().map(AsRef::as_ref))
@@ -347,9 +354,9 @@ impl<'g> ModuleSystem<'g> {
     }
     pub fn resolve(
         &self,
-        rule_ref: &'g RuleRef<'g>,
+        rule_ref: &'_ RuleRef<'g>,
         root: &TokenStream,
-    ) -> Result<Intermediate, ModuleError<'g>> {
+    ) -> Result<Intermediate<'g>, ModuleError<'g>> {
         let rc = self.resolve_node(&rule_ref.path)?;
         let res = rc.get(
             root,
