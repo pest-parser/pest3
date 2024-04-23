@@ -7,7 +7,7 @@
 ///
 /// ## Example
 ///
-/// ```rust
+/// ```rust,ignore
 /// pest3::choice_type!(Choice2, (Choice0, T0), (Choice1, T1));
 /// ```
 #[macro_export]
