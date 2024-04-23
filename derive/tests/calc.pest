@@ -1,6 +1,6 @@
 use common::base as common
 
-~ = common::whitespaces
+~ = common::whitespaces*
 
 program    =   pest::SOI ~ expr ~ pest::EOI
 expr       =   prefix* ~ primary ~ postfix* ~ (infix ~ prefix* ~ primary ~ postfix* )*
