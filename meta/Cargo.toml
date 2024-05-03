@@ -3,6 +3,8 @@ name = "pest3_meta"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
+description.workspace = true
+license.workspace = true
 
 [dependencies]
 pest = "2.1"

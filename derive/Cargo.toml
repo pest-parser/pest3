@@ -1,11 +1,10 @@
 [package]
 name = "pest3_derive"
-
-# authors = [] # List authors later :)
 version.workspace = true
+authors.workspace = true
 edition.workspace = true
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description.workspace = true
+license.workspace = true
 
 [lib]
 proc-macro = true
