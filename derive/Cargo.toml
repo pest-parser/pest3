@@ -10,8 +10,8 @@ license.workspace = true
 proc-macro = true
 
 [dependencies]
-pest3_generator = { workspace = true, version = "0.0.0-prealpha0" }
+pest3_generator = { workspace = true, path = "../generator", version = "0.0.0-prealpha0" }
 
 [dev-dependencies]
-pest3 = { workspace = true, version = "0.0.0-prealpha0" }
+pest3 = { workspace = true, path = "../pest", version = "0.0.0-prealpha0" }
 anyhow = "1"
