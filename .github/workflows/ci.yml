@@ -50,7 +50,7 @@ jobs:
           verbose: true
 
   benchmark:
-    name: Test Coverage
+    name: Benchmark
     needs: check
     runs-on: ubuntu-latest
     steps:
