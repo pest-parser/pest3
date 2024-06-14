@@ -12,6 +12,6 @@ package.license = "MIT OR Apache-2.0"
 pest3 = { path = "./pest", package = "pest3" }
 pest3_meta = { path = "./meta", package = "pest3_meta" }
 pest3_generator = { path = "./generator", package = "pest3_generator" }
-unicode-width = { version = "0.1.11" }
+unicode-width = { version = "0.1.13" }
 pest2 = { version = "2.7.8", package = "pest" }
 pest2_derive =  { version = "2.7.8", package = "pest_derive" }
