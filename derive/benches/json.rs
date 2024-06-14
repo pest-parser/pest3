@@ -10,9 +10,9 @@ use serde_json::{Map, Value};
 pub struct JsonParser;
 
 pub fn deep_object(c: &mut Criterion) {
-    let mut group = c.benchmark_group("json_deep_object");
+    let mut group = c.benchmark_group("json_deep_object_26_10");
     group.sample_size(10);
-    group.measurement_time(Duration::from_secs(40));
+    group.measurement_time(Duration::from_secs(50));
     let mut val = Value::Array(vec![]);
     // 'a0': 0,
     //     ...
@@ -25,15 +25,20 @@ pub fn deep_object(c: &mut Criterion) {
     }
     let s = format!("{:#}", val);
     println!("Input string has {} characters.", s.len());
-    group.bench_function("26*10", |b| {
+    group.bench_function("parse", |b| {
         b.iter(|| {
-            let _ = rules::json::try_parse(&s);
+            let _ = rules::json::try_parse(&s).unwrap();
+        })
+    });
+    group.bench_function("check", |b| {
+        b.iter(|| {
+            let _ = rules::json::check(&s).unwrap();
         })
     });
 }
 
 pub fn shallow_object(c: &mut Criterion) {
-    let mut group = c.benchmark_group("json_shallow_object");
+    let mut group = c.benchmark_group("json_shallow_object_26_26_26");
     group.sample_size(10);
     group.measurement_time(Duration::from_secs(40));
     // 'aaa': 0,
@@ -56,9 +61,14 @@ pub fn shallow_object(c: &mut Criterion) {
     );
     let s = format!("{:#}", obj);
     println!("Input string has {} characters.", s.len());
-    group.bench_function("26*26*26", |b| {
+    group.bench_function("parse", |b| {
         b.iter(|| {
-            let _ = rules::json::try_parse(&s);
+            let _ = rules::json::try_parse(&s).unwrap();
+        })
+    });
+    group.bench_function("check", |b| {
+        b.iter(|| {
+            let _ = rules::json::check(&s).unwrap();
         })
     });
 }
