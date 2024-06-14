@@ -15,7 +15,7 @@ jobs:
           override: true
           components: rustfmt, clippy
       - name: cargo fmt
-        run: cargo fmt --workspace -- --check
+        run: cargo fmt --all -- --check
       - name: cargo clippy
         run: cargo clippy --workspace --all-targets -- -Dwarnings
       - name: cargo test
