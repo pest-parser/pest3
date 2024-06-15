@@ -17,7 +17,6 @@ jobs:
         uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: stable
-      - uses: actions/checkout@v4
       - uses: bencherdev/bencher@main
       - name: Track base branch benchmarks with Bencher
         run: |
@@ -26,6 +25,5 @@ jobs:
           --token '${{ secrets.BENCHER_API_TOKEN }}' \
           --branch ${{ github.ref_name }} \
           --testbed ubuntu-latest \
-          --adapter json \
-          --err \
+          -- err \
           cargo bench --workspace
