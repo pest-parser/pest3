@@ -50,8 +50,7 @@ jobs:
           verbose: true
 
   benchmark:
-    name: Benchmark
-    needs: check
+    name: Continuous Benchmarking with Bencher
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -61,5 +60,15 @@ jobs:
         with:
           toolchain: 1.74.0
           override: true
-      - name: cargo bench
-        run: cargo bench --workspace
+      - uses: actions/checkout@v4
+      - uses: bencherdev/bencher@main
+      - name: Track base branch benchmarks with Bencher
+        run: |
+          bencher run \
+          --project pest3 \
+          --token '${{ secrets.BENCHER_API_TOKEN }}' \
+          --branch main \
+          --testbed ubuntu-latest \
+          --adapter json \
+          --err \
+          cargo bench --workspace
