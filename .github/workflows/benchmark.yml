@@ -3,6 +3,9 @@ on:
     branches:
       - main
       - add-ci # Temporarily used for CI tests.
+
+name: Benchmark
+
 jobs:
   benchmark:
     name: Continuous Benchmarking with Bencher
