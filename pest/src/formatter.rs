@@ -673,7 +673,7 @@ mod span {
         assert_eq!(
             msg,
             "  \
-  |   v
+  |  v
 1 | ß␊
 2 | ∆␊
 3 | 中␊
