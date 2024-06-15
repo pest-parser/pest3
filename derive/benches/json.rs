@@ -40,7 +40,7 @@ pub fn deep_object(c: &mut Criterion) {
 pub fn shallow_object(c: &mut Criterion) {
     let mut group = c.benchmark_group("json_shallow_object_26_26_26");
     group.sample_size(10);
-    group.measurement_time(Duration::from_secs(40));
+    group.measurement_time(Duration::from_secs(70));
     // 'aaa': 0,
     // ...
     // 'zzz': 25 * 25 * 25,
