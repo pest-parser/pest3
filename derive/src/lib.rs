@@ -1,4 +1,49 @@
 //! Derive macros implemented with [pest3_generator].
+//!
+//! ## Code Generation
+//!
+//! ### Meta Rules
+//!
+//! Rules can have several arguments.
+//!
+//! Definitions of these rules can use these arguments,
+//! and these rules will be mapped to a struct in Rust using generics.
+//!
+//! ```rust
+//! use pest3_derive::Parser;
+//! use pest3::typed::TypedNode;
+//!
+//! #[derive(Parser)]
+//! #[grammar_inline = r#"
+//!   pair(a, b) = a - " "* - ":" - " "* - b
+//!   string     = "\"" - ('a'..'z' | 'A'..'Z' | '0'..'9')* - "\""
+//!   main       = pair(string, string)
+//! "#]
+//! struct Parser;
+//!
+//! fn main() -> anyhow::Result<()> {
+//!   use rules::*;
+//!   pair::<string, string>::check(r#""a": "b""#)?;
+//!   Ok(())
+//! }
+//! ```
+//!
+//! Once called with some exact parameters,
+//! these arguments are replaced directly as a whole.
+//!
+//! In the example above,
+//! `pair(string, string)` has the same structure with
+//! `string - " "* - ":" - " "* - string`.
+//!
+//! But there are some restrictions on meta rules:
+//!
+//! - All arguments must be used.
+//!   I think there is no reason in pest for one to define an argument
+//!   that won't be used, at least for now.
+//!
+//! And later we may support constant arguments
+//! just like the built-in rule `pest::stack::peek`.
+
 #![warn(rust_2018_idioms, rust_2021_compatibility, missing_docs)]
 
 use proc_macro::TokenStream;
