@@ -33,5 +33,10 @@ fn main() -> Result<()> {
         to_json("123,456\n789,abc")?,
         json!([["123", "456"], ["789", "abc"]])
     );
+    assert!(to_json("").is_err());
+    assert!(to_json("123,").is_err());
+    assert!(to_json("123,456,").is_err());
+    assert!(to_json("123\n").is_err());
+    assert!(to_json("123,\n456").is_err());
     Ok(())
 }
