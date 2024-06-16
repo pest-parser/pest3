@@ -1,8 +1,7 @@
 on:
   push:
     branches:
-      - main
-      - add-ci # Temporarily used for CI tests.
+      - "*" # Run benchmarks on all branches.
 
 name: Benchmark
 
