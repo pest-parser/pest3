@@ -234,7 +234,8 @@ impl<'i, R: RuleType, const CHAR: char> TypedNode<'i, R> for Char<CHAR> {
         _stack: &mut Stack<Span<'i>>,
         _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
-        match input.match_string(CHAR.to_string().as_str()) {
+        let mut buf = [0u8; 4];
+        match input.match_string(CHAR.encode_utf8(&mut buf)) {
             true => Some((input, Self)),
             false => None,
         }
@@ -245,7 +246,8 @@ impl<'i, R: RuleType, const CHAR: char> TypedNode<'i, R> for Char<CHAR> {
         _stack: &mut Stack<Span<'i>>,
         _tracker: &mut Tracker<'i, R>,
     ) -> Option<Position<'i>> {
-        match input.match_string(CHAR.to_string().as_str()) {
+        let mut buf = [0u8; 4];
+        match input.match_string(CHAR.encode_utf8(&mut buf)) {
             true => Some(input),
             false => None,
         }
