@@ -21,6 +21,7 @@ use core::{
     ops::{Deref, DerefMut, Range},
 };
 pub use repetition::{Rep, RepMax, RepMin, RepMinMax, RepOnce};
+use std::str::from_utf8_unchecked;
 
 /// Match given string case sensitively.
 ///
@@ -234,10 +235,33 @@ impl<'i, R: RuleType, const CHAR: char> TypedNode<'i, R> for Char<CHAR> {
         _stack: &mut Stack<Span<'i>>,
         _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
-        let mut buf = [0u8; 4];
-        match input.match_string(CHAR.encode_utf8(&mut buf)) {
-            true => Some((input, Self)),
-            false => None,
+        let len = len_utf8(CHAR as u32);
+        macro_rules! match_char {
+            ($expr:expr) => {
+                match input.match_string(const { unsafe { from_utf8_unchecked(&$expr) } }) {
+                    true => Some((input, Self)),
+                    false => None,
+                }
+            };
+        }
+        match len {
+            1 => match_char!([CHAR as u8]),
+            2 => match_char!([
+                (CHAR as u32 >> 6 & 0x1F) as u8 | TAG_TWO_B,
+                (CHAR as u32 & 0x3F) as u8 | TAG_CONT,
+            ]),
+            3 => match_char!([
+                (CHAR as u32 >> 12 & 0x0F) as u8 | TAG_THREE_B,
+                (CHAR as u32 >> 6 & 0x3F) as u8 | TAG_CONT,
+                (CHAR as u32 & 0x3F) as u8 | TAG_CONT,
+            ]),
+            4 => match_char!([
+                (CHAR as u32 >> 18 & 0x07) as u8 | TAG_FOUR_B,
+                (CHAR as u32 >> 12 & 0x3F) as u8 | TAG_CONT,
+                (CHAR as u32 >> 6 & 0x3F) as u8 | TAG_CONT,
+                (CHAR as u32 & 0x3F) as u8 | TAG_CONT,
+            ]),
+            _ => unreachable!(),
         }
     }
     #[inline]
@@ -1084,3 +1108,24 @@ pub fn restore_on_none<'i, T>(
     }
     res
 }
+
+const fn len_utf8(code: u32) -> usize {
+    if code < MAX_ONE_B {
+        1
+    } else if code < MAX_TWO_B {
+        2
+    } else if code < MAX_THREE_B {
+        3
+    } else {
+        4
+    }
+}
+
+// UTF-8 ranges and tags for encoding characters
+const TAG_CONT: u8 = 0b1000_0000;
+const TAG_TWO_B: u8 = 0b1100_0000;
+const TAG_THREE_B: u8 = 0b1110_0000;
+const TAG_FOUR_B: u8 = 0b1111_0000;
+const MAX_ONE_B: u32 = 0x80;
+const MAX_TWO_B: u32 = 0x800;
+const MAX_THREE_B: u32 = 0x10000;
