@@ -1,3 +1,5 @@
+#![allow(non_camel_case_types)]
+
 use std::time::Duration;
 
 use criterion::{criterion_group, criterion_main, Criterion};
@@ -41,7 +43,6 @@ impl wrapper::String for I {
 fn benchmark(b: &mut Criterion) {
     let input = FRAG.repeat(TIMES);
 
-    #[allow(non_camel_case_types)]
     mod types {
         use super::*;
         pub type any = RepMinMax<ANY, Empty, TOTAL, TOTAL>;
