@@ -26,90 +26,10 @@ const FRAG: &'static str = "0123456789abcdef";
 const LEN: usize = 16;
 const TOTAL: usize = TIMES * LEN;
 
-fn any(input: &str) {
-    type R = RepMinMax<ANY, Empty, TOTAL, TOTAL>;
-    <R as TypedNode<'_, Rule>>::try_parse(input).unwrap();
-}
-
-fn choices_16(input: &str) {
-    type R = RepMinMax<
-        Choice16<
-            Char<'0'>,
-            Char<'1'>,
-            Char<'2'>,
-            Char<'3'>,
-            Char<'4'>,
-            Char<'5'>,
-            Char<'6'>,
-            Char<'7'>,
-            Char<'8'>,
-            Char<'9'>,
-            Char<'a'>,
-            Char<'b'>,
-            Char<'c'>,
-            Char<'d'>,
-            Char<'e'>,
-            Char<'f'>,
-        >,
-        Empty,
-        TOTAL,
-        TOTAL,
-    >;
-    <R as TypedNode<'_, Rule>>::try_parse(input).unwrap();
-}
-
-fn sequence_16(input: &str) {
-    type R = RepMinMax<
-        Sequence16<
-            Char<'0'>,
-            Empty,
-            Char<'1'>,
-            Empty,
-            Char<'2'>,
-            Empty,
-            Char<'3'>,
-            Empty,
-            Char<'4'>,
-            Empty,
-            Char<'5'>,
-            Empty,
-            Char<'6'>,
-            Empty,
-            Char<'7'>,
-            Empty,
-            Char<'8'>,
-            Empty,
-            Char<'9'>,
-            Empty,
-            Char<'a'>,
-            Empty,
-            Char<'b'>,
-            Empty,
-            Char<'c'>,
-            Empty,
-            Char<'d'>,
-            Empty,
-            Char<'e'>,
-            Empty,
-            Char<'f'>,
-            Empty,
-        >,
-        Empty,
-        TIMES,
-        TIMES,
-    >;
-    <R as TypedNode<'_, Rule>>::try_parse(input).unwrap();
-}
-
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 struct S;
 impl wrapper::String for S {
     const CONTENT: &'static str = FRAG;
-}
-
-fn strings(input: &str) {
-    type R = RepMinMax<Str<S>, Empty, TIMES, TIMES>;
-    <R as TypedNode<'_, Rule>>::try_parse(input).unwrap();
 }
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -118,63 +38,106 @@ impl wrapper::String for I {
     const CONTENT: &'static str = "0123456789ABCDEF";
 }
 
-fn insensitive_strings(input: &str) {
-    type R<'i> = RepMinMax<Insens<'i, I>, Empty, TIMES, TIMES>;
-    <R as TypedNode<'_, Rule>>::try_parse(input).unwrap();
-}
-
-fn range(input: &str) {
-    type R = RepMinMax<CharRange<'0', 'f'>, Empty, TOTAL, TOTAL>;
-    <R as TypedNode<'_, Rule>>::try_parse(input).unwrap();
-}
-
-fn range2(input: &str) {
-    type R = RepMinMax<Choice2<CharRange<'0', '9'>, CharRange<'a', 'f'>>, Empty, TOTAL, TOTAL>;
-    <R as TypedNode<'_, Rule>>::try_parse(input).unwrap();
-}
-
-fn skip_fragments(input: &str) {
-    type R<'i> = RepMinMax<SkipChar<'i, LEN>, Empty, TIMES, TIMES>;
-    <R as TypedNode<'_, Rule>>::try_parse(input).unwrap();
-}
-
-fn skip_all(input: &str) {
-    type R<'i> = SkipChar<'i, TOTAL>;
-    <R as TypedNode<'_, Rule>>::try_parse(input).unwrap();
-}
-
-fn push(input: &str) {
-    type R<'i> = RepMinMax<PUSH<Str<S>>, Empty, TIMES, TIMES>;
-    <R as TypedNode<'_, Rule>>::try_parse(input).unwrap();
-}
-
-fn push_peek(input: &str) {
-    type R<'i> = Sequence2<
-        PUSH<Str<S>>,
-        Empty,
-        RepMinMax<PEEK<'i>, Empty, { TIMES - 1 }, { TIMES - 1 }>,
-        Empty,
-    >;
-    <R as TypedNode<'_, Rule>>::try_parse(input).unwrap();
-}
-
-fn push_peek_all(input: &str) {
-    type R<'i> = Sequence2<
-        PUSH<Str<S>>,
-        Empty,
-        RepMinMax<PEEK_ALL<'i>, Empty, { TIMES - 1 }, { TIMES - 1 }>,
-        Empty,
-    >;
-    <R as TypedNode<'_, Rule>>::try_parse(input).unwrap();
-}
-
 fn benchmark(b: &mut Criterion) {
     let input = FRAG.repeat(TIMES);
+
+    #[allow(non_camel_case_types)]
+    mod types {
+        use super::*;
+        pub type any = RepMinMax<ANY, Empty, TOTAL, TOTAL>;
+        pub type choices_16 = RepMinMax<
+            Choice16<
+                Char<'0'>,
+                Char<'1'>,
+                Char<'2'>,
+                Char<'3'>,
+                Char<'4'>,
+                Char<'5'>,
+                Char<'6'>,
+                Char<'7'>,
+                Char<'8'>,
+                Char<'9'>,
+                Char<'a'>,
+                Char<'b'>,
+                Char<'c'>,
+                Char<'d'>,
+                Char<'e'>,
+                Char<'f'>,
+            >,
+            Empty,
+            TOTAL,
+            TOTAL,
+        >;
+        pub type sequence_16 = RepMinMax<
+            Sequence16<
+                Char<'0'>,
+                Empty,
+                Char<'1'>,
+                Empty,
+                Char<'2'>,
+                Empty,
+                Char<'3'>,
+                Empty,
+                Char<'4'>,
+                Empty,
+                Char<'5'>,
+                Empty,
+                Char<'6'>,
+                Empty,
+                Char<'7'>,
+                Empty,
+                Char<'8'>,
+                Empty,
+                Char<'9'>,
+                Empty,
+                Char<'a'>,
+                Empty,
+                Char<'b'>,
+                Empty,
+                Char<'c'>,
+                Empty,
+                Char<'d'>,
+                Empty,
+                Char<'e'>,
+                Empty,
+                Char<'f'>,
+                Empty,
+            >,
+            Empty,
+            TIMES,
+            TIMES,
+        >;
+        pub type strings = RepMinMax<Str<S>, Empty, TIMES, TIMES>;
+        pub type insensitive_strings<'i> = RepMinMax<Insens<'i, I>, Empty, TIMES, TIMES>;
+        pub type range = RepMinMax<CharRange<'0', 'f'>, Empty, TOTAL, TOTAL>;
+        pub type range2 =
+            RepMinMax<Choice2<CharRange<'0', '9'>, CharRange<'a', 'f'>>, Empty, TOTAL, TOTAL>;
+        pub type skip_fragments<'i> = RepMinMax<SkipChar<'i, LEN>, Empty, TIMES, TIMES>;
+        pub type skip_all<'i> = SkipChar<'i, TOTAL>;
+        pub type push = RepMinMax<PUSH<Str<S>>, Empty, TIMES, TIMES>;
+        pub type push_peek<'i> = Sequence2<
+            PUSH<Str<S>>,
+            Empty,
+            RepMinMax<PEEK<'i>, Empty, { TIMES - 1 }, { TIMES - 1 }>,
+            Empty,
+        >;
+        pub type push_peek_all<'i> = Sequence2<
+            PUSH<Str<S>>,
+            Empty,
+            RepMinMax<PEEK_ALL<'i>, Empty, { TIMES - 1 }, { TIMES - 1 }>,
+            Empty,
+        >;
+    }
     macro_rules! test_series {
-        ($($func:expr),*) => {
+        ($($name:ident),*) => {
             b
             $(
-                .bench_function(stringify!($func), |b| b.iter(|| $func(&input)))
+                .bench_function(stringify!(parse - $name), |b| b.iter(|| {
+                    <types::$name as TypedNode<'_, Rule>>::try_parse(&input).unwrap()
+                }))
+                .bench_function(stringify!(check - $name), |b| b.iter(|| {
+                    <types::$name as TypedNode<'_, Rule>>::check(&input).unwrap()
+                }))
             )*
         };
     }
