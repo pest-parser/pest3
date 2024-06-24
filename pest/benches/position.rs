@@ -1,3 +1,4 @@
+//! This benchmark is designed to test the performance of the `TypedNode` trait.
 #![allow(non_camel_case_types)]
 
 use std::time::Duration;
