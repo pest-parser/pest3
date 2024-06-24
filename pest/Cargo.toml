@@ -9,3 +9,10 @@ license.workspace = true
 [dependencies]
 unicode-width.workspace = true
 pest2.workspace = true
+
+[dev-dependencies]
+criterion.workspace = true
+
+[[bench]]
+name = "position"
+harness = false

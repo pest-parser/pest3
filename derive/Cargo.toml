@@ -15,8 +15,8 @@ pest3_generator = { path = "../generator", version = "= 0.0.0-prealpha0" }
 [dev-dependencies]
 pest3 = { path = "../pest", version = "= 0.0.0-prealpha0" }
 anyhow = "1"
-criterion = "0.5.1"
 serde_json = "1.0.117"
+criterion.workspace = true
 
 [[bench]]
 name = "json"
