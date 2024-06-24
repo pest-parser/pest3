@@ -1,8 +1,7 @@
 on:
   push:
     branches:
-      - main
-      - add-ci # Temporarily used for CI tests.
+      - "*" # Run benchmarks on all branches.
 
 name: Benchmark
 
@@ -21,7 +20,7 @@ jobs:
       - name: Track base branch benchmarks with Bencher
         run: |
           bencher run \
-          --project pest3 \
+          --project pest3-zhacqvrk \
           --token '${{ secrets.BENCHER_API_TOKEN }}' \
           --branch ${{ github.ref_name }} \
           --testbed ubuntu-latest \
