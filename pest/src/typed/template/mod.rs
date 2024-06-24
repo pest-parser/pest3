@@ -471,13 +471,9 @@ impl<'i, R: RuleType> TypedNode<'i, R> for ANY {
         _stack: &mut Stack<Span<'i>>,
         _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
-        let mut c: char = ' ';
-        match input.match_char_by(|ch| {
-            c = ch;
-            true
-        }) {
-            true => Some((input, Self { content: c })),
-            false => None,
+        match input.next_char() {
+            Some(c) => Some((input, Self { content: c })),
+            None => None,
         }
     }
     #[inline]

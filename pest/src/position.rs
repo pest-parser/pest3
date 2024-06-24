@@ -383,6 +383,16 @@ impl<'i> Position<'i> {
         false
     }
 
+    /// Returns the char at the `Position` and updates `pos` to the next char, if there is one.
+    /// Otherwise, returns `None`.
+    #[inline]
+    #[allow(dead_code)]
+    pub(crate) fn next_char(&mut self) -> Option<char> {
+        let c = self.input[self.pos..].chars().next();
+        self.pos += c.map_or(0, char::len_utf8);
+        c
+    }
+
     /// Matches the char at the `Position` against a specified character and returns `true` if a match
     /// was made. If no match was made, returns `false`.
     /// `pos` will not be updated in either case.
