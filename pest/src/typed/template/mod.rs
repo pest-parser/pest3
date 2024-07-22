@@ -234,7 +234,8 @@ impl<'i, R: RuleType, const CHAR: char> TypedNode<'i, R> for Char<CHAR> {
         _stack: &mut Stack<Span<'i>>,
         _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
-        match input.match_char_by(|c| c == CHAR) {
+        let mut buf = [0u8; 4];
+        match input.match_string(CHAR.encode_utf8(&mut buf)) {
             true => Some((input, Self)),
             false => None,
         }
@@ -245,7 +246,8 @@ impl<'i, R: RuleType, const CHAR: char> TypedNode<'i, R> for Char<CHAR> {
         _stack: &mut Stack<Span<'i>>,
         _tracker: &mut Tracker<'i, R>,
     ) -> Option<Position<'i>> {
-        match input.match_char_by(|c| c == CHAR) {
+        let mut buf = [0u8; 4];
+        match input.match_string(CHAR.encode_utf8(&mut buf)) {
             true => Some(input),
             false => None,
         }
@@ -469,13 +471,9 @@ impl<'i, R: RuleType> TypedNode<'i, R> for ANY {
         _stack: &mut Stack<Span<'i>>,
         _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
-        let mut c: char = ' ';
-        match input.match_char_by(|ch| {
-            c = ch;
-            true
-        }) {
-            true => Some((input, Self { content: c })),
-            false => None,
+        match input.next_char() {
+            Some(c) => Some((input, Self { content: c })),
+            None => None,
         }
     }
     #[inline]

@@ -14,8 +14,6 @@
 //!
 //! [pest-typed/position.rs]: https://github.com/TheVeryDarkness/pest-typed/blob/0.12.1/main/src/position.rs
 
-#![allow(dead_code)]
-
 use core::cmp::Ordering;
 use core::fmt::{self, Write};
 use core::hash::{Hash, Hasher};
@@ -308,6 +306,7 @@ impl<'i> Position<'i> {
     /// Skips until one of the given `strings` is found. If none of the `strings` can be found,
     /// this function will return `false` but its `pos` will *still* be updated.
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn skip_until(&mut self, strings: &[&str]) -> bool {
         #[cfg(not(feature = "memchr"))]
         {
@@ -361,6 +360,7 @@ impl<'i> Position<'i> {
     }
 
     #[inline]
+    #[allow(dead_code)]
     fn skip_until_basic(&mut self, strings: &[&str]) -> bool {
         // TODO: optimize with Aho-Corasick, e.g. https://crates.io/crates/daachorse?
         for from in self.pos..self.input.len() {
@@ -383,6 +383,16 @@ impl<'i> Position<'i> {
         false
     }
 
+    /// Returns the char at the `Position` and updates `pos` to the next char, if there is one.
+    /// Otherwise, returns `None`.
+    #[inline]
+    #[allow(dead_code)]
+    pub(crate) fn next_char(&mut self) -> Option<char> {
+        let c = self.input[self.pos..].chars().next();
+        self.pos += c.map_or(0, char::len_utf8);
+        c
+    }
+
     /// Matches the char at the `Position` against a specified character and returns `true` if a match
     /// was made. If no match was made, returns `false`.
     /// `pos` will not be updated in either case.
@@ -395,7 +405,6 @@ impl<'i> Position<'i> {
     /// Matches the char at the `Position` against a filter function and returns `true` if a match
     /// was made. If no match was made, returns `false` and `pos` will not be updated.
     #[inline]
-    #[allow(dead_code)]
     pub(crate) fn match_char_by<F>(&mut self, f: F) -> bool
     where
         F: FnOnce(char) -> bool,
