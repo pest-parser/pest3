@@ -6,7 +6,7 @@ extern crate alloc;
 
 #[cfg(test)]
 mod tests {
-    use pest3::{
+    use pest3_core::{
         choice::Choice2,
         full_rule_struct,
         typed::{
