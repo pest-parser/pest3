@@ -11,6 +11,7 @@ proc-macro = true
 
 [dependencies]
 pest3_generator = { path = "../generator", version = "= 0.0.0-prealpha0" }
+pest3_core = { path = "../core", version = "= 0.0.0-prealpha0" }
 
 [dev-dependencies]
 pest3 = { path = "../pest", version = "= 0.0.0-prealpha0" }
