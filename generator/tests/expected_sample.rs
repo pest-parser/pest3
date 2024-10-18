@@ -1709,7 +1709,12 @@ pub mod rules {
         (),
         super::Rule,
         super::Rule::r#repeat_min_max,
-        super::generics::RepMinMax::<r#string::<'i>, ::pest3_core::typed::template::Empty, 2usize, 3usize>,
+        super::generics::RepMinMax::<
+            r#string::<'i>,
+            ::pest3_core::typed::template::Empty,
+            2usize,
+            3usize,
+        >,
         ::pest3_core::std::Box<
             super::generics::RepMinMax::<
                 r#string::<'i>,
@@ -1932,7 +1937,12 @@ pub mod rules {
         (),
         super::Rule,
         super::Rule::r#repeat_exact,
-        super::generics::RepMinMax::<r#string::<'i>, ::pest3_core::typed::template::Empty, 2usize, 2usize>,
+        super::generics::RepMinMax::<
+            r#string::<'i>,
+            ::pest3_core::typed::template::Empty,
+            2usize,
+            2usize,
+        >,
         ::pest3_core::std::Box<
             super::generics::RepMinMax::<
                 r#string::<'i>,
@@ -4649,7 +4659,10 @@ pub mod rules {
         (),
         super::Rule,
         super::Rule::r#ascii_digits,
-        super::generics::RepOnce::<super::generics::r#ascii_digit, ::pest3_core::typed::template::Empty>,
+        super::generics::RepOnce::<
+            super::generics::r#ascii_digit,
+            ::pest3_core::typed::template::Empty,
+        >,
         ::pest3_core::std::Box<
             super::generics::RepOnce::<
                 super::generics::r#ascii_digit,
@@ -5220,7 +5233,10 @@ pub mod rules {
         (),
         super::Rule,
         super::Rule::r#ascii_alphas,
-        super::generics::RepOnce::<super::generics::r#ascii_alpha, ::pest3_core::typed::template::Empty>,
+        super::generics::RepOnce::<
+            super::generics::r#ascii_alpha,
+            ::pest3_core::typed::template::Empty,
+        >,
         ::pest3_core::std::Box<
             super::generics::RepOnce::<
                 super::generics::r#ascii_alpha,
@@ -5381,7 +5397,10 @@ pub mod rules {
         super::Rule::r#asciis,
         super::generics::RepOnce::<super::generics::r#ascii, ::pest3_core::typed::template::Empty>,
         ::pest3_core::std::Box<
-            super::generics::RepOnce::<super::generics::r#ascii, ::pest3_core::typed::template::Empty>,
+            super::generics::RepOnce::<
+                super::generics::r#ascii,
+                ::pest3_core::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -5455,7 +5474,10 @@ pub mod rules {
         super::Rule::r#newline,
         super::generics::RepOnce::<super::generics::r#newline, ::pest3_core::typed::template::Empty>,
         ::pest3_core::std::Box<
-            super::generics::RepOnce::<super::generics::r#newline, ::pest3_core::typed::template::Empty>,
+            super::generics::RepOnce::<
+                super::generics::r#newline,
+                ::pest3_core::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]
@@ -5549,14 +5571,20 @@ pub mod rules {
         super::generics::Sequence2::<
             super::unicode::XID_START,
             ::pest3_core::typed::template::Empty,
-            super::generics::Rep::<super::unicode::XID_CONTINUE, ::pest3_core::typed::template::Empty>,
+            super::generics::Rep::<
+                super::unicode::XID_CONTINUE,
+                ::pest3_core::typed::template::Empty,
+            >,
             __OptionalTrivia::<'i>,
         >,
         ::pest3_core::std::Box<
             super::generics::Sequence2::<
                 super::unicode::XID_START,
                 ::pest3_core::typed::template::Empty,
-                super::generics::Rep::<super::unicode::XID_CONTINUE, ::pest3_core::typed::template::Empty>,
+                super::generics::Rep::<
+                    super::unicode::XID_CONTINUE,
+                    ::pest3_core::typed::template::Empty,
+                >,
                 __OptionalTrivia::<'i>,
             >,
         >,
@@ -5774,7 +5802,10 @@ pub mod rules {
         super::Rule::r#hiragana,
         super::generics::RepOnce::<super::unicode::HIRAGANA, ::pest3_core::typed::template::Empty>,
         ::pest3_core::std::Box<
-            super::generics::RepOnce::<super::unicode::HIRAGANA, ::pest3_core::typed::template::Empty>,
+            super::generics::RepOnce::<
+                super::unicode::HIRAGANA,
+                ::pest3_core::typed::template::Empty,
+            >,
         >,
     );
     #[allow(non_camel_case_types)]

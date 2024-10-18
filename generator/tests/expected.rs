@@ -1589,7 +1589,10 @@ pub mod rules {
                     ::pest3_core::typed::template::Empty,
                     r#Neg::<'i>,
                     __OptionalTrivia::<'i>,
-                    super::generics::RepOnce::<r#ExactString::<'i>, ::pest3_core::typed::template::Empty>,
+                    super::generics::RepOnce::<
+                        r#ExactString::<'i>,
+                        ::pest3_core::typed::template::Empty,
+                    >,
                     __OptionalTrivia::<'i>,
                     r#Push::<'i>,
                     __OptionalTrivia::<'i>,
