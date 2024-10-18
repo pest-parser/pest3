@@ -7,7 +7,7 @@
 /// ## Example
 ///
 /// ```rust
-/// pest3::sequence_type!(Sequence2, (field_0, T0, TRIVIA_0), (field_1, T1, TRIVIA_1));
+/// pest3_core::sequence_type!(Sequence2, (field_0, T0, TRIVIA_0), (field_1, T1, TRIVIA_1));
 /// ```
 #[macro_export]
 macro_rules! sequence_type {
