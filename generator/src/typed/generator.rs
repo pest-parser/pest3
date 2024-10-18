@@ -250,7 +250,7 @@ fn create_rule<'g>(
             }
             quote! {
                 #[allow(unused_imports)]
-                use pest3::typed::SubRule as _;
+                use #this::typed::SubRule as _;
                 #this::full_rule_struct!(#name, (#(#args),*), #rule, #rule_val, #inner_type, #content_type, );
             }
         });

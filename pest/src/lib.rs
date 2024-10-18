@@ -3,13 +3,27 @@
 // #![no_std]
 #![warn(rust_2018_idioms, rust_2021_compatibility, missing_docs)]
 
-pub mod choice;
-pub mod formatter;
-pub mod position;
-pub mod sequence;
-pub mod span;
-pub mod token;
-pub mod typed;
+pub mod choice {
+    pub use pest3_core::choice::*;
+}
+pub mod formatter {
+    pub use pest3_core::formatter::*;
+}
+pub mod position {
+    pub use pest3_core::position::*;
+}
+pub mod sequence {
+    pub use pest3_core::sequence::*;
+}
+pub mod span {
+    pub use pest3_core::span::*;
+}
+pub mod token {
+    pub use pest3_core::token::*;
+}
+pub mod typed {
+    pub use pest3_core::typed::*;
+}
 
 extern crate alloc;
 
@@ -27,43 +41,5 @@ pub mod std {
     pub use std::vec::Vec;
 }
 
-/// Generate unicode property type.
-#[macro_export]
-macro_rules! unicode {
-    ($property:ident) => {
-        #[doc = ::core::stringify!(Auto generated. Unicode property $property.)]
-        #[derive(Clone, Debug, Hash, PartialEq, Eq)]
-        #[allow(non_camel_case_types)]
-        pub struct $property {
-            /// Matched character.
-            pub content: $crate::std::char,
-        }
-        impl<'i, R: $crate::typed::RuleType> $crate::typed::TypedNode<'i, R> for $property {
-            #[inline]
-            fn try_parse_with_partial(
-                mut input: $crate::Position<'i>,
-                _stack: &mut $crate::Stack<$crate::Span<'i>>,
-                _tracker: &mut $crate::typed::Tracker<'i, R>,
-            ) -> $crate::std::Option<($crate::Position<'i>, Self)> {
-                match $crate::typed::template::match_char_by(&mut input, $crate::unicode::$property)
-                {
-                    $crate::std::Some(content) => $crate::std::Some((input, Self { content })),
-                    $crate::std::None => $crate::std::None,
-                }
-            }
-            #[inline]
-            fn check_with_partial(
-                mut input: $crate::Position<'i>,
-                _stack: &mut $crate::Stack<$crate::Span<'i>>,
-                _tracker: &mut $crate::typed::Tracker<'i, R>,
-            ) -> $crate::std::Option<$crate::Position<'i>> {
-                match $crate::typed::template::match_char_by(&mut input, $crate::unicode::$property)
-                {
-                    $crate::std::Some(_) => $crate::std::Some(input),
-                    $crate::std::None => $crate::std::None,
-                }
-            }
-        }
-        impl $crate::typed::EmptyPairContainer for $property {}
-    };
-}
+#[cfg(feature = "derive")]
+pub use pest3_derive::Parser;

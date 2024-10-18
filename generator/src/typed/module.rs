@@ -3,7 +3,7 @@ use super::{
     getter::GetterByName,
     output::generics,
 };
-use pest3::unicode::unicode_property_names;
+use pest3_core::unicode::unicode_property_names;
 use pest3_meta::parser::{ParseRule, Range};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};

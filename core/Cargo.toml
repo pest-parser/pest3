@@ -1,0 +1,11 @@
+[package]
+name = "pest3_core"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+description.workspace = true
+license.workspace = true
+
+[dependencies]
+unicode-width.workspace = true
+pest2.workspace = true
