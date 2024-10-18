@@ -68,7 +68,7 @@ pub mod rules {
             impl<'i> r#x<'i> {}
             #[allow(unused_imports)]
             use pest3_core::typed::SubRule as _;
-            ::pest3_core::full_rule_struct!(
+            ::pest3_core::typed::full_rule_struct!(
                 r#x,
                 (),
                 super::Rule,
@@ -80,7 +80,7 @@ pub mod rules {
             );
             #[allow(unused_imports)]
             use pest3_core::typed::SubRule as _;
-            ::pest3_core::full_rule_struct!(
+            ::pest3_core::typed::full_rule_struct!(
                 r#x,
                 (),
                 super::super::super::Rule,
@@ -174,7 +174,7 @@ pub mod rules {
     impl<'i> r#w<'i> {}
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#w,
         (),
         super::Rule,
@@ -234,7 +234,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#x0,
         (),
         super::Rule,
@@ -313,7 +313,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#x1,
         (),
         super::Rule,
@@ -404,7 +404,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#x2,
         (),
         super::Rule,
@@ -486,7 +486,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#x3,
         (),
         super::Rule,
@@ -566,7 +566,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#x4,
         (),
         super::Rule,

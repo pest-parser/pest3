@@ -167,6 +167,8 @@ macro_rules! full_rule_struct {
     };
 }
 
+pub use full_rule_struct;
+
 /// A container of pairs.
 pub trait PairContainer<R> {
     /// for `Self` as a pair if it is, otherwise for each child pair.

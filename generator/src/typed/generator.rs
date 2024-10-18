@@ -251,7 +251,7 @@ fn create_rule<'g>(
             quote! {
                 #[allow(unused_imports)]
                 use #this::typed::SubRule as _;
-                #this::full_rule_struct!(#name, (#(#args),*), #rule, #rule_val, #inner_type, #content_type, );
+                #this::typed::full_rule_struct!(#name, (#(#args),*), #rule, #rule_val, #inner_type, #content_type, );
             }
         });
         quote! {#(#rule)*}
