@@ -47,7 +47,12 @@ pop_ = pest::stack::push(range) - pest::stack::push(range) - pest::stack::pop - 
 pop_all = pest::stack::push(range) - pest::stack::push(range) - pest::stack::pop_all
 pop_fail = pest::stack::push(range) - !pest::stack::pop - range - pest::stack::pop
 checkpoint_restore = pest::stack::push("") - (pest::stack::push("a") - "b" - pest::stack::pop | pest::stack::drop - "b" | pest::stack::pop - "a") - pest::EOI
-
+longchoice_builtin = ( "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12" | "13" | "14" | "15" | "16")
+longseq_builtin = ( "01" ~ "02" ~ "03" ~ "04" ~ "05" ~ "06" ~ "07" ~ "08" ~ "09" ~ "10" ~ "11" ~ "12" ~ "13" ~ "14" ~ "15" ~ "16")
+longchoice_critical = ( "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17")
+longseq_critical = ( "01" ~ "02" ~ "03" ~ "04" ~ "05" ~ "06" ~ "07" ~ "08" ~ "09" ~ "10" ~ "11" ~ "12" ~ "13" ~ "14" ~ "15" ~ "16" ~ "17")
+longchoice_jump = ( "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19")
+longseq_jump = ( "01" ~ "02" ~ "03" ~ "04" ~ "05" ~ "06" ~ "07" ~ "08" ~ "09" ~ "10" ~ "11" ~ "12" ~ "13" ~ "14" ~ "15" ~ "16" ~ "17" ~ "18" ~ "19")
 /*
 ascii_digits = ASCII_DIGIT+
 ascii_nonzero_digits = ASCII_NONZERO_DIGIT+

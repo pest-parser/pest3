@@ -100,6 +100,8 @@ macro_rules! sequence_type {
     };
 }
 
+pub use sequence_type;
+
 sequence_type! {
     Sequence2,
     (field_0, T0, TR0),
