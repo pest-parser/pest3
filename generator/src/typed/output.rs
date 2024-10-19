@@ -94,23 +94,25 @@ impl<'g> Tracker<'g> {
                         seq: bool| {
                 for len in set.iter().cloned() {
                     let generics_i = format_ident!("{}{}", prefix, len);
-                    let (types, field): (Vec<_>, Vec<_>) = (0..len)
-                        .map(|i| {
-                            let field = if seq {
-                                let i = Index::from(i);
-                                let i = format_ident!("field_{}", i);
-                                quote! {#i}
-                            } else {
-                                let i = format_ident!("Choice{}", i);
-                                quote! {#i}
-                            };
-                            (format_ident!("T{}", i), field)
-                        })
-                        .unzip();
+                    let branch = (0..len).map(|i| {
+                        if seq {
+                            format_ident!("field_{}", i)
+                        } else {
+                            format_ident!("Choice{}", i)
+                        }
+                    });
+                    let the_type = (0..len).map(|i| format_ident!("T{}", i));
+                    let trivia_or_getter = (0..len).map(|i| {
+                        if seq {
+                            format_ident!("TR{}", i)
+                        } else {
+                            format_ident!("choice_{}", i)
+                        }
+                    });
                     // `pest` is already imported, so can be referred directly.
-                    if len >= 16 {
+                    if len > 16 {
                         target.push(quote! {
-                            #pest::#mac!(#generics_i, #(#types, #field, )*);
+                            #pest::#module::#mac!(#generics_i, #((#branch, #the_type, #trivia_or_getter),)*);
                         });
                     } else {
                         target.push(quote! {

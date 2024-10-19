@@ -100,6 +100,8 @@ macro_rules! choice_type {
     };
 }
 
+pub use choice_type;
+
 choice_type! {
     Choice2,
     (Choice0, T0, choice_0),
