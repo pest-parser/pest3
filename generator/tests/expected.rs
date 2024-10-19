@@ -75,7 +75,7 @@ pub mod rules {
     impl<'i> r#Regular<'i> {}
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Regular,
         (),
         super::Rule,
@@ -183,7 +183,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Atomic,
         (),
         super::Rule,
@@ -259,7 +259,7 @@ pub mod rules {
     impl<'i> r#NonAtomic<'i> {}
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#NonAtomic,
         (),
         super::Rule,
@@ -324,7 +324,7 @@ pub mod rules {
     impl<'i> r#ExactString<'i> {}
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#ExactString,
         (),
         super::Rule,
@@ -377,7 +377,7 @@ pub mod rules {
     impl<'i> r#CharRange<'i> {}
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#CharRange,
         (),
         super::Rule,
@@ -437,7 +437,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Any,
         (),
         super::Rule,
@@ -499,7 +499,7 @@ pub mod rules {
     impl<'i> r#Seq<'i> {}
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Seq,
         (),
         super::Rule,
@@ -702,7 +702,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Choice,
         (),
         super::Rule,
@@ -816,7 +816,7 @@ pub mod rules {
     impl<'i> r#Rep<'i> {}
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Rep,
         (),
         super::Rule,
@@ -882,7 +882,7 @@ pub mod rules {
     impl<'i> r#RepAtLeastOnce<'i> {}
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#RepAtLeastOnce,
         (),
         super::Rule,
@@ -945,7 +945,7 @@ pub mod rules {
     impl<'i> r#Opt<'i> {}
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Opt,
         (),
         super::Rule,
@@ -1021,7 +1021,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#RepExact,
         (),
         super::Rule,
@@ -1102,7 +1102,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#RepLeft,
         (),
         super::Rule,
@@ -1173,7 +1173,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#RepRight,
         (),
         super::Rule,
@@ -1249,7 +1249,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#RepLeftRight,
         (),
         super::Rule,
@@ -1354,7 +1354,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Pos,
         (),
         super::Rule,
@@ -1442,7 +1442,7 @@ pub mod rules {
     impl<'i> r#Neg<'i> {}
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Neg,
         (),
         super::Rule,
@@ -1559,7 +1559,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Push,
         (),
         super::Rule,
@@ -1658,7 +1658,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Pop,
         (),
         super::Rule,
@@ -1718,7 +1718,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#PopAll,
         (),
         super::Rule,
@@ -1778,7 +1778,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Peek,
         (),
         super::Rule,
@@ -1838,7 +1838,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#PeekUnlimited,
         (),
         super::Rule,
@@ -1898,7 +1898,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#PeekLeft,
         (),
         super::Rule,
@@ -1958,7 +1958,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#PeekRight,
         (),
         super::Rule,
@@ -2018,7 +2018,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#PeekLeftRight,
         (),
         super::Rule,
@@ -2078,7 +2078,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#Drop,
         (),
         super::Rule,
@@ -2138,7 +2138,7 @@ pub mod rules {
     }
     #[allow(unused_imports)]
     use pest3_core::typed::SubRule as _;
-    ::pest3_core::full_rule_struct!(
+    ::pest3_core::typed::full_rule_struct!(
         r#PeekAll,
         (),
         super::Rule,
