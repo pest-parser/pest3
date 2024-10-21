@@ -1,4 +1,4 @@
-//! A parser for JSON file.
+#! A parser for JSON file.
 //!
 //! And this is a example for JSON parser.
 //!
@@ -8,7 +8,7 @@
 // FIXME: some should be under pest::*
 use common::base as p
 
-json = pest::SOI ~ value ~ pest::EOI
+json = pest::soi ~ value ~ pest::eoi
 
 /// Matches object, e.g.: `{ "foo": "bar" }`
 /// Foobar
