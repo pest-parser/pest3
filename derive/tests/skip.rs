@@ -7,7 +7,7 @@ use pest3_derive::Parser;
 #[grammar_inline = r#"
 ~          = (" " | "/*" - (!"*/" - pest::any)* - "*/")*
 main       = "x"~*
-program    = pest::SOI ~ main ~ pest::EOI
+program    = pest::soi ~ main ~ pest::EOI
 "#]
 struct Parser;
 

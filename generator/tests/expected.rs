@@ -1296,7 +1296,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `Pos`. Grammar: `&(pest::SOI ~ RepLeftRight[2..4])`."]
+    #[doc = "Generated for rule `Pos`. Grammar: `&(pest::soi ~ RepLeftRight[2..4])`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     #[allow(non_camel_case_types)]
     pub struct r#Pos<'i> {
@@ -1304,7 +1304,7 @@ pub mod rules {
         pub content: ::pest3_core::std::Box<
             super::generics::Positive<
                 super::generics::Sequence2<
-                    super::generics::r#SOI,
+                    super::generics::r#soi,
                     ::pest3_core::typed::template::Empty,
                     super::generics::RepMinMax<
                         r#RepLeftRight<'i>,
@@ -1342,9 +1342,9 @@ pub mod rules {
                 }
             }
         }
-        #[doc = "A helper function to access [`SOI`]."]
+        #[doc = "A helper function to access [`soi`]."]
         #[allow(non_snake_case)]
-        pub fn r#SOI<'s>(&'s self) -> &'s super::generics::r#SOI {
+        pub fn r#soi<'s>(&'s self) -> &'s super::generics::r#soi {
             let res = &*self.content;
             {
                 let res = &res.field_0;
@@ -1361,7 +1361,7 @@ pub mod rules {
         super::Rule::r#Pos,
         super::generics::Positive::<
             super::generics::Sequence2::<
-                super::generics::r#SOI,
+                super::generics::r#soi,
                 ::pest3_core::typed::template::Empty,
                 super::generics::RepMinMax::<
                     r#RepLeftRight::<'i>,
@@ -1375,7 +1375,7 @@ pub mod rules {
         ::pest3_core::std::Box<
             super::generics::Positive::<
                 super::generics::Sequence2::<
-                    super::generics::r#SOI,
+                    super::generics::r#soi,
                     ::pest3_core::typed::template::Empty,
                     super::generics::RepMinMax::<
                         r#RepLeftRight::<'i>,
