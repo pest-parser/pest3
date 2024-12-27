@@ -9,7 +9,7 @@ use pest3::{
     sequence::{Sequence16, Sequence2},
     typed::{
         template::{
-            Char, CharRange, Empty, Insens, RepMinMax, SkipChar, Str, any, peek, peek_all, push,
+            any, peek, peek_all, push, Char, CharRange, Empty, Insens, RepMinMax, SkipChar, Str,
         },
         wrapper, RuleType, TypedNode,
     },
