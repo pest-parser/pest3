@@ -460,11 +460,12 @@ impl<N> EmptyPairContainer for Negative<N> {}
 
 /// Match any character.
 #[derive(Clone, Hash, PartialEq, Eq)]
-pub struct ANY {
+#[allow(non_camel_case_types)]
+pub struct any {
     /// Matched character.
     pub content: char,
 }
-impl<'i, R: RuleType> TypedNode<'i, R> for ANY {
+impl<'i, R: RuleType> TypedNode<'i, R> for any {
     #[inline]
     fn try_parse_with_partial(
         mut input: Position<'i>,
@@ -492,12 +493,12 @@ impl<'i, R: RuleType> TypedNode<'i, R> for ANY {
         }
     }
 }
-impl Debug for ANY {
+impl Debug for any {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("ANY").field(&self.content).finish()
     }
 }
-impl EmptyPairContainer for ANY {}
+impl EmptyPairContainer for any {}
 
 /// Never matches.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
@@ -555,8 +556,9 @@ impl EmptyPairContainer for Empty {}
 
 /// Match the start of input.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct SOI;
-impl<'i, R: RuleType> TypedNode<'i, R> for SOI {
+#[allow(non_camel_case_types)]
+pub struct soi;
+impl<'i, R: RuleType> TypedNode<'i, R> for soi {
     #[inline]
     fn try_parse_with_partial(
         input: Position<'i>,
@@ -582,14 +584,15 @@ impl<'i, R: RuleType> TypedNode<'i, R> for SOI {
         }
     }
 }
-impl EmptyPairContainer for SOI {}
+impl EmptyPairContainer for soi {}
 
 /// Match the end of input.
 ///
-/// [`EOI`] will record its rule if not matched.
+/// [`eoi`] will record its rule if not matched.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct EOI;
-impl<'i, R: RuleType> TypedNode<'i, R> for EOI {
+#[allow(non_camel_case_types)]
+pub struct eoi;
+impl<'i, R: RuleType> TypedNode<'i, R> for eoi {
     #[inline]
     fn try_parse_with_partial(
         input: Position<'i>,
@@ -615,7 +618,7 @@ impl<'i, R: RuleType> TypedNode<'i, R> for EOI {
         }
     }
 }
-impl EmptyPairContainer for EOI {}
+impl EmptyPairContainer for eoi {}
 
 /// Type of eol.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
@@ -631,11 +634,12 @@ pub enum NewLineType {
 /// Match a new line character.
 /// A built-in rule. Equivalent to `"\r\n" | "\n" | "\r"`.
 #[derive(Clone, Hash, PartialEq, Eq)]
-pub struct NEWLINE {
+#[allow(non_camel_case_types)]
+pub struct newline {
     /// Type of matched character.
     pub content: NewLineType,
 }
-impl<'i, R: RuleType> TypedNode<'i, R> for NEWLINE {
+impl<'i, R: RuleType> TypedNode<'i, R> for newline {
     #[inline]
     fn try_parse_with_partial(
         mut input: Position<'i>,
@@ -666,22 +670,22 @@ impl<'i, R: RuleType> TypedNode<'i, R> for NEWLINE {
         }
     }
 }
-impl Debug for NEWLINE {
+impl Debug for newline {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("NEWLINE").field(&self.content).finish()
     }
 }
-impl EmptyPairContainer for NEWLINE {}
+impl EmptyPairContainer for newline {}
 
 /// Peek all spans in stack reversely.
 /// Will consume input.
 #[allow(non_camel_case_types)]
 #[derive(Clone, Hash, PartialEq, Eq)]
-pub struct PEEK_ALL<'i> {
+pub struct peek_all<'i> {
     /// Pair span.
     pub span: Span<'i>,
 }
-impl<'i, R: RuleType> TypedNode<'i, R> for PEEK_ALL<'i> {
+impl<'i, R: RuleType> TypedNode<'i, R> for peek_all<'i> {
     #[inline]
     fn try_parse_with_partial(
         input: Position<'i>,
@@ -703,26 +707,27 @@ impl<'i, R: RuleType> TypedNode<'i, R> for PEEK_ALL<'i> {
         Some(input)
     }
 }
-impl<'i> Debug for PEEK_ALL<'i> {
+impl<'i> Debug for peek_all<'i> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("PEEK_ALL").field(&self.span).finish()
     }
 }
-impl<'i> EmptyPairContainer for PEEK_ALL<'i> {}
+impl<'i> EmptyPairContainer for peek_all<'i> {}
 
 /// Peek top span in stack.
 /// Will consume input.
 #[derive(Clone, Hash, PartialEq, Eq)]
-pub struct PEEK<'i> {
+#[allow(non_camel_case_types)]
+pub struct peek<'i> {
     /// Pair span.
     pub span: Span<'i>,
 }
-impl<'i> From<Span<'i>> for PEEK<'i> {
+impl<'i> From<Span<'i>> for peek<'i> {
     fn from(span: Span<'i>) -> Self {
         Self { span }
     }
 }
-impl<'i, R: RuleType> TypedNode<'i, R> for PEEK<'i> {
+impl<'i, R: RuleType> TypedNode<'i, R> for peek<'i> {
     #[inline]
     fn try_parse_with_partial(
         mut input: Position<'i>,
@@ -759,19 +764,20 @@ impl<'i, R: RuleType> TypedNode<'i, R> for PEEK<'i> {
         }
     }
 }
-impl<'i> Debug for PEEK<'i> {
+impl<'i> Debug for peek<'i> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("PEEK").field(&self.span).finish()
     }
 }
-impl<'i> EmptyPairContainer for PEEK<'i> {}
+impl<'i> EmptyPairContainer for peek<'i> {}
 
 /// Drop the top of the stack.
 ///
 /// Fail if there is no span in the stack.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct DROP;
-impl<'i, R: RuleType> TypedNode<'i, R> for DROP {
+#[allow(non_camel_case_types)]
+pub struct drop;
+impl<'i, R: RuleType> TypedNode<'i, R> for drop {
     #[inline]
     fn try_parse_with_partial(
         input: Position<'i>,
@@ -801,21 +807,22 @@ impl<'i, R: RuleType> TypedNode<'i, R> for DROP {
         }
     }
 }
-impl EmptyPairContainer for DROP {}
+impl EmptyPairContainer for drop {}
 
 /// Match and pop the top span of the stack.
 #[derive(Clone, Hash, PartialEq, Eq)]
-pub struct POP<'i> {
+#[allow(non_camel_case_types)]
+pub struct pop<'i> {
     /// Matched span.
     pub span: Span<'i>,
 }
 
-impl<'i> From<Span<'i>> for POP<'i> {
+impl<'i> From<Span<'i>> for pop<'i> {
     fn from(span: Span<'i>) -> Self {
         Self { span }
     }
 }
-impl<'i, R: RuleType> TypedNode<'i, R> for POP<'i> {
+impl<'i, R: RuleType> TypedNode<'i, R> for pop<'i> {
     #[inline]
     fn try_parse_with_partial(
         mut input: Position<'i>,
@@ -851,33 +858,33 @@ impl<'i, R: RuleType> TypedNode<'i, R> for POP<'i> {
         }
     }
 }
-impl<'i> Debug for POP<'i> {
+impl<'i> Debug for pop<'i> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("POP").field(&self.span).finish()
     }
 }
-impl<'i> EmptyPairContainer for POP<'i> {}
+impl<'i> EmptyPairContainer for pop<'i> {}
 
 /// Match and pop all spans in the stack in top-to-bottom-order.
 #[allow(non_camel_case_types)]
 #[derive(Clone, Hash, PartialEq, Eq)]
-pub struct POP_ALL<'i> {
+pub struct pop_all<'i> {
     /// Matched span.
     pub span: Span<'i>,
 }
-impl<'i> From<Span<'i>> for POP_ALL<'i> {
+impl<'i> From<Span<'i>> for pop_all<'i> {
     fn from(span: Span<'i>) -> Self {
         Self { span }
     }
 }
-impl<'i, R: RuleType> TypedNode<'i, R> for POP_ALL<'i> {
+impl<'i, R: RuleType> TypedNode<'i, R> for pop_all<'i> {
     #[inline]
     fn try_parse_with_partial(
         input: Position<'i>,
         stack: &mut Stack<Span<'i>>,
         tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
-        let (input, res) = PEEK_ALL::try_parse_with_partial(input, stack, tracker)?;
+        let (input, res) = peek_all::try_parse_with_partial(input, stack, tracker)?;
         while stack.pop().is_some() {}
         Some((input, Self::from(res.span)))
     }
@@ -887,30 +894,31 @@ impl<'i, R: RuleType> TypedNode<'i, R> for POP_ALL<'i> {
         stack: &mut Stack<Span<'i>>,
         tracker: &mut Tracker<'i, R>,
     ) -> Option<Position<'i>> {
-        let input = PEEK_ALL::check_with_partial(input, stack, tracker)?;
+        let input = peek_all::check_with_partial(input, stack, tracker)?;
         while stack.pop().is_some() {}
         Some(input)
     }
 }
-impl<'i> Debug for POP_ALL<'i> {
+impl<'i> Debug for pop_all<'i> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("POP_ALL").field(&self.span).finish()
     }
 }
-impl<'i> EmptyPairContainer for POP_ALL<'i> {}
+impl<'i> EmptyPairContainer for pop_all<'i> {}
 
 /// Match an expression and push it to the [Stack].
 #[derive(Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
-pub struct PUSH<T> {
+#[allow(non_camel_case_types)]
+pub struct push<T> {
     /// Matched content.
     pub content: T,
 }
-impl<T> From<T> for PUSH<T> {
+impl<T> From<T> for push<T> {
     fn from(content: T) -> Self {
         Self { content }
     }
 }
-impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for PUSH<T> {
+impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for push<T> {
     #[inline]
     fn try_parse_with_partial(
         input: Position<'i>,
@@ -934,23 +942,23 @@ impl<'i, R: RuleType, T: TypedNode<'i, R>> TypedNode<'i, R> for PUSH<T> {
         Some(input)
     }
 }
-impl<T> Deref for PUSH<T> {
+impl<T> Deref for push<T> {
     type Target = T;
     fn deref(&self) -> &Self::Target {
         &self.content
     }
 }
-impl<T> DerefMut for PUSH<T> {
+impl<T> DerefMut for push<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.content
     }
 }
-impl<T: Debug> Debug for PUSH<T> {
+impl<T: Debug> Debug for push<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("PUSH").field(&self.content).finish()
     }
 }
-impl<R: RuleType, T: PairContainer<R>> PairContainer<R> for PUSH<T> {
+impl<R: RuleType, T: PairContainer<R>> PairContainer<R> for push<T> {
     fn for_each_child_pair(&self, f: &mut impl FnMut(crate::token::Pair<R>)) {
         self.content.for_self_or_for_each_child_pair(f)
     }

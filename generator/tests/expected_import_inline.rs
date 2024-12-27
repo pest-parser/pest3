@@ -642,11 +642,9 @@ pub mod generics {
     pub use pest3_core::choice::Choice2;
     pub use pest3_core::sequence::Sequence2;
     pub use pest3_core::typed::template::{
-        ascii, ascii_alpha, ascii_alpha_lower, ascii_alpha_upper, ascii_alphanumeric,
-        ascii_bin_digit, ascii_digit, ascii_hex_digit, ascii_nonzero_digit, ascii_oct_digit,
-        CharRange, Insens, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin,
-        RepMinMax, RepOnce, Str, ANY as any, DROP as drop, EOI, EOI as eoi, NEWLINE as newline,
-        PEEK as peek, PEEK_ALL as peek_all, POP as pop, POP_ALL as pop_all, PUSH as push, SOI,
-        SOI as soi,
+        any, ascii, ascii_alpha, ascii_alpha_lower, ascii_alpha_upper, ascii_alphanumeric,
+        ascii_bin_digit, ascii_digit, ascii_hex_digit, ascii_nonzero_digit, ascii_oct_digit, drop,
+        eoi, newline, peek, peek_all, pop, pop_all, push, soi, CharRange, Insens, Negative,
+        PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin, RepMinMax, RepOnce, Str,
     };
 }

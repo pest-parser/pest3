@@ -9,7 +9,7 @@ use pest3::{
     sequence::{Sequence16, Sequence2},
     typed::{
         template::{
-            Char, CharRange, Empty, Insens, RepMinMax, SkipChar, Str, ANY, PEEK, PEEK_ALL, PUSH,
+            Char, CharRange, Empty, Insens, RepMinMax, SkipChar, Str, any, peek, peek_all, push,
         },
         wrapper, RuleType, TypedNode,
     },
@@ -46,7 +46,7 @@ fn benchmark(b: &mut Criterion) {
 
     mod types {
         use super::*;
-        pub type any = RepMinMax<ANY, Empty, TOTAL, TOTAL>;
+        pub type anyb = RepMinMax<any, Empty, TOTAL, TOTAL>;
         pub type choices_16 = RepMinMax<
             Choice16<
                 Char<'0'>,
@@ -116,17 +116,17 @@ fn benchmark(b: &mut Criterion) {
             RepMinMax<Choice2<CharRange<'0', '9'>, CharRange<'a', 'f'>>, Empty, TOTAL, TOTAL>;
         pub type skip_fragments<'i> = RepMinMax<SkipChar<'i, LEN>, Empty, TIMES, TIMES>;
         pub type skip_all<'i> = SkipChar<'i, TOTAL>;
-        pub type push = RepMinMax<PUSH<Str<S>>, Empty, TIMES, TIMES>;
+        pub type pushb = RepMinMax<push<Str<S>>, Empty, TIMES, TIMES>;
         pub type push_peek<'i> = Sequence2<
-            PUSH<Str<S>>,
+            push<Str<S>>,
             Empty,
-            RepMinMax<PEEK<'i>, Empty, { TIMES - 1 }, { TIMES - 1 }>,
+            RepMinMax<peek<'i>, Empty, { TIMES - 1 }, { TIMES - 1 }>,
             Empty,
         >;
         pub type push_peek_all<'i> = Sequence2<
-            PUSH<Str<S>>,
+            push<Str<S>>,
             Empty,
-            RepMinMax<PEEK_ALL<'i>, Empty, { TIMES - 1 }, { TIMES - 1 }>,
+            RepMinMax<peek_all<'i>, Empty, { TIMES - 1 }, { TIMES - 1 }>,
             Empty,
         >;
     }
@@ -144,7 +144,7 @@ fn benchmark(b: &mut Criterion) {
         };
     }
     test_series!(
-        any,
+        anyb,
         choices_16,
         sequence_16,
         range,
@@ -153,7 +153,7 @@ fn benchmark(b: &mut Criterion) {
         insensitive_strings,
         skip_fragments,
         skip_all,
-        push,
+        pushb,
         push_peek,
         push_peek_all
     );
