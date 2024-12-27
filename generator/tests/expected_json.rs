@@ -2861,12 +2861,10 @@ pub mod generics {
     pub use pest3_core::sequence::Sequence3;
     pub use pest3_core::sequence::Sequence4;
     pub use pest3_core::typed::template::{
-        ascii_digit, CharRange, Insens, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax,
-        RepMin, RepMinMax, RepOnce, Str, ANY as any, ASCII as ascii, ASCII_ALPHA as ascii_alpha,
-        ASCII_ALPHANUMERIC as ascii_alphanumeric, ASCII_ALPHA_LOWER as ascii_alpha_lower,
-        ASCII_ALPHA_UPPER as ascii_alpha_upper, ASCII_BIN_DIGIT as ascii_bin_digit,
-        ASCII_HEX_DIGIT as ascii_hex_digit, ASCII_NONZERO_DIGIT as ascii_nonzero_digit,
-        ASCII_OCT_DIGIT as ascii_oct_digit, DROP as drop, EOI, EOI as eoi, NEWLINE as newline,
+        ascii, ascii_alpha, ascii_alpha_lower, ascii_alpha_upper, ascii_alphanumeric,
+        ascii_bin_digit, ascii_digit, ascii_hex_digit, ascii_nonzero_digit, ascii_oct_digit,
+        CharRange, Insens, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin,
+        RepMinMax, RepOnce, Str, ANY as any, DROP as drop, EOI, EOI as eoi, NEWLINE as newline,
         PEEK as peek, PEEK_ALL as peek_all, POP as pop, POP_ALL as pop_all, PUSH as push, SOI,
         SOI as soi,
     };

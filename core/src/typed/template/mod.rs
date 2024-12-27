@@ -1021,40 +1021,40 @@ pub type ascii_digit = CharRange<'0', '9'>;
 
 /// Non-zero ASCII Digit. `'1'..'9'`
 #[allow(non_camel_case_types)]
-pub type ASCII_NONZERO_DIGIT = CharRange<'1', '9'>;
+pub type ascii_nonzero_digit = CharRange<'1', '9'>;
 
 /// Binary ASCII Digit. `'0'..'1'`
 #[allow(non_camel_case_types)]
-pub type ASCII_BIN_DIGIT = CharRange<'0', '1'>;
+pub type ascii_bin_digit = CharRange<'0', '1'>;
 
 /// Octal ASCII Digit. `'0'..'7'`
 #[allow(non_camel_case_types)]
-pub type ASCII_OCT_DIGIT = CharRange<'0', '7'>;
+pub type ascii_oct_digit = CharRange<'0', '7'>;
 
 use crate::choice::{Choice2, Choice3};
 /// Hexadecimal ASCII Digit. `'0'..'9' | 'a'..'f' | 'A'..'F'`
 #[allow(non_camel_case_types)]
-pub type ASCII_HEX_DIGIT = Choice3<ascii_digit, CharRange<'a', 'f'>, CharRange<'A', 'F'>>;
+pub type ascii_hex_digit = Choice3<ascii_digit, CharRange<'a', 'f'>, CharRange<'A', 'F'>>;
 
 /// Lower case ASCII alphabet.
 #[allow(non_camel_case_types)]
-pub type ASCII_ALPHA_LOWER = CharRange<'a', 'z'>;
+pub type ascii_alpha_lower = CharRange<'a', 'z'>;
 
 /// Upper case ASCII alphabet.
 #[allow(non_camel_case_types)]
-pub type ASCII_ALPHA_UPPER = CharRange<'A', 'Z'>;
+pub type ascii_alpha_upper = CharRange<'A', 'Z'>;
 
 /// ASCII alphabet.
 #[allow(non_camel_case_types)]
-pub type ASCII_ALPHA = Choice2<ASCII_ALPHA_LOWER, ASCII_ALPHA_UPPER>;
+pub type ascii_alpha = Choice2<ascii_alpha_lower, ascii_alpha_upper>;
 
 /// ASCII alphabet or digit.
 #[allow(non_camel_case_types)]
-pub type ASCII_ALPHANUMERIC = Choice2<ASCII_ALPHA, ascii_digit>;
+pub type ascii_alphanumeric = Choice2<ascii_alpha, ascii_digit>;
 
 /// ASCII alphabet.
 #[allow(non_camel_case_types)]
-pub type ASCII = CharRange<'\x00', '\x7f'>;
+pub type ascii = CharRange<'\x00', '\x7f'>;
 
 /// Match char by a predicate.
 ///
