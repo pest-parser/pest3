@@ -853,7 +853,7 @@ pub mod rules {
             super::Rule::p(self)
         }
     }
-    #[doc = "Generated for rule `json`. Grammar: `(pest::soi ~ (value ~ pest::EOI))`."]
+    #[doc = "Generated for rule `json`. Grammar: `(pest::soi ~ (value ~ pest::eoi))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     #[allow(non_camel_case_types)]
     pub struct r#json<'i> {
@@ -864,7 +864,7 @@ pub mod rules {
                 ::pest3_core::typed::template::Empty,
                 r#value<'i>,
                 __OptionalTrivia<'i>,
-                super::generics::r#EOI,
+                super::generics::r#eoi,
                 __OptionalTrivia<'i>,
             >,
         >,
@@ -878,9 +878,9 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> r#json<'i> {
-        #[doc = "A helper function to access [`EOI`]."]
+        #[doc = "A helper function to access [`eoi`]."]
         #[allow(non_snake_case)]
-        pub fn r#EOI<'s>(&'s self) -> &'s super::generics::r#EOI {
+        pub fn r#eoi<'s>(&'s self) -> &'s super::generics::r#eoi {
             let res = &*self.content;
             {
                 let res = &res.field_2;
@@ -918,7 +918,7 @@ pub mod rules {
             ::pest3_core::typed::template::Empty,
             r#value::<'i>,
             __OptionalTrivia::<'i>,
-            super::generics::r#EOI,
+            super::generics::r#eoi,
             __OptionalTrivia::<'i>,
         >,
         ::pest3_core::std::Box<
@@ -927,7 +927,7 @@ pub mod rules {
                 ::pest3_core::typed::template::Empty,
                 r#value::<'i>,
                 __OptionalTrivia::<'i>,
-                super::generics::r#EOI,
+                super::generics::r#eoi,
                 __OptionalTrivia::<'i>,
             >,
         >,
