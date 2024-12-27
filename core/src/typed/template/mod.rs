@@ -1017,7 +1017,7 @@ impl<const START: isize> EmptyPairContainer for PeekSlice1<START> {}
 
 /// ASCII Digit. `'0'..'9'`
 #[allow(non_camel_case_types)]
-pub type ASCII_DIGIT = CharRange<'0', '9'>;
+pub type ascii_digit = CharRange<'0', '9'>;
 
 /// Non-zero ASCII Digit. `'1'..'9'`
 #[allow(non_camel_case_types)]
@@ -1034,7 +1034,7 @@ pub type ASCII_OCT_DIGIT = CharRange<'0', '7'>;
 use crate::choice::{Choice2, Choice3};
 /// Hexadecimal ASCII Digit. `'0'..'9' | 'a'..'f' | 'A'..'F'`
 #[allow(non_camel_case_types)]
-pub type ASCII_HEX_DIGIT = Choice3<ASCII_DIGIT, CharRange<'a', 'f'>, CharRange<'A', 'F'>>;
+pub type ASCII_HEX_DIGIT = Choice3<ascii_digit, CharRange<'a', 'f'>, CharRange<'A', 'F'>>;
 
 /// Lower case ASCII alphabet.
 #[allow(non_camel_case_types)]
@@ -1050,7 +1050,7 @@ pub type ASCII_ALPHA = Choice2<ASCII_ALPHA_LOWER, ASCII_ALPHA_UPPER>;
 
 /// ASCII alphabet or digit.
 #[allow(non_camel_case_types)]
-pub type ASCII_ALPHANUMERIC = Choice2<ASCII_ALPHA, ASCII_DIGIT>;
+pub type ASCII_ALPHANUMERIC = Choice2<ASCII_ALPHA, ascii_digit>;
 
 /// ASCII alphabet.
 #[allow(non_camel_case_types)]

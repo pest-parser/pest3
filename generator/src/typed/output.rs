@@ -159,7 +159,7 @@ impl<'g> Tracker<'g> {
                         PUSH as push,
                         POP as pop,
                         POP_ALL as pop_all,
-                        ASCII_DIGIT as ascii_digit,
+                        ascii_digit,
                         ASCII_NONZERO_DIGIT as ascii_nonzero_digit,
                         ASCII_BIN_DIGIT as ascii_bin_digit,
                         ASCII_OCT_DIGIT as ascii_oct_digit,
