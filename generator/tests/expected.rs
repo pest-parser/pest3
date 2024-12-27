@@ -1415,7 +1415,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `Neg`. Grammar: `!(pest::EOI ~ Pos)`."]
+    #[doc = "Generated for rule `Neg`. Grammar: `!(pest::eoi ~ Pos)`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     #[allow(non_camel_case_types)]
     pub struct r#Neg<'i> {
@@ -1423,7 +1423,7 @@ pub mod rules {
         pub content: ::pest3_core::std::Box<
             super::generics::Negative<
                 super::generics::Sequence2<
-                    super::generics::r#EOI,
+                    super::generics::r#eoi,
                     ::pest3_core::typed::template::Empty,
                     r#Pos<'i>,
                     __OptionalTrivia<'i>,
@@ -1449,7 +1449,7 @@ pub mod rules {
         super::Rule::r#Neg,
         super::generics::Negative::<
             super::generics::Sequence2::<
-                super::generics::r#EOI,
+                super::generics::r#eoi,
                 ::pest3_core::typed::template::Empty,
                 r#Pos::<'i>,
                 __OptionalTrivia::<'i>,
@@ -1458,7 +1458,7 @@ pub mod rules {
         ::pest3_core::std::Box<
             super::generics::Negative::<
                 super::generics::Sequence2::<
-                    super::generics::r#EOI,
+                    super::generics::r#eoi,
                     ::pest3_core::typed::template::Empty,
                     r#Pos::<'i>,
                     __OptionalTrivia::<'i>,

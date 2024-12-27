@@ -26,7 +26,7 @@ RepRight        =  RepLeft{..2}
 RepLeftRight    =  RepRight{1..2}
 
 Pos = &(pest::soi ~ RepLeftRight{2..4})
-Neg = !(pest::EOI ~ Pos)
+Neg = !(pest::eoi ~ Pos)
 
 Push = pest::stack::push(RepLeft* ~ Neg ~ ExactString+ ~ Push ~ Pop ~ Push ~ PopAll)
 
