@@ -1,4 +1,4 @@
-use super::template::EOI;
+use super::template::eoi;
 use crate::{error::Error, token::Pair, typed::tracker::Tracker, Position, Span};
 use core::{fmt::Debug, hash::Hash};
 use pest2::Stack;
@@ -29,7 +29,7 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
         let (input, res) = Self::try_parse_with_partial(input, stack, tracker)?;
         let (_input, _eoi) = tracker.record_option_during_with(
             input,
-            |tracker| EOI::try_parse_with_partial(input, stack, tracker),
+            |tracker| eoi::try_parse_with_partial(input, stack, tracker),
             <R as RuleType>::EOI,
         )?;
         Some(res)
@@ -70,7 +70,7 @@ pub trait TypedNode<'i, R: RuleType>: Sized {
         };
         let _input = match tracker.record_option_during_with(
             input,
-            |tracker| EOI::check_with_partial(input, stack, tracker),
+            |tracker| eoi::check_with_partial(input, stack, tracker),
             <R as RuleType>::EOI,
         ) {
             Some(input) => input,

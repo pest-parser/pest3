@@ -306,8 +306,6 @@ impl<'g> ModuleSystem<'g> {
                 .collect(),
         );
         let pest = HashMap::from([
-            pest_builtin!(SOI {}),
-            pest_builtin!(EOI {}),
             pest_builtin!(soi {}),
             pest_builtin!(eoi {}),
             pest_builtin!(any {}),

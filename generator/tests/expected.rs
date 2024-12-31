@@ -1296,7 +1296,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `Pos`. Grammar: `&(pest::SOI ~ RepLeftRight[2..4])`."]
+    #[doc = "Generated for rule `Pos`. Grammar: `&(pest::soi ~ RepLeftRight[2..4])`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     #[allow(non_camel_case_types)]
     pub struct r#Pos<'i> {
@@ -1304,7 +1304,7 @@ pub mod rules {
         pub content: ::pest3_core::std::Box<
             super::generics::Positive<
                 super::generics::Sequence2<
-                    super::generics::r#SOI,
+                    super::generics::r#soi,
                     ::pest3_core::typed::template::Empty,
                     super::generics::RepMinMax<
                         r#RepLeftRight<'i>,
@@ -1342,9 +1342,9 @@ pub mod rules {
                 }
             }
         }
-        #[doc = "A helper function to access [`SOI`]."]
+        #[doc = "A helper function to access [`soi`]."]
         #[allow(non_snake_case)]
-        pub fn r#SOI<'s>(&'s self) -> &'s super::generics::r#SOI {
+        pub fn r#soi<'s>(&'s self) -> &'s super::generics::r#soi {
             let res = &*self.content;
             {
                 let res = &res.field_0;
@@ -1361,7 +1361,7 @@ pub mod rules {
         super::Rule::r#Pos,
         super::generics::Positive::<
             super::generics::Sequence2::<
-                super::generics::r#SOI,
+                super::generics::r#soi,
                 ::pest3_core::typed::template::Empty,
                 super::generics::RepMinMax::<
                     r#RepLeftRight::<'i>,
@@ -1375,7 +1375,7 @@ pub mod rules {
         ::pest3_core::std::Box<
             super::generics::Positive::<
                 super::generics::Sequence2::<
-                    super::generics::r#SOI,
+                    super::generics::r#soi,
                     ::pest3_core::typed::template::Empty,
                     super::generics::RepMinMax::<
                         r#RepLeftRight::<'i>,
@@ -1415,7 +1415,7 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
-    #[doc = "Generated for rule `Neg`. Grammar: `!(pest::EOI ~ Pos)`."]
+    #[doc = "Generated for rule `Neg`. Grammar: `!(pest::eoi ~ Pos)`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     #[allow(non_camel_case_types)]
     pub struct r#Neg<'i> {
@@ -1423,7 +1423,7 @@ pub mod rules {
         pub content: ::pest3_core::std::Box<
             super::generics::Negative<
                 super::generics::Sequence2<
-                    super::generics::r#EOI,
+                    super::generics::r#eoi,
                     ::pest3_core::typed::template::Empty,
                     r#Pos<'i>,
                     __OptionalTrivia<'i>,
@@ -1449,7 +1449,7 @@ pub mod rules {
         super::Rule::r#Neg,
         super::generics::Negative::<
             super::generics::Sequence2::<
-                super::generics::r#EOI,
+                super::generics::r#eoi,
                 ::pest3_core::typed::template::Empty,
                 r#Pos::<'i>,
                 __OptionalTrivia::<'i>,
@@ -1458,7 +1458,7 @@ pub mod rules {
         ::pest3_core::std::Box<
             super::generics::Negative::<
                 super::generics::Sequence2::<
-                    super::generics::r#EOI,
+                    super::generics::r#eoi,
                     ::pest3_core::typed::template::Empty,
                     r#Pos::<'i>,
                     __OptionalTrivia::<'i>,
@@ -2251,13 +2251,9 @@ pub mod generics {
     pub use pest3_core::sequence::Sequence4;
     pub use pest3_core::sequence::Sequence7;
     pub use pest3_core::typed::template::{
-        CharRange, Insens, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin,
-        RepMinMax, RepOnce, Str, ANY as any, ASCII as ascii, ASCII_ALPHA as ascii_alpha,
-        ASCII_ALPHANUMERIC as ascii_alphanumeric, ASCII_ALPHA_LOWER as ascii_alpha_lower,
-        ASCII_ALPHA_UPPER as ascii_alpha_upper, ASCII_BIN_DIGIT as ascii_bin_digit,
-        ASCII_DIGIT as ascii_digit, ASCII_HEX_DIGIT as ascii_hex_digit,
-        ASCII_NONZERO_DIGIT as ascii_nonzero_digit, ASCII_OCT_DIGIT as ascii_oct_digit,
-        DROP as drop, EOI, EOI as eoi, NEWLINE as newline, PEEK as peek, PEEK_ALL as peek_all,
-        POP as pop, POP_ALL as pop_all, PUSH as push, SOI, SOI as soi,
+        any, ascii, ascii_alpha, ascii_alpha_lower, ascii_alpha_upper, ascii_alphanumeric,
+        ascii_bin_digit, ascii_digit, ascii_hex_digit, ascii_nonzero_digit, ascii_oct_digit, drop,
+        eoi, newline, peek, peek_all, pop, pop_all, push, soi, CharRange, Insens, Negative,
+        PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin, RepMinMax, RepOnce, Str,
     };
 }

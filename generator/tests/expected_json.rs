@@ -853,18 +853,18 @@ pub mod rules {
             super::Rule::p(self)
         }
     }
-    #[doc = "Generated for rule `json`. Grammar: `(pest::SOI ~ (value ~ pest::EOI))`."]
+    #[doc = "Generated for rule `json`. Grammar: `(pest::soi ~ (value ~ pest::eoi))`."]
     #[derive(Clone, Debug, Eq, PartialEq)]
     #[allow(non_camel_case_types)]
     pub struct r#json<'i> {
         #[doc = r" Matched structure."]
         pub content: ::pest3_core::std::Box<
             super::generics::Sequence3<
-                super::generics::r#SOI,
+                super::generics::r#soi,
                 ::pest3_core::typed::template::Empty,
                 r#value<'i>,
                 __OptionalTrivia<'i>,
-                super::generics::r#EOI,
+                super::generics::r#eoi,
                 __OptionalTrivia<'i>,
             >,
         >,
@@ -878,18 +878,18 @@ pub mod rules {
     }
     #[allow(non_camel_case_types)]
     impl<'i> r#json<'i> {
-        #[doc = "A helper function to access [`EOI`]."]
+        #[doc = "A helper function to access [`eoi`]."]
         #[allow(non_snake_case)]
-        pub fn r#EOI<'s>(&'s self) -> &'s super::generics::r#EOI {
+        pub fn r#eoi<'s>(&'s self) -> &'s super::generics::r#eoi {
             let res = &*self.content;
             {
                 let res = &res.field_2;
                 res
             }
         }
-        #[doc = "A helper function to access [`SOI`]."]
+        #[doc = "A helper function to access [`soi`]."]
         #[allow(non_snake_case)]
-        pub fn r#SOI<'s>(&'s self) -> &'s super::generics::r#SOI {
+        pub fn r#soi<'s>(&'s self) -> &'s super::generics::r#soi {
             let res = &*self.content;
             {
                 let res = &res.field_0;
@@ -914,20 +914,20 @@ pub mod rules {
         super::Rule,
         super::Rule::r#json,
         super::generics::Sequence3::<
-            super::generics::r#SOI,
+            super::generics::r#soi,
             ::pest3_core::typed::template::Empty,
             r#value::<'i>,
             __OptionalTrivia::<'i>,
-            super::generics::r#EOI,
+            super::generics::r#eoi,
             __OptionalTrivia::<'i>,
         >,
         ::pest3_core::std::Box<
             super::generics::Sequence3::<
-                super::generics::r#SOI,
+                super::generics::r#soi,
                 ::pest3_core::typed::template::Empty,
                 r#value::<'i>,
                 __OptionalTrivia::<'i>,
-                super::generics::r#EOI,
+                super::generics::r#eoi,
                 __OptionalTrivia::<'i>,
             >,
         >,
@@ -2861,13 +2861,9 @@ pub mod generics {
     pub use pest3_core::sequence::Sequence3;
     pub use pest3_core::sequence::Sequence4;
     pub use pest3_core::typed::template::{
-        CharRange, Insens, Negative, PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin,
-        RepMinMax, RepOnce, Str, ANY as any, ASCII as ascii, ASCII_ALPHA as ascii_alpha,
-        ASCII_ALPHANUMERIC as ascii_alphanumeric, ASCII_ALPHA_LOWER as ascii_alpha_lower,
-        ASCII_ALPHA_UPPER as ascii_alpha_upper, ASCII_BIN_DIGIT as ascii_bin_digit,
-        ASCII_DIGIT as ascii_digit, ASCII_HEX_DIGIT as ascii_hex_digit,
-        ASCII_NONZERO_DIGIT as ascii_nonzero_digit, ASCII_OCT_DIGIT as ascii_oct_digit,
-        DROP as drop, EOI, EOI as eoi, NEWLINE as newline, PEEK as peek, PEEK_ALL as peek_all,
-        POP as pop, POP_ALL as pop_all, PUSH as push, SOI, SOI as soi,
+        any, ascii, ascii_alpha, ascii_alpha_lower, ascii_alpha_upper, ascii_alphanumeric,
+        ascii_bin_digit, ascii_digit, ascii_hex_digit, ascii_nonzero_digit, ascii_oct_digit, drop,
+        eoi, newline, peek, peek_all, pop, pop_all, push, soi, CharRange, Insens, Negative,
+        PeekSlice1, PeekSlice2, Positive, Rep, RepMax, RepMin, RepMinMax, RepOnce, Str,
     };
 }
