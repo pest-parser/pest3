@@ -4,7 +4,7 @@ resolver = "2"
 
 package.authors = ["Dragoș Tiselice <dragostiselice@gmail.com>", "Tomas Tauber <me@tomtau.be>", "Boyi Huang <3266343194@qq.com>"]
 package.edition = "2021"
-package.version = "0.0.0-prealpha0"
+package.version = "0.0.1"
 package.description = "Early WIP prototype version of pest 3.0"
 package.license = "MIT OR Apache-2.0"
 
