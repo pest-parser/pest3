@@ -11,8 +11,8 @@ default = []
 derive = ["dep:pest3_derive"]
 
 [dependencies]
-pest3_core = { path = "../core", version = "= 0.0.0-prealpha0" }
-pest3_derive = { path = "../derive", version = "= 0.0.0-prealpha0", optional = true }
+pest3_core = { path = "../core", version = "0.0.1" }
+pest3_derive = { path = "../derive", version = "0.0.1", optional = true }
 
 unicode-width.workspace = true
 pest2.workspace = true
