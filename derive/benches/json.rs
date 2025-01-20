@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use pest3::typed::TypedNode;
+use pest3_core::typed::TypedNode;
 use pest3_derive::Parser;
 use serde_json::{Map, Value};
 

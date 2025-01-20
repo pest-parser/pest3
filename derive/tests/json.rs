@@ -14,7 +14,7 @@ pub mod json {
 
 #[cfg(test)]
 mod tests {
-    use pest3::typed::{PairContainer, TypedParser};
+    use pest3_core::typed::{PairContainer, TypedParser};
 
     use crate::{json, json::generics::*};
     #[test]

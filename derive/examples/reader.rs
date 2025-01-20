@@ -1,4 +1,4 @@
-use pest3::typed::{PairTree, TypedNode as _};
+use pest3_core::typed::{PairTree, TypedNode as _};
 use pest3_derive::Parser;
 use std::io::{stdin, BufRead};
 

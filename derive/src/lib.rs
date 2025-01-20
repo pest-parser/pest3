@@ -11,7 +11,7 @@
 //!
 //! ```rust
 //! use pest3_derive::Parser;
-//! use pest3::typed::TypedNode;
+//! use pest3_core::typed::TypedNode;
 //!
 //! #[derive(Parser)]
 //! #[grammar_inline = r#"

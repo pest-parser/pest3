@@ -1,5 +1,5 @@
 use anyhow::Result;
-use pest3::typed::TypedParser;
+use pest3_core::typed::TypedParser;
 use pest3_derive::Parser;
 use serde_json::{json, Value};
 use std::iter::once;

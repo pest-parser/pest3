@@ -11,7 +11,7 @@
 //! and modified.
 //! Overridden the macro [`parses_to`].
 
-use pest3::{
+use pest3_core::{
     token::Pair,
     typed::{PairTree, TypedNode},
 };

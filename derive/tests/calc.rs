@@ -11,7 +11,7 @@ pub mod calc {
 
 #[cfg(test)]
 mod tests {
-    use pest3::typed::TypedParser;
+    use pest3_core::typed::TypedParser;
 
     use crate::calc;
 

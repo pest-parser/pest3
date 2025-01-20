@@ -1,4 +1,4 @@
-use pest3::typed::TypedNode;
+use pest3_core::typed::TypedNode;
 use pest3_derive::Parser;
 
 #[derive(Parser)]
@@ -22,7 +22,7 @@ macro_rules! test {
     ($name:ident, $input:literal, $($fields:tt)*) => {
         mod $name {
             use super::rules;
-            use pest3::typed::TypedNode;
+            use pest3_core::typed::TypedNode;
 
             #[test]
             fn matched() -> anyhow::Result<()> {

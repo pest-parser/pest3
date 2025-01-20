@@ -1,6 +1,6 @@
 #![allow(unused_variables)]
 use anyhow::Result;
-use pest3::typed::TypedNode as _;
+use pest3_core::typed::TypedNode as _;
 use pest3_derive::Parser;
 
 #[derive(Parser)]
