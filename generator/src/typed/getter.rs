@@ -265,7 +265,7 @@ impl<'g> GetterByName<'g> {
                 }
             };
             // We may generate source codes to help debugging here.
-            let doc = format! {"A helper function to access [`{}`].", name};
+            let doc = format! {"A helper function to access [`{name}`]."};
             quote! {
                 #[doc = #doc]
                 #src

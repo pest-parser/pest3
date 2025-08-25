@@ -25,7 +25,7 @@ impl RuleType for Rule {
 }
 
 const TIMES: usize = 0x10000usize;
-const FRAG: &'static str = "0123456789abcdef";
+const FRAG: &str = "0123456789abcdef";
 const LEN: usize = 16;
 const TOTAL: usize = TIMES * LEN;
 

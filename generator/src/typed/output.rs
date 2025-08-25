@@ -66,7 +66,7 @@ impl<'g> Tracker<'g> {
             let index = self.wrapper_counter.len();
             let s = format_ident!("W{}", index);
             self.wrapper_counter.insert(string, index);
-            let doc = format!("A wrapper for `{:?}`.", string);
+            let doc = format!("A wrapper for `{string:?}`.");
             let str = _str();
             let this = pest();
             let wrapper = quote! {

@@ -33,8 +33,8 @@ impl ToString for SpecialError {
     fn to_string(&self) -> String {
         match self {
             SpecialError::SliceOutOfBound(start, end) => match end {
-                Some(end) => format!("Peek slice {}..{} out of bound.", start, end),
-                None => format!("Peek slice {}.. out of bound.", start),
+                Some(end) => format!("Peek slice {start}..{end} out of bound."),
+                None => format!("Peek slice {start}.. out of bound."),
             },
             SpecialError::RepeatTooManyTimes => "Repeated too many times.".to_owned(),
             SpecialError::EmptyStack => "Nothing to pop or drop.".to_owned(),
@@ -218,7 +218,7 @@ impl<'i, R: RuleType> Tracker<'i, R> {
         // "{} | "
         // "{} = "
         let (line, col) = pos.line_col();
-        let spacing = format!("{}", line).len() + 3;
+        let spacing = format!("{line}").len() + 3;
         let spacing = "\n".to_owned() + &" ".repeat(spacing);
         // Will not remove trailing CR or LF.
         let line_string = pos.line_of();
@@ -232,7 +232,7 @@ impl<'i, R: RuleType> Tracker<'i, R> {
         use core::fmt::Write;
         let mut message = String::new();
 
-        let _ = write!(message, "{}^---", line_matched);
+        let _ = write!(message, "{line_matched}^---");
 
         let mut write_message =
             |(rule, (mut positives, mut negatives, special)): (Option<R>, Tracked<R>)| {
@@ -241,7 +241,7 @@ impl<'i, R: RuleType> Tracker<'i, R> {
                 negatives.sort();
                 negatives.dedup();
                 fn collect_rules<R: RuleType>(vec: Vec<R>) -> String {
-                    format!("{:?}", vec)
+                    format!("{vec:?}")
                 }
                 let _ = message.write_str(&spacing);
                 let _ = match (positives.is_empty(), negatives.is_empty()) {
@@ -256,7 +256,7 @@ impl<'i, R: RuleType> Tracker<'i, R> {
                     ),
                 };
                 if let Some(upper_rule) = rule {
-                    let _ = write!(message, ", by {:?}", upper_rule);
+                    let _ = write!(message, ", by {upper_rule:?}");
                 };
                 let _ = write!(message, ".");
 
@@ -264,7 +264,7 @@ impl<'i, R: RuleType> Tracker<'i, R> {
                     let _ = message.write_str(&spacing);
                     let _ = write!(message, "{}", special.to_string());
                     if let Some(upper_rule) = rule {
-                        let _ = write!(message, " (By {:?})", upper_rule);
+                        let _ = write!(message, " (By {upper_rule:?})");
                     };
                 }
             };

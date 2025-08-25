@@ -11,6 +11,6 @@ fn main() {
     )
     .unwrap();
     for unicode in unicode_property_names() {
-        writeln!(out, "crate::unicode!({});", unicode).unwrap()
+        writeln!(out, "crate::unicode!({unicode});").unwrap()
     }
 }

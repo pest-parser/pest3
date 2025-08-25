@@ -20,7 +20,7 @@ impl ToTokens for GeneratedExpr {
         match self {
             GeneratedExpr::Inline(inline) => tokens.append_all(inline.clone()),
             GeneratedExpr::State(id) => {
-                let state = Ident::new(&format!("state{}", id), Span::call_site());
+                let state = Ident::new(&format!("state{id}"), Span::call_site());
 
                 tokens.append_all(quote!(return self.#state()));
             }
@@ -96,8 +96,8 @@ impl<'r> StateBuilder<'r> {
     }
 
     fn gen_expr(&mut self, expr: &Expr, accept_id: StateId, reject_id: StateId) -> GeneratedExpr {
-        let accept = Ident::new(&format!("state{}", accept_id), Span::call_site());
-        let reject = Ident::new(&format!("state{}", reject_id), Span::call_site());
+        let accept = Ident::new(&format!("state{accept_id}"), Span::call_site());
+        let reject = Ident::new(&format!("state{reject_id}"), Span::call_site());
 
         match expr {
             Expr::Range(Range { start, end }) => match (start.len_utf8(), end.len_utf8()) {

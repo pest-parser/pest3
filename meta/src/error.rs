@@ -26,6 +26,6 @@ pub fn rename_meta_rule(rule: &Rule) -> String {
         Rule::insensitive_string => "`i`".to_owned(),
         Rule::range_operator => "`..`".to_owned(),
         Rule::single_quote => "`'`".to_owned(),
-        other_rule => format!("{:?}", other_rule),
+        other_rule => format!("{other_rule:?}"),
     }
 }

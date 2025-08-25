@@ -25,7 +25,6 @@ pub mod typed {
     pub use pest3_core::typed::*;
 }
 
-extern crate alloc;
 
 pub use pest2::{error, unicode, RuleType, Stack};
 pub use position::Position;

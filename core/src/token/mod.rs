@@ -45,10 +45,10 @@ impl<R: crate::RuleType> Display for Pair<R> {
         write!(f, "{:?}({}, {}, [", self.rule, self.start, self.end,)?;
         let mut iter = self.children.iter();
         if let Some(first) = iter.next() {
-            write!(f, "{}", first)?;
+            write!(f, "{first}")?;
         }
         for item in iter {
-            write!(f, ", {}", item)?;
+            write!(f, ", {item}")?;
         }
         write!(f, "])")?;
         Ok(())

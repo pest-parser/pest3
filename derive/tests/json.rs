@@ -41,17 +41,14 @@ mod tests {
         let sample1 = "{\"key\": \"value\"}";
         let s1: json::rules::json = json::JsonParser::try_parse(sample1).unwrap();
         let value: json::rules::value<'_> = s1.content.field_1;
-        match *value.content {
-            Choice6::Choice2(object) => {
-                let (_, mut pairs, _) = object.content.into_tuple();
-                assert_eq!(pairs.content.len(), 1);
-                let pair = pairs.content.pop().unwrap();
-                let (key, _, value) = pair.content.into_tuple();
-                let (_, key, _) = key.content.into_tuple();
-                assert_eq!(key.span.as_str(), "key");
-                assert_eq!(value.span.as_str(), "\"value\"");
-            }
-            _ => {}
+        if let Choice6::Choice2(object) = *value.content {
+            let (_, mut pairs, _) = object.content.into_tuple();
+            assert_eq!(pairs.content.len(), 1);
+            let pair = pairs.content.pop().unwrap();
+            let (key, _, value) = pair.content.into_tuple();
+            let (_, key, _) = key.content.into_tuple();
+            assert_eq!(key.span.as_str(), "key");
+            assert_eq!(value.span.as_str(), "\"value\"");
         }
     }
 
@@ -61,17 +58,14 @@ mod tests {
         let sample1 = "{\"key\": \"value\"}";
         let s1: json::rules::json = json::JsonParser::try_parse(sample1).unwrap();
         let value = s1.value();
-        match value.content.as_ref() {
-            Choice6::Choice2(object) => {
-                let mut pairs = object.pair();
-                assert_eq!(pairs.len(), 1);
-                let pair = pairs.pop().unwrap();
-                let (key, _, value) = pair.content.as_tuple();
-                let (_, key, _) = key.content.as_tuple();
-                assert_eq!(key.span.as_str(), "key");
-                assert_eq!(value.span.as_str(), "\"value\"");
-            }
-            _ => {}
+        if let Choice6::Choice2(object) = value.content.as_ref() {
+            let mut pairs = object.pair();
+            assert_eq!(pairs.len(), 1);
+            let pair = pairs.pop().unwrap();
+            let (key, _, value) = pair.content.as_tuple();
+            let (_, key, _) = key.content.as_tuple();
+            assert_eq!(key.span.as_str(), "key");
+            assert_eq!(value.span.as_str(), "\"value\"");
         }
     }
 }

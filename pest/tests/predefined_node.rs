@@ -70,7 +70,7 @@ mod tests {
     #[test]
     fn string() {
         let s = StrFoo::try_parse("foo").unwrap();
-        assert_eq!(format!("{:?}", s), r#"StrFoo { content: Str("foo") }"#)
+        assert_eq!(format!("{s:?}"), r#"StrFoo { content: Str("foo") }"#)
     }
 
     #[test]
@@ -78,7 +78,7 @@ mod tests {
         type Trivia<'i> = OptionalTrivia<'i>;
         let trivia = <Trivia as TypedNode<'static, Rule>>::try_parse(" \t  \t\t").unwrap();
         assert_eq!(
-            format!("{:?}", trivia),
+            format!("{trivia:?}"),
             "RepMinMax([Choice0(Char(' ')), Choice1(Char('\\t')), Choice0(Char(' ')), Choice0(Char(' ')), Choice1(Char('\\t')), Choice1(Char('\\t'))])"
         );
     }

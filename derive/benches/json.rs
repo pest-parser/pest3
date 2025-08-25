@@ -23,7 +23,7 @@ pub fn deep_object(c: &mut Criterion) {
             val = Value::Object(Map::from_iter([(key, val)]));
         }
     }
-    let s = format!("{:#}", val);
+    let s = format!("{val:#}");
     println!("Input string has {} characters.", s.len());
     group.bench_function("parse", |b| {
         b.iter(|| {
@@ -32,7 +32,7 @@ pub fn deep_object(c: &mut Criterion) {
     });
     group.bench_function("check", |b| {
         b.iter(|| {
-            let _ = rules::json::check(&s).unwrap();
+            rules::json::check(&s).unwrap();
         })
     });
 }
@@ -59,7 +59,7 @@ pub fn shallow_object(c: &mut Criterion) {
             })
             .collect(),
     );
-    let s = format!("{:#}", obj);
+    let s = format!("{obj:#}");
     println!("Input string has {} characters.", s.len());
     group.bench_function("parse", |b| {
         b.iter(|| {
@@ -68,7 +68,7 @@ pub fn shallow_object(c: &mut Criterion) {
     });
     group.bench_function("check", |b| {
         b.iter(|| {
-            let _ = rules::json::check(&s).unwrap();
+            rules::json::check(&s).unwrap();
         })
     });
 }

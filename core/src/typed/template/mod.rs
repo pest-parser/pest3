@@ -472,10 +472,7 @@ impl<'i, R: RuleType> TypedNode<'i, R> for any {
         _stack: &mut Stack<Span<'i>>,
         _tracker: &mut Tracker<'i, R>,
     ) -> Option<(Position<'i>, Self)> {
-        match input.next_char() {
-            Some(c) => Some((input, Self { content: c })),
-            None => None,
-        }
+        input.next_char().map(|c| (input, Self { content: c }))
     }
     #[inline]
     fn check_with_partial(

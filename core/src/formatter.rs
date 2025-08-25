@@ -168,7 +168,7 @@ impl<SF, MF, NF> FormatOption<SF, MF, NF> {
         NF: FnMut(&str, &mut Writer) -> fmt::Result,
     {
         let spacing = " ".repeat(index_digit);
-        write!(f, "{} ", spacing)?;
+        write!(f, "{spacing} ")?;
         (self.number_formatter)("|", f)?;
         writeln!(f)?;
 
@@ -179,7 +179,7 @@ impl<SF, MF, NF> FormatOption<SF, MF, NF> {
         write!(f, " {}{}", line.former, line.latter)?;
         writeln!(f)?;
 
-        write!(f, "{} ", spacing)?;
+        write!(f, "{spacing} ")?;
         (self.number_formatter)("|", f)?;
         write!(
             f,
@@ -204,7 +204,7 @@ impl<SF, MF, NF> FormatOption<SF, MF, NF> {
         NF: FnMut(&str, &mut Writer) -> fmt::Result,
     {
         let spacing = " ".repeat(index_digit);
-        write!(f, "{} ", spacing)?;
+        write!(f, "{spacing} ")?;
         (self.number_formatter)("|", f)?;
         writeln!(f)?;
 
@@ -217,7 +217,7 @@ impl<SF, MF, NF> FormatOption<SF, MF, NF> {
         write!(f, "{}", line.latter)?;
         writeln!(f)?;
 
-        write!(f, "{} ", spacing)?;
+        write!(f, "{spacing} ")?;
         (self.number_formatter)("|", f)?;
         write!(
             f,
@@ -245,7 +245,7 @@ impl<SF, MF, NF> FormatOption<SF, MF, NF> {
         MF: FnMut(&str, &mut Writer) -> fmt::Result,
         NF: FnMut(&str, &mut Writer) -> fmt::Result,
     {
-        let number = format!("{:w$}", line, w = index_digit);
+        let number = format!("{line:index_digit$}");
         (self.number_formatter)(&number, f)?;
         write!(f, " ")?;
         (self.number_formatter)("|", f)?;
@@ -273,7 +273,7 @@ impl<SF, MF, NF> FormatOption<SF, MF, NF> {
         NF: FnMut(&str, &mut Writer) -> fmt::Result,
     {
         let spacing = " ".repeat(index_digit);
-        write!(f, "{} ", spacing)?;
+        write!(f, "{spacing} ")?;
         (self.number_formatter)("|", f)?;
         write!(
             f,
@@ -298,7 +298,7 @@ impl<SF, MF, NF> FormatOption<SF, MF, NF> {
         if let Some(line) = inner.1 {
             self.display_full_covered_snippet(f, index_digit, start.line + 3, line)?;
         } else if inner.2 {
-            write!(f, "{} ", spacing)?;
+            write!(f, "{spacing} ")?;
             (self.number_formatter)("|", f)?;
             writeln!(f, " ...")?;
         }
@@ -315,7 +315,7 @@ impl<SF, MF, NF> FormatOption<SF, MF, NF> {
         (self.span_formatter)(&end.former, f)?;
         writeln!(f, "{}", end.latter)?;
 
-        write!(f, "{} ", spacing)?;
+        write!(f, "{spacing} ")?;
         (self.number_formatter)("|", f)?;
         write!(
             f,
