@@ -238,9 +238,9 @@ impl ParseExpr {
                 let replaced_rhs = rhs.expr.replace(arg_name, new_expr);
                 replaced_lhs || replaced_rhs
             }
-            Self::Path(_, Some(PathArgs::Call(args))) => {
-                args.iter_mut().any(|arg| arg.expr.replace(arg_name, new_expr))
-            }
+            Self::Path(_, Some(PathArgs::Call(args))) => args
+                .iter_mut()
+                .any(|arg| arg.expr.replace(arg_name, new_expr)),
             _ => false,
         }
     }
@@ -275,9 +275,7 @@ impl Display for ParseExpr {
 fn skip(rule: Rule, pairs: &mut Pairs<'_, Rule>) {
     if let Some(current_rule) = pairs.peek().map(|pair| pair.as_rule()) {
         if current_rule == rule {
-            pairs
-                .next()
-                .unwrap_or_else(|| panic!("expected {rule:?}"));
+            pairs.next().unwrap_or_else(|| panic!("expected {rule:?}"));
         }
     }
 }

@@ -140,7 +140,9 @@ impl<'g> RuleRef<'g> {
 impl<'g> Display for RuleRef<'g> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt_sep(&self.path, "::", f)?;
-        if let Some(args) = &self.args { write!(f, "{args}")? }
+        if let Some(args) = &self.args {
+            write!(f, "{args}")?
+        }
         Ok(())
     }
 }
@@ -870,7 +872,9 @@ fn collect_silent_rules_with_args<'a>(
 fn inline_silent_rules_with_args(module: GrammarModule) -> GrammarModule {
     let silent_rules = collect_silent_rules_with_args(None, &module);
     let mut new_module = module.clone();
-    new_module.rules.retain(|rule| !rule.silent || rule.args.is_empty());
+    new_module
+        .rules
+        .retain(|rule| !rule.silent || rule.args.is_empty());
     for rule in new_module.rules.iter_mut() {
         let mut nodes = vec![&mut rule.node];
         while !nodes.is_empty() {

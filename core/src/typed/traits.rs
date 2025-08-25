@@ -187,7 +187,9 @@ pub trait PairContainer<R> {
 
 impl<R, T: PairContainer<R>> PairContainer<R> for Option<T> {
     fn for_each_child_pair(&self, f: &mut impl FnMut(Pair<R>)) {
-        if let Some(val) = self { val.for_self_or_for_each_child_pair(f) }
+        if let Some(val) = self {
+            val.for_self_or_for_each_child_pair(f)
+        }
     }
 }
 
