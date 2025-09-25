@@ -13,8 +13,8 @@ meta = []
 proc-macro2 = "1.0"
 quote = "1.0"
 syn = "2.0"
-pest3_meta = { path = "../meta", version = "0.0.1" }
-pest3_core = { path = "../core", version = "0.0.1" }
+pest3_meta = { path = "../meta", version = "0.0.2" }
+pest3_core = { path = "../core", version = "0.0.2" }
 
 [dev-dependencies]
 pest3_generator = { path = ".", features = ["meta"] }

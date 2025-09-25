@@ -10,12 +10,12 @@ license.workspace = true
 proc-macro = true
 
 [dependencies]
-pest3_generator = { path = "../generator", version = "0.0.1" }
-pest3_core = { path = "../core", version = "0.0.1" }
+pest3_generator = { path = "../generator", version = "0.0.2" }
+pest3_core = { path = "../core", version = "0.0.2" }
 
 [dev-dependencies]
-pest3_core = { path = "../core", version = "0.0.1" }
-pest3_generator = { path = "../generator", version = "0.0.1", features = [ "meta" ] }
+pest3_core = { path = "../core", version = "0.0.2" }
+pest3_generator = { path = "../generator", version = "0.0.2", features = [ "meta" ] }
 anyhow = "1"
 serde_json = "1.0.117"
 criterion.workspace = true
