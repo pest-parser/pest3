@@ -506,7 +506,6 @@ fn parse_rule(rule: Pair<'_, Rule>, path: PathBuf) -> Result<ParseRule, Error<Ru
     if has_braces {
         skip(Rule::opening_brace, &mut pairs);
     }
-    skip(Rule::assignment_operator, &mut pairs);
 
     let pratt_parser = PrattParser::new()
         .op(Op::infix(Rule::choice_operator, Assoc::Right))
