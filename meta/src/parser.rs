@@ -103,11 +103,11 @@ impl<T: Copy> Range<T> {
 impl<T: Display> Display for Range<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if let Some(start) = &self.start {
-            write!(f, "{}", start)?;
+            write!(f, "{start}")?;
         }
         write!(f, "..")?;
         if let Some(end) = &self.end {
-            write!(f, "{}", end)?;
+            write!(f, "{end}")?;
         }
         Ok(())
     }
@@ -149,7 +149,7 @@ impl Display for PathArgs {
                 fmt_sep(args, ", ", f)?;
                 write!(f, ")")
             }
-            Self::Slice(range) => write!(f, "[{}]", range),
+            Self::Slice(range) => write!(f, "[{range}]"),
         }
     }
 }
@@ -162,10 +162,10 @@ pub fn fmt_sep<T: Display>(
 ) -> std::fmt::Result {
     let mut iter = vec.iter();
     if let Some(first) = iter.next() {
-        write!(f, "{}", first)?;
+        write!(f, "{first}")?;
     }
     for res in iter {
-        write!(f, "{}{}", sep, res)?;
+        write!(f, "{sep}{res}")?;
     }
     Ok(())
 }
@@ -214,28 +214,60 @@ pub enum ParseExpr {
     Separated(Box<ParseNode>, Trivia),
 }
 
+impl ParseExpr {
+    pub fn replace(&mut self, arg_name: &str, new_expr: &ParseExpr) -> bool {
+        match self {
+            Self::Path(p, None) if p.len() == 1 && p[0] == arg_name => {
+                *self = new_expr.clone();
+                true
+            }
+            Self::PosPred(inner)
+            | Self::NegPred(inner)
+            | Self::Opt(inner)
+            | Self::Rep(inner)
+            | Self::RepOnce(inner)
+            | Self::RepRange(inner, _)
+            | Self::Separated(inner, _) => inner.expr.replace(arg_name, new_expr),
+            Self::Seq(lhs, rhs, _) => {
+                let replaced_lhs = lhs.expr.replace(arg_name, new_expr);
+                let replaced_rhs = rhs.expr.replace(arg_name, new_expr);
+                replaced_lhs || replaced_rhs
+            }
+            Self::Choice(lhs, rhs) => {
+                let replaced_lhs = lhs.expr.replace(arg_name, new_expr);
+                let replaced_rhs = rhs.expr.replace(arg_name, new_expr);
+                replaced_lhs || replaced_rhs
+            }
+            Self::Path(_, Some(PathArgs::Call(args))) => args
+                .iter_mut()
+                .any(|arg| arg.expr.replace(arg_name, new_expr)),
+            _ => false,
+        }
+    }
+}
+
 impl Display for ParseExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Str(str) => write!(f, "{:?}", str),
-            Self::Insens(str) => write!(f, "^{:?}", str),
-            Self::Range(start, end) => write!(f, "{:?}..{:?}", start, end),
+            Self::Str(str) => write!(f, "{str:?}"),
+            Self::Insens(str) => write!(f, "^{str:?}"),
+            Self::Range(start, end) => write!(f, "{start:?}..{end:?}"),
             Self::Path(path, args) => {
                 fmt_sep(path, "::", f)?;
                 if let Some(args) = args {
-                    write!(f, "{}", args)?;
+                    write!(f, "{args}")?;
                 }
                 Ok(())
             }
-            Self::PosPred(inner) => write!(f, "&{}", inner),
-            Self::NegPred(inner) => write!(f, "!{}", inner),
-            Self::Seq(lhs, rhs, trivia) => write!(f, "({} {} {})", lhs, trivia, rhs),
-            Self::Choice(lhs, rhs) => write!(f, "({} | {})", lhs, rhs),
-            Self::Opt(inner) => write!(f, "{}?", inner),
-            Self::Rep(inner) => write!(f, "{}*", inner),
-            Self::RepOnce(inner) => write!(f, "{}+", inner),
-            Self::RepRange(inner, range) => write!(f, "{}[{}]", inner, range),
-            Self::Separated(inner, trivia) => write!(f, "{}{}", inner, trivia),
+            Self::PosPred(inner) => write!(f, "&{inner}"),
+            Self::NegPred(inner) => write!(f, "!{inner}"),
+            Self::Seq(lhs, rhs, trivia) => write!(f, "({lhs} {trivia} {rhs})"),
+            Self::Choice(lhs, rhs) => write!(f, "({lhs} | {rhs})"),
+            Self::Opt(inner) => write!(f, "{inner}?"),
+            Self::Rep(inner) => write!(f, "{inner}*"),
+            Self::RepOnce(inner) => write!(f, "{inner}+"),
+            Self::RepRange(inner, range) => write!(f, "{inner}[{range}]"),
+            Self::Separated(inner, trivia) => write!(f, "{inner}{trivia}"),
         }
     }
 }
@@ -243,9 +275,7 @@ impl Display for ParseExpr {
 fn skip(rule: Rule, pairs: &mut Pairs<'_, Rule>) {
     if let Some(current_rule) = pairs.peek().map(|pair| pair.as_rule()) {
         if current_rule == rule {
-            pairs
-                .next()
-                .unwrap_or_else(|| panic!("expected {:?}", rule));
+            pairs.next().unwrap_or_else(|| panic!("expected {rule:?}"));
         }
     }
 }
@@ -343,8 +373,7 @@ fn _parse<P: AsRef<Path>>(
                                         Error::new_from_span(
                                             ErrorVariant::CustomError {
                                                 message: format!(
-                                                    "cannot read from {:?} due to: {}",
-                                                    path, err
+                                                    "cannot read from {path:?} due to: {err}"
                                                 ),
                                             },
                                             span_path2,
@@ -462,13 +491,21 @@ fn parse_rule(rule: Pair<'_, Rule>, path: PathBuf) -> Result<ParseRule, Error<Ru
         .map(|pair| pair.as_str().to_string())
         .collect();
 
+    // Skip assignment operator first
+    skip(Rule::assignment_operator, &mut pairs);
+
+    // Then check for silent modifier
     let silent = matches!(pairs.peek().unwrap().as_rule(), Rule::silent_modifier);
 
     if silent {
         pairs.next().unwrap(); // modifier
     }
-    skip(Rule::opening_brace, &mut pairs);
-    skip(Rule::assignment_operator, &mut pairs);
+    // Check if we have braces or direct expression
+    let has_braces = matches!(pairs.peek().unwrap().as_rule(), Rule::opening_brace);
+
+    if has_braces {
+        skip(Rule::opening_brace, &mut pairs);
+    }
 
     let pratt_parser = PrattParser::new()
         .op(Op::infix(Rule::choice_operator, Assoc::Right))
@@ -476,6 +513,10 @@ fn parse_rule(rule: Pair<'_, Rule>, path: PathBuf) -> Result<ParseRule, Error<Ru
             | Op::infix(Rule::tilde_operator, Assoc::Right)
             | Op::infix(Rule::caret_operator, Assoc::Right));
     let node = parse_node(pairs.next().unwrap(), &span, &pratt_parser)?;
+
+    if has_braces {
+        skip(Rule::closing_brace, &mut pairs);
+    }
 
     Ok(ParseRule {
         doc,
@@ -726,7 +767,7 @@ fn parse_bounded_repeat(pair: Pair<'_, Rule>, child: ParseNode) -> Result<ParseE
         if start > end {
             return Err(Error::new_from_span(
                 ErrorVariant::CustomError {
-                    message: format!("repetition range void ({} > {})", start, end),
+                    message: format!("repetition range void ({start} > {end})"),
                 },
                 inner_span(pair),
             ));

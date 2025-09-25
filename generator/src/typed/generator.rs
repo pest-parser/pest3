@@ -8,6 +8,7 @@ use super::{
 use crate::{
     common::generate_include,
     config::collect_data,
+    expr,
     typed::getter,
     types::{option_type, pest},
 };
@@ -83,7 +84,7 @@ impl Display for ProcessedPathArgs<'_> {
                 fmt_sep(args, ", ", f)?;
                 write!(f, ")")
             }
-            Self::Slice(range) => write!(f, "{}", range),
+            Self::Slice(range) => write!(f, "{range}"),
         }
     }
 }
@@ -139,9 +140,8 @@ impl<'g> RuleRef<'g> {
 impl<'g> Display for RuleRef<'g> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt_sep(&self.path, "::", f)?;
-        match &self.args {
-            Some(args) => write!(f, "{}", args)?,
-            None => (),
+        if let Some(args) = &self.args {
+            write!(f, "{args}")?
         }
         Ok(())
     }
@@ -772,7 +772,7 @@ fn collect_trivia<'g>(
 }
 
 #[cfg(test)]
-fn collect_used_rules<'s>(rules: &'s [ParseRule]) -> BTreeSet<&'s str> {
+fn collect_used_rules(rules: &[ParseRule]) -> BTreeSet<&str> {
     let mut res = BTreeSet::new();
     let optional_trivia = rules.iter().find(|rule| rule.name == "~");
     let mandatory_trivia = rules.iter().find(|rule| rule.name == "^");
@@ -846,6 +846,102 @@ fn generate_typed_pair_from_rule<'g>(
     quote! {#output}
 }
 
+fn collect_silent_rules_with_args<'a>(
+    path: Option<&'a str>,
+    module: &'a GrammarModule,
+) -> BTreeMap<Option<&'a str>, BTreeMap<&'a str, &'a ParseRule>> {
+    let mut result = BTreeMap::new();
+    result.insert(
+        path,
+        module
+            .rules
+            .iter()
+            .filter(|rule| rule.silent && !rule.args.is_empty())
+            .map(|rule| (rule.name.as_str(), rule))
+            .collect(),
+    );
+    module.imports.iter().for_each(|import| {
+        if let Import::File(path, module) = import {
+            result.extend(collect_silent_rules_with_args(Some(path), module));
+        }
+    });
+
+    result
+}
+
+fn inline_silent_rules_with_args(module: GrammarModule) -> GrammarModule {
+    let silent_rules = collect_silent_rules_with_args(None, &module);
+    let mut new_module = module.clone();
+    new_module
+        .rules
+        .retain(|rule| !rule.silent || rule.args.is_empty());
+    for rule in new_module.rules.iter_mut() {
+        let mut nodes = vec![&mut rule.node];
+        while !nodes.is_empty() {
+            loop {
+                let mut replaced = false;
+
+                if let Some(node) = nodes.last_mut() {
+                    let mut replace_expr = None;
+                    if let ParseExpr::Path(path, args) = &node.expr {
+                        if let Some(PathArgs::Call(args)) = args {
+                            if let Some(rule_name) = path.last() {
+                                if let Some(silent_rule) = silent_rules
+                                    .iter()
+                                    .find_map(|(mod_path, rules)| rules.get(rule_name.as_str()))
+                                {
+                                    assert!(silent_rule.args.len() == args.len(), "Arguments count mismatch when inlining silent rule `{}`. Expected {}, found {}.", silent_rule.name, silent_rule.args.len(), args.len());
+                                    let mut new_expr = silent_rule.node.expr.clone();
+                                    for (arg, silent_arg_name) in
+                                        args.iter().zip(silent_rule.args.iter())
+                                    {
+                                        replaced |=
+                                            new_expr.replace(silent_arg_name.as_str(), &arg.expr);
+                                    }
+                                    if replaced {
+                                        replace_expr = Some(new_expr);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if let Some(expr) = replace_expr {
+                        node.expr = expr;
+                    }
+                }
+                if !replaced {
+                    break;
+                }
+            }
+            let node = nodes.pop().unwrap();
+            match &mut node.expr {
+                ParseExpr::Seq(left, right, _) => {
+                    nodes.push(left);
+                    nodes.push(right);
+                }
+                ParseExpr::Choice(left, right) => {
+                    nodes.push(left);
+                    nodes.push(right);
+                }
+                ParseExpr::Opt(inner)
+                | ParseExpr::Rep(inner)
+                | ParseExpr::RepOnce(inner)
+                | ParseExpr::Separated(inner, _) => {
+                    nodes.push(inner);
+                }
+                ParseExpr::RepRange(inner, _) => {
+                    nodes.push(inner);
+                }
+                ParseExpr::PosPred(inner) | ParseExpr::NegPred(inner) => {
+                    nodes.push(inner);
+                }
+                _ => {}
+            }
+        }
+    }
+    new_module
+}
+
 /// Generate codes for Parser.
 fn generate_typed(
     name: Ident,
@@ -864,6 +960,7 @@ fn generate_typed(
     };
     let mut tracker = Tracker::new();
     let global = ModuleSystem::make_global();
+    let module = inline_silent_rules_with_args(module);
     let definition = generate_typed_pair_from_rule(&module, config, global, &mut tracker);
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
     let pest = pest();
@@ -940,7 +1037,7 @@ mod tests {
             String::from_utf8(std::fs::read("tests/syntax.pest").unwrap()).unwrap()
         });
         let parse_result =
-            PARSE_RESULT.get_or_init(|| parser::parse(&syntax, &"tests/syntax.pest").unwrap());
+            PARSE_RESULT.get_or_init(|| parser::parse(syntax, &"tests/syntax.pest").unwrap());
         (syntax, parse_result)
     }
 
@@ -956,7 +1053,7 @@ b = "b"+
         )
         .unwrap();
         let GrammarModule { rules, .. } = module.as_ref();
-        let used = collect_used_rules(&rules);
+        let used = collect_used_rules(rules);
         assert_eq!(used, BTreeSet::from(["a", "b"]));
     }
 
@@ -964,7 +1061,7 @@ b = "b"+
     /// Check we can actually break the cycles.
     fn inter_reference() {
         let module = parser::parse(
-            &r#"
+            r#"
 a = "a" - b*
 b = "b" - c?
 c = a+
@@ -973,9 +1070,37 @@ c = a+
         )
         .unwrap();
         let GrammarModule { rules, .. } = module.as_ref();
-        let used = collect_used_rules(&rules);
+        let used = collect_used_rules(rules);
         assert_eq!(used, BTreeSet::from(["a", "b", "c"]));
-        let graph = collect_reachability(&rules);
+        let graph = collect_reachability(rules);
         assert_eq!(graph, BTreeMap::from([("b", BTreeSet::from(["a", "c"]))]));
+    }
+
+    #[test]
+    fn inline_silent_with_args() {
+        let module = parser::parse(
+            r#"
+^ = "\r\n" | "\n"
+field = (pest::ascii_digit | "." | "-")+
+separated(e, s) = _{ e - (s - e)* }
+comma_separated(e) = _{ separated(e, ",") }
+record = comma_separated(field)
+file = pest::soi - (record ^ "")* - pest::eoi
+"#,
+            &file!(),
+        )
+        .unwrap();
+        let transformed_module = inline_silent_rules_with_args(module.as_ref().clone());
+        for rule in transformed_module.rules.iter() {
+            assert!(
+                !rule.silent || rule.args.is_empty(),
+                "Rule `{}` is still silent with arguments.",
+                rule.name
+            );
+            if rule.name == "record" {
+                // should be inlined as `record = (field - ("," - field)*)`
+                assert!(matches!(rule.node.expr, ParseExpr::Seq(_, _, Trivia::None)));
+            }
+        }
     }
 }

@@ -73,7 +73,7 @@ pub(crate) fn collect_data(contents: Vec<GrammarSource>) -> Vec<(String, Option<
 
                 let data = match read_to_string(&path) {
                     Ok(data) => data,
-                    Err(error) => panic!("error opening {:?}: {}", file_name, error),
+                    Err(error) => panic!("error opening {file_name:?}: {error}"),
                 };
                 (data, Some(path.clone()))
             }
