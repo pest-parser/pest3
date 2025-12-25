@@ -201,7 +201,11 @@ pub(crate) struct Output<'g> {
     rules_mod: Option<String>,
 }
 impl<'g> Output<'g> {
-    pub fn new(module: &'g GrammarModule, modules: Vec<(Ident, Self)>, rules_mod: Option<String>) -> Self {
+    pub fn new(
+        module: &'g GrammarModule,
+        modules: Vec<(Ident, Self)>,
+        rules_mod: Option<String>,
+    ) -> Self {
         let rule_enum = generate_rule_enum(module);
         Self {
             content: Vec::new(),
