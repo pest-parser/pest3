@@ -24,7 +24,19 @@ pub(crate) fn parse_derive(ast: DeriveInput) -> (Ident, Generics, Vec<GrammarSou
         } else if path.is_ident("box_all_rules") {
             config.box_rules_only_if_needed = get_bool(attr, "box_all_rules");
         } else if path.is_ident("rules_mod") {
-            config.rules_mod = Some(get_string(attr, "rules_mod"));
+            let value = get_string(attr, "rules_mod");
+            if value.is_empty() {
+                panic!(
+                    "Attribute #[rules_mod = \"...\"] must not be empty; provide a valid Rust identifier."
+                );
+            }
+            if syn::parse_str::<proc_macro2::Ident>(&value).is_err() {
+                panic!(
+                    "Invalid #[rules_mod = \"{}\"] attribute: expected a valid Rust identifier.",
+                    value
+                );
+            }
+            config.rules_mod = Some(value);
         }
     }
 
