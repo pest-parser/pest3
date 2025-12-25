@@ -23,6 +23,8 @@ pub(crate) fn parse_derive(ast: DeriveInput) -> (Ident, Generics, Vec<GrammarSou
             config.no_warnings = get_bool(attr, "no_warnings");
         } else if path.is_ident("box_all_rules") {
             config.box_rules_only_if_needed = get_bool(attr, "box_all_rules");
+        } else if path.is_ident("rules_mod") {
+            config.rules_mod = Some(get_string(attr, "rules_mod"));
         }
     }
 
