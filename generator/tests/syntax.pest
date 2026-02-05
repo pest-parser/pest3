@@ -42,3 +42,5 @@ PeekLeftRight = pest::stack::peek[1..2]
 Drop = pest::stack::drop
 
 PeekAll = pest::stack::peek_all
+
+OptionalPredicate = "a" - (&OptionalPredicate | "b")

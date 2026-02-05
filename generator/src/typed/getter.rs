@@ -24,7 +24,7 @@ enum Edge {
 #[derive(Clone, Debug)]
 enum Node<'g> {
     /// Type resolved from #root::rules
-    /// - Type: `& #(#prefix::rules::)* #ident`
+    /// - Type: `& #(#root::rules::)* #ident`
     /// - Path: `.content.deref()`
     Rule(TokenStream, &'g ()),
     /// - Type: `&#ident`
