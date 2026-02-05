@@ -34,7 +34,7 @@ closing_brack        = { "]" }
 
 arguments = { opening_paren ~ (identifier ~ (comma ~ identifier)* ~ comma?)? ~ closing_paren }
 
-silent_modifier     = { "_" }
+silent_modifier     = @{ "_" ~ !identifier }
 
 expression =  {
     (choice_operator? ~ term ~ choice_operator)? ~
