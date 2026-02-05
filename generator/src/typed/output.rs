@@ -16,8 +16,11 @@ pub fn generics() -> TokenStream {
         generics
     }
 }
-pub fn types_mod() -> TokenStream {
-    quote! {rules}
+/// Returns the rules module identifier.
+/// Defaults to "rules" if no custom name is provided.
+pub fn types_mod(rules_mod: Option<&str>) -> TokenStream {
+    let name = format_ident!("{}", rules_mod.unwrap_or("rules"));
+    quote! {#name}
 }
 
 pub fn constant_wrappers() -> TokenStream {
@@ -195,9 +198,14 @@ pub(crate) struct Output<'g> {
     modules: Vec<(Ident, Self)>,
     phantom: PhantomData<&'g ()>,
     rule_enum: TokenStream,
+    rules_mod: Option<String>,
 }
 impl<'g> Output<'g> {
-    pub fn new(module: &'g GrammarModule, modules: Vec<(Ident, Self)>) -> Self {
+    pub fn new(
+        module: &'g GrammarModule,
+        modules: Vec<(Ident, Self)>,
+        rules_mod: Option<String>,
+    ) -> Self {
         let rule_enum = generate_rule_enum(module);
         Self {
             content: Vec::new(),
@@ -206,6 +214,7 @@ impl<'g> Output<'g> {
             modules,
             phantom: PhantomData,
             rule_enum,
+            rules_mod,
         }
     }
     /// Insert rule struct to rule module.
@@ -222,7 +231,7 @@ impl<'g> Output<'g> {
     pub fn collect(&self) -> TokenStream {
         let pest = pest();
         let content = &self.content;
-        let types = types_mod();
+        let types = types_mod(self.rules_mod.as_deref());
         let rule_enum = &self.rule_enum;
         let optional_trivia = self
             .optional_trivia

@@ -52,7 +52,7 @@ pub struct RuleInfo<'g> {
 impl<'g> RuleInfo<'g> {
     fn new(
         rule: &'g ParseRule,
-        config: Config,
+        config: &Config,
         reachability: &BTreeMap<&str, BTreeSet<&str>>,
     ) -> Self {
         let rule_name = rule.name.as_str();
@@ -95,7 +95,7 @@ impl<'g> ProcessedPathArgs<'g> {
         rule_config: &RuleConfig<'g>,
         tracker: &mut Tracker<'g>,
         output: &mut Output<'g>,
-        config: Config,
+        config: &Config,
         mod_sys: &ModuleSystem<'g>,
         root: &TokenStream,
     ) -> Self {
@@ -148,7 +148,7 @@ impl<'g> Display for RuleRef<'g> {
 }
 
 fn create_rule<'g>(
-    config: Config,
+    config: &Config,
     rule_config: &RuleConfig<'g>,
     rule_info: &RuleInfo<'g>,
     prefix: &[String],
@@ -338,7 +338,7 @@ fn process_expr<'g>(
     rule_config: &RuleConfig<'g>,
     tracker: &mut Tracker<'g>,
     output: &mut Output<'g>,
-    config: Config,
+    config: &Config,
     mod_sys: &ModuleSystem<'g>,
     root: &TokenStream,
 ) -> Intermediate<'g> {
@@ -553,7 +553,7 @@ fn process_rule<'g: 'f, 'f>(
     rule: &'g ParseRule,
     mod_sys: &ModuleSystem<'g>,
     reachability: &BTreeMap<&str, BTreeSet<&str>>,
-    config: Config,
+    config: &Config,
     root: &TokenStream,
     prefix: &[String],
     tracker: &mut Tracker<'g>,
@@ -589,7 +589,7 @@ fn process_rule<'g: 'f, 'f>(
 fn process_rules<'g>(
     module: &'g GrammarModule,
     mod_sys: &mut ModuleSystem<'g>,
-    config: Config,
+    config: &Config,
     global: Rc<ModuleNode<'g>>,
     prefix: &[String],
     root: &TokenStream,
@@ -633,7 +633,7 @@ fn process_rules<'g>(
             }
         })
         .collect();
-    let mut output = Output::new(module, modules);
+    let mut output = Output::new(module, modules, config.rules_mod.clone());
     let reachability = collect_reachability(rules);
     for rule in rules.iter() {
         match rule.name.as_str() {
@@ -828,7 +828,7 @@ fn collect_reachability(rules: &[ParseRule]) -> BTreeMap<&str, BTreeSet<&str>> {
 
 fn generate_typed_pair_from_rule<'g>(
     module: &'g GrammarModule,
-    config: Config,
+    config: &Config,
     global: Rc<ModuleNode<'g>>,
     tracker: &mut Tracker<'g>,
 ) -> TokenStream {
@@ -950,7 +950,7 @@ fn generate_typed(
     module: GrammarModule,
     include_grammar: bool,
     impl_parser: bool,
-    config: Config,
+    config: &Config,
 ) -> TokenStream {
     paths.extend(module.dependencies.clone());
     let include_fix = if include_grammar {
@@ -1015,7 +1015,7 @@ pub fn derive_typed_parser(
         module,
         include_grammar,
         impl_parser,
-        config,
+        &config,
     )
 }
 

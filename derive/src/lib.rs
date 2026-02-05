@@ -58,6 +58,7 @@ use proc_macro::TokenStream;
         no_warnings,
         box_rules_only_if_needed,
         no_getter,
+        rules_mod,
     )
 )]
 /// Derive typed parser from given grammar.

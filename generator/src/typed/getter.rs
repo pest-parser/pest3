@@ -2,10 +2,7 @@ use std::collections::{btree_map::Entry, BTreeMap};
 
 use crate::types::pest;
 
-use super::{
-    generator::{RuleConfig, RuleInfo},
-    output::types_mod,
-};
+use super::generator::{RuleConfig, RuleInfo};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 use syn::Index;
@@ -125,7 +122,6 @@ impl<'g> Node<'g> {
             }
         };
         let vec = quote! {#this::std::Vec};
-        let rules_mod = types_mod();
         match self {
             Node::Rule(tokens, _) => (quote! {res}, quote! {&'s #tokens}),
             Node::GenericsArg(name) => {
