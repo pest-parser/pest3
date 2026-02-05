@@ -1,0 +1,11 @@
+//! A test for several bugs in https://github.com/pest-parser/pest3/issues/27
+
+useA = "a" ~ "b"*
+
+a = _b
+
+_b = "b"+
+
+x = "a" - (&x | "b")
+
+~ = ","
