@@ -402,7 +402,7 @@ fn process_expr<'g>(
             );
             let inner_typename = &inner.typename;
             let typename = quote! {#root::#generics::Positive::<#inner_typename>};
-            let getter = inner.getter;
+            let getter = inner.getter.content();
             Intermediate { typename, getter }
         }
         ParseExpr::NegPred(node) => {

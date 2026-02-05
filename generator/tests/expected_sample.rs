@@ -336,7 +336,10 @@ pub mod rules {
         #[allow(non_snake_case)]
         pub fn r#string<'s>(&'s self) -> &'s r#string<'i> {
             let res = &*self.content;
-            res
+            {
+                let res = &res.content;
+                res
+            }
         }
     }
     #[allow(unused_imports)]

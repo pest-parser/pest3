@@ -38,6 +38,7 @@ pub enum Rule {
     r#PeekLeftRight,
     r#Drop,
     r#PeekAll,
+    r#OptionalPredicate,
 }
 impl ::pest3_core::typed::RuleType for Rule {
     const EOI: Self = Rule::EOI;
@@ -1331,14 +1332,17 @@ pub mod rules {
         pub fn r#RepLeftRight<'s>(&'s self) -> ::pest3_core::std::Vec<&'s r#RepLeftRight<'i>> {
             let res = &*self.content;
             {
-                let res = &res.field_1;
+                let res = &res.content;
                 {
-                    let res = res
-                        .content
-                        .iter()
-                        .map(|res| res)
-                        .collect::<::pest3_core::std::Vec<_>>();
-                    res
+                    let res = &res.field_1;
+                    {
+                        let res = res
+                            .content
+                            .iter()
+                            .map(|res| res)
+                            .collect::<::pest3_core::std::Vec<_>>();
+                        res
+                    }
                 }
             }
         }
@@ -1347,8 +1351,11 @@ pub mod rules {
         pub fn r#soi<'s>(&'s self) -> &'s super::generics::r#soi {
             let res = &*self.content;
             {
-                let res = &res.field_0;
-                res
+                let res = &res.content;
+                {
+                    let res = &res.field_0;
+                    res
+                }
             }
         }
     }
@@ -2173,6 +2180,105 @@ pub mod rules {
             (self.span.start(), self.span.end())
         }
     }
+    #[doc = "Generated for rule `OptionalPredicate`. Grammar: `(\"a\" - (&OptionalPredicate | \"b\"))`."]
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    #[allow(non_camel_case_types)]
+    pub struct r#OptionalPredicate<'i> {
+        #[doc = r" Matched structure."]
+        pub content: ::pest3_core::std::Box<
+            super::generics::Sequence2<
+                super::generics::Str<super::wrapper::W7>,
+                ::pest3_core::typed::template::Empty,
+                super::generics::Choice2<
+                    super::generics::Positive<r#OptionalPredicate<'i>>,
+                    super::generics::Str<super::wrapper::W8>,
+                >,
+                ::pest3_core::typed::template::Empty,
+            >,
+        >,
+        #[doc = r" Matched span."]
+        pub span: ::pest3_core::Span<'i>,
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> ::pest3_core::typed::wrapper::Rule for r#OptionalPredicate<'i> {
+        type Rule = super::Rule;
+        const RULE: super::Rule = super::Rule::r#OptionalPredicate;
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> r#OptionalPredicate<'i> {
+        #[doc = "A helper function to access [`OptionalPredicate`]."]
+        #[allow(non_snake_case)]
+        pub fn r#OptionalPredicate<'s>(
+            &'s self,
+        ) -> ::pest3_core::std::Option<&'s r#OptionalPredicate<'i>> {
+            let res = &*self.content;
+            {
+                let res = &res.field_1;
+                {
+                    let res = res.choice_0().map(|res| {
+                        let res = &res.content;
+                        res
+                    });
+                    res
+                }
+            }
+        }
+    }
+    #[allow(unused_imports)]
+    use pest3_core::typed::SubRule as _;
+    ::pest3_core::typed::full_rule_struct!(
+        r#OptionalPredicate,
+        (),
+        super::Rule,
+        super::Rule::r#OptionalPredicate,
+        super::generics::Sequence2::<
+            super::generics::Str::<super::wrapper::W7>,
+            ::pest3_core::typed::template::Empty,
+            super::generics::Choice2::<
+                super::generics::Positive::<r#OptionalPredicate::<'i>>,
+                super::generics::Str::<super::wrapper::W8>,
+            >,
+            ::pest3_core::typed::template::Empty,
+        >,
+        ::pest3_core::std::Box<
+            super::generics::Sequence2::<
+                super::generics::Str::<super::wrapper::W7>,
+                ::pest3_core::typed::template::Empty,
+                super::generics::Choice2::<
+                    super::generics::Positive::<r#OptionalPredicate::<'i>>,
+                    super::generics::Str::<super::wrapper::W8>,
+                >,
+                ::pest3_core::typed::template::Empty,
+            >,
+        >,
+    );
+    #[allow(non_camel_case_types)]
+    impl<'i> ::pest3_core::typed::PairContainer<super::Rule> for r#OptionalPredicate<'i> {
+        fn for_each_child_pair(
+            &self,
+            f: &mut impl ::pest3_core::std::FnMut(::pest3_core::token::Pair<super::Rule>),
+        ) {
+            self.content.for_self_or_for_each_child_pair(f)
+        }
+        fn for_self_or_for_each_child_pair(
+            &self,
+            f: &mut impl ::pest3_core::std::FnMut(::pest3_core::token::Pair<super::Rule>),
+        ) {
+            use pest3_core::typed::PairTree;
+            f(self.as_pair_tree())
+        }
+    }
+    #[allow(non_camel_case_types)]
+    impl<'i> ::pest3_core::typed::PairTree<super::Rule> for r#OptionalPredicate<'i> {
+        fn get_rule() -> super::Rule {
+            #[allow(unused_imports)]
+            use pest3_core::typed::SubRule as _;
+            super::Rule::r#OptionalPredicate
+        }
+        fn get_span(&self) -> (::pest3_core::std::usize, ::pest3_core::std::usize) {
+            (self.span.start(), self.span.end())
+        }
+    }
 }
 mod wrapper {
     #[doc = "A wrapper for `\" \"`."]
@@ -2245,6 +2351,7 @@ mod wrapper {
 pub use pest3_core::typed::unicode;
 #[doc = "Used generics."]
 pub mod generics {
+    pub use pest3_core::choice::Choice2;
     pub use pest3_core::choice::Choice9;
     pub use pest3_core::sequence::Sequence2;
     pub use pest3_core::sequence::Sequence3;
