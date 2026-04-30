@@ -71,6 +71,8 @@ struct ErasedValue {
 impl ErasedValue {
     fn new<T: Clone>(value: T) -> Self {
         unsafe fn clone_impl<T: Clone>(ptr: *const ()) -> *mut () {
+            // SAFETY: `ptr` was created from `Box<T>` in `ErasedValue::new`, and `clone_impl` is
+            // stored alongside the matching concrete `T`.
             let value = unsafe { &*(ptr as *const T) };
             Box::into_raw(Box::new(value.clone())) as *mut ()
         }
@@ -227,14 +229,15 @@ impl<'i, R: RuleType> Tracker<'i, R> {
         let (end, value) = entry.value.as_ref()?;
         let pos = Position::new(input.input, *end).unwrap_or_else(|| {
             panic!(
-                "memoized position {} is not valid for the current input",
-                end
+                "memoized position {} is not valid for the current input of length {}",
+                end,
+                input.input.len()
             )
         });
         Some((pos, value.clone_as::<T>()))
     }
     fn active_at_position(active_positions: &BTreeMap<usize, usize>, pos: usize) -> bool {
-        active_positions.get(&pos).is_some_and(|count| *count != 0)
+        active_positions.contains_key(&pos)
     }
     fn begin_position(active_positions: &mut BTreeMap<usize, usize>, pos: usize) {
         *active_positions.entry(pos).or_default() += 1;

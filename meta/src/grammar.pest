@@ -36,6 +36,7 @@ arguments = { opening_paren ~ (identifier ~ (comma ~ identifier)* ~ comma?)? ~ c
 
 rule_modifier       = _{ silent_modifier | recursive_modifier }
 silent_modifier     = @{ "_" ~ !identifier }
+// `@` is the documented recursive modifier; `%` is kept as an equivalent alias.
 recursive_modifier  = @{ "@" | "%" }
 
 expression =  {

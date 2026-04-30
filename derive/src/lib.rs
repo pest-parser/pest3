@@ -47,6 +47,7 @@
 //! ### Left-recursive rules
 //!
 //! Rules that should use left-recursive growth can be marked with `@` after `=`.
+//! `%` is accepted as an equivalent alias.
 //!
 //! ```rust
 //! use pest3_derive::Parser;
