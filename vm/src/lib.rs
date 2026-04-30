@@ -1168,12 +1168,12 @@ fn peek_stack(
 mod tests {
     use super::*;
 
+    fn test_path(relative: &str) -> String {
+        format!("{}/{}", env!("CARGO_MANIFEST_DIR"), relative)
+    }
+
     fn vm_from_inline(grammar: &str) -> Vm {
-        Vm::from_source(
-            grammar,
-            "/home/runner/work/pest3/pest3/vm/tests/inline.pest",
-        )
-        .unwrap()
+        Vm::from_source(grammar, test_path("tests/inline.pest")).unwrap()
     }
 
     #[test]
@@ -1216,12 +1216,8 @@ main = pest::soi - "a" - pest::eoi
 
     #[test]
     fn parses_runtime_grammar_with_imports_and_stack_ops() {
-        let grammar = include_str!("/home/runner/work/pest3/pest3/meta/tests/pest3sample.pest");
-        let vm = Vm::from_source(
-            grammar,
-            "/home/runner/work/pest3/pest3/meta/tests/pest3sample.pest",
-        )
-        .unwrap();
+        let grammar = include_str!("../../meta/tests/pest3sample.pest");
+        let vm = Vm::from_source(grammar, test_path("../meta/tests/pest3sample.pest")).unwrap();
 
         vm.parse("peek_", "0111").unwrap();
         vm.parse("checkpoint_restore", "a").unwrap();
