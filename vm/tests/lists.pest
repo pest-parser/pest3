@@ -1,0 +1,10 @@
+item = (!"\n" - pest::any)*
+
+lists        = _{ lines - pest::eoi }
+lines        = _{ top_first - ("\n" - top_continue)* }
+top_first    = _{ "- " - item - ("\n" - children)? }
+top_continue = _{ pest::stack::peek_all - "- " - item - ("\n" - children)? }
+
+indentation = (" " | "\t")+
+children    = { pest::stack::peek_all - pest::stack::push(indentation) - lines - pest::stack::drop }
+

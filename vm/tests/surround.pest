@@ -1,0 +1,10 @@
+Quote = _{ _QuoteStart - QuoteChars - _QuoteEnd }
+
+_QuoteStart = _{
+    ("(" - pest::stack::push(")"))
+    | ("<" - pest::stack::push(">"))
+}
+_QuoteEnd = _{ pest::stack::pop }
+
+QuoteChars = (!pest::stack::peek - pest::any)*
+
