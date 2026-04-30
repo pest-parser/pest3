@@ -97,3 +97,19 @@ fn generated_json() {
         },
     );
 }
+
+#[test]
+fn generated_meta_bootstrap() {
+    let actual = derive_typed_parser(
+        quote! {
+            #[grammar = "../meta/src/grammar_bootstrap.pest"]
+            struct Parser;
+        },
+        false,
+        true,
+    )
+    .to_string();
+
+    assert!(actual.contains("r#grammar_rules"));
+    assert!(actual.contains("TypedParser < Rule > for Parser"));
+}
