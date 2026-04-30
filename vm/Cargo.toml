@@ -1,0 +1,11 @@
+[package]
+name = "pest3_vm"
+authors.workspace = true
+edition.workspace = true
+version.workspace = true
+description.workspace = true
+license.workspace = true
+
+[dependencies]
+pest3_core = { path = "../core", version = "0.0.3" }
+pest3_meta.workspace = true

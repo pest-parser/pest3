@@ -1,5 +1,5 @@
 [workspace]
-members = ["core", "derive", "generator", "meta", "pest"]
+members = ["core", "derive", "generator", "meta", "pest", "vm"]
 resolver = "2"
 
 package.authors = ["Dragoș Tiselice <dragostiselice@gmail.com>", "Tomas Tauber <me@tomtau.be>", "Boyi Huang <3266343194@qq.com>"]
