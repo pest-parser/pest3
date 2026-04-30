@@ -971,6 +971,15 @@ fn nested_rule_type(types: &proc_macro2::TokenStream, prefix: &[String]) -> Toke
     quote! { #types::#(#prefix::)* Rule }
 }
 
+fn nested_types_path(types: &proc_macro2::TokenStream, prefix: &[String]) -> TokenStream {
+    let mut path = quote! { #types };
+    for segment in prefix {
+        let segment = format_ident!("r#{}", segment);
+        path = quote! { #path::#segment::#types };
+    }
+    path
+}
+
 fn generate_event_processor_methods(module: &GrammarModule, prefix: &[String]) -> Vec<TokenStream> {
     let pest = pest();
     let mut methods = module
@@ -1128,15 +1137,13 @@ fn generate_pair_parser(
     module: &GrammarModule,
     prefix: &[String],
     types: &TokenStream,
+    config: &Config,
 ) -> TokenStream {
     let pest = pest();
     let parse_fn = helper_name(prefix, "parse_pair");
     let error_fn = helper_name(&[], "event_parse_error");
     let module_rule = nested_rule_type(types, prefix);
-    let type_prefix = prefix
-        .iter()
-        .map(|segment| format_ident!("r#{}", segment))
-        .collect::<Vec<_>>();
+    let types_path = nested_types_path(types, prefix);
 
     let mut arms = vec![quote! {
         #module_rule::EOI => {
@@ -1150,16 +1157,16 @@ fn generate_pair_parser(
 
     for rule in module.rules.iter().filter(|rule| rule.name != "~" && rule.name != "^") {
         let rule_id = format_ident!("r#{}", rule.name);
-        if rule.args.is_empty() {
+        if !config.no_pair && !rule.silent && rule.args.is_empty() {
             arms.push(quote! {
                 #module_rule::#rule_id => {
                     use #pest::typed::{PairTree as _, TypedNode as _};
-                    Ok(#types::#(#type_prefix::)* #rule_id::try_parse(input)?.as_pair_tree())
+                    Ok(#types_path::#rule_id::try_parse(input)?.as_pair_tree())
                 }
             });
         } else {
             let message = format!(
-                "Rule `{}` requires concrete meta-rule arguments and cannot be parsed directly through the event API.",
+                "Rule `{}` does not produce pair events directly and cannot be parsed directly through the event API.",
                 if prefix.is_empty() {
                     rule.name.clone()
                 } else {
@@ -1185,7 +1192,7 @@ fn generate_pair_parser(
                         .map_err(|error| Self::#error_fn(input, error.to_string()))
                 }
             });
-            nested.push(generate_pair_parser(module, &next_prefix, types));
+            nested.push(generate_pair_parser(module, &next_prefix, types, config));
         }
     }
 
@@ -1222,7 +1229,7 @@ fn generate_event_api(
     let error_fn = helper_name(&[], "event_parse_error");
     let methods = generate_event_processor_methods(module, &[]);
     let dispatchers = generate_event_dispatchers(module, &[], &observer_trait, &types);
-    let parsers = generate_pair_parser(module, &[], &types);
+    let parsers = generate_pair_parser(module, &[], &types, config);
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     quote! {
