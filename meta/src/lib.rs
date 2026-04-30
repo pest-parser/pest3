@@ -3,4 +3,5 @@
 
 pub mod doc;
 pub mod error;
+pub mod grammar;
 pub mod parser;

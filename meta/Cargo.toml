@@ -7,5 +7,6 @@ description.workspace = true
 license.workspace = true
 
 [dependencies]
+pest3 = { path = "../pest", version = "0.0.3" }
 pest = "2.1"
 pest_derive = "2.1"

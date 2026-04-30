@@ -1,0 +1,14 @@
+[package]
+name = "pest3_bootstrap"
+version = "0.0.3"
+authors = ["Dragoș Tiselice <dragostiselice@gmail.com>", "Tomas Tauber <me@tomtau.be>", "Boyi Huang <3266343194@qq.com>"]
+edition = "2021"
+description = "Bootstrap helper for generating pest3's meta parser"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[dependencies]
+pest3_generator = "=0.0.3"
+quote = "1.0"
+
+[workspace]
