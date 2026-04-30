@@ -46,6 +46,7 @@ pub struct RuleInfo<'g> {
     pub rule_id: Ident,
     pub rule_name: &'g str,
     pub silent: bool,
+    pub recursive: bool,
     pub boxed: bool,
     pub getter: bool,
 }
@@ -59,12 +60,14 @@ impl<'g> RuleInfo<'g> {
         let boxed = !config.box_rules_only_if_needed || !reachability.contains_key(rule_name);
         let rule_id = format_ident!("r#{}", rule_name);
         let silent = rule.silent;
+        let recursive = rule.recursive;
         let getter = !config.no_getter;
         Self {
             rule_id,
             rule_name,
             boxed,
             silent,
+            recursive,
             getter,
         }
     }
@@ -239,6 +242,7 @@ fn create_rule<'g>(
         quote! {}
     };
     let typed_node = {
+        let recursive = rule_info.recursive;
         let rule = (0..=prefix.len()).map(|n| {
             let supers = prefix.iter().take(n).map(|s| quote! {super::super::});
             let rule = quote! {
@@ -248,10 +252,19 @@ fn create_rule<'g>(
             for _ in 0..n {
                 rule_val = quote!{#rule_val.cvt_into()};
             }
+            let invocation = if recursive {
+                quote! {
+                    #this::typed::full_rule_struct!(#name, (#(#args),*), #rule, #rule_val, #inner_type, #content_type, recursive = true, );
+                }
+            } else {
+                quote! {
+                    #this::typed::full_rule_struct!(#name, (#(#args),*), #rule, #rule_val, #inner_type, #content_type, );
+                }
+            };
             quote! {
                 #[allow(unused_imports)]
                 use #this::typed::SubRule as _;
-                #this::typed::full_rule_struct!(#name, (#(#args),*), #rule, #rule_val, #inner_type, #content_type, );
+                #invocation
             }
         });
         quote! {#(#rule)*}

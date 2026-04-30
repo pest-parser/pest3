@@ -43,6 +43,28 @@
 //!
 //! And later we may support constant arguments
 //! just like the built-in rule `pest::stack::peek`.
+//!
+//! ### Left-recursive rules
+//!
+//! Rules that should use left-recursive growth can be marked with `@` after `=`.
+//! `%` is accepted as an equivalent alias.
+//!
+//! ```rust
+//! use pest3_derive::Parser;
+//! use pest3_core::typed::TypedNode;
+//!
+//! #[derive(Parser)]
+//! #[grammar_inline = r#"
+//!   expr = @ { expr - "+" - num | num }
+//!   num = ('0'..'9')+
+//! "#]
+//! struct Parser;
+//!
+//! # fn main() -> Result<(), Box<dyn std::error::Error>> {
+//! rules::expr::check("1+2+3")?;
+//! # Ok(())
+//! # }
+//! ```
 
 #![warn(rust_2018_idioms, rust_2021_compatibility, missing_docs)]
 

@@ -130,6 +130,43 @@ pub trait SubRule: RuleType {
 #[macro_export]
 /// Struct for rules with full capacity.
 macro_rules! full_rule_struct {
+    ($name:ident, ( $($args:ident ),* ), $Rule:ty, $rule:expr, $inner:ty, $content:ty, recursive = $recursive:expr, $(,)?) => {
+        #[allow(non_camel_case_types)]
+        impl<'i, $($args: $crate::typed::TypedNode<'i, $Rule>, )*> $crate::typed::TypedNode<'i, $Rule> for $name<'i, $($args, )*> {
+            fn try_parse_with_partial(
+                input: $crate::Position<'i>,
+                stack: &mut $crate::Stack<$crate::Span<'i>>,
+                tracker: &mut $crate::typed::Tracker<'i, $Rule>,
+            ) -> Option<($crate::Position<'i>, Self)> {
+                tracker.record_memoized_option_during(
+                    input,
+                    |tracker| {
+                        let (pos, content) = <$inner as $crate::typed::TypedNode<'i, $Rule>>::try_parse_with_partial(input, stack, tracker)?;
+                        let content = content.into();
+                        let span = input.span(&pos);
+                        Some((pos, Self { content, span }))
+                    },
+                    $rule,
+                    $recursive
+                )
+            }
+            fn check_with_partial(
+                input: $crate::Position<'i>,
+                stack: &mut $crate::Stack<$crate::Span<'i>>,
+                tracker: &mut $crate::typed::Tracker<'i, $Rule>,
+            ) -> Option<$crate::Position<'i>> {
+                tracker.record_memoized_empty_during::<Self>(
+                    input,
+                    |tracker| {
+                        let pos = <$inner>::check_with_partial(input, stack, tracker)?;
+                        Some(pos)
+                    },
+                    $rule,
+                    $recursive
+                )
+            }
+        }
+    };
     ($name:ident, ( $($args:ident ),* ), $Rule:ty, $rule:expr, $inner:ty, $content:ty, $(,)?) => {
         #[allow(non_camel_case_types)]
         impl<'i, $($args: $crate::typed::TypedNode<'i, $Rule>, )*> $crate::typed::TypedNode<'i, $Rule> for $name<'i, $($args, )*> {

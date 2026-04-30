@@ -16,7 +16,7 @@ import = { "use " ~ path ~ ("in" ~ string)? ~ ("as" ~ identifier)? }
 grammar_rule = {
     rule_doc* ~
     (identifier | overridable_operator) ~ arguments? ~
-    assignment_operator ~ silent_modifier? ~
+    assignment_operator ~ rule_modifier* ~
     (
         opening_brace ~ expression ~ closing_brace |
         expression
@@ -34,7 +34,10 @@ closing_brack        = { "]" }
 
 arguments = { opening_paren ~ (identifier ~ (comma ~ identifier)* ~ comma?)? ~ closing_paren }
 
+rule_modifier       = _{ silent_modifier | recursive_modifier }
 silent_modifier     = @{ "_" ~ !identifier }
+// `@` is the documented recursive modifier; `%` is kept as an equivalent alias.
+recursive_modifier  = @{ "@" | "%" }
 
 expression =  {
     (choice_operator? ~ term ~ choice_operator)? ~

@@ -121,6 +121,7 @@ pub struct ParseRule {
     pub span: Span,
     pub node: ParseNode,
     pub silent: bool,
+    pub recursive: bool,
 }
 
 #[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
@@ -494,11 +495,20 @@ fn parse_rule(rule: Pair<'_, Rule>, path: PathBuf) -> Result<ParseRule, Error<Ru
     // Skip assignment operator first
     skip(Rule::assignment_operator, &mut pairs);
 
-    // Then check for silent modifier
-    let silent = matches!(pairs.peek().unwrap().as_rule(), Rule::silent_modifier);
-
-    if silent {
-        pairs.next().unwrap(); // modifier
+    let mut silent = false;
+    let mut recursive = false;
+    while let Some(pair) = pairs.peek() {
+        match pair.as_rule() {
+            Rule::silent_modifier => {
+                silent = true;
+                pairs.next().unwrap();
+            }
+            Rule::recursive_modifier => {
+                recursive = true;
+                pairs.next().unwrap();
+            }
+            _ => break,
+        }
     }
     // Check if we have braces or direct expression
     let has_braces = matches!(pairs.peek().unwrap().as_rule(), Rule::opening_brace);
@@ -525,6 +535,7 @@ fn parse_rule(rule: Pair<'_, Rule>, path: PathBuf) -> Result<ParseRule, Error<Ru
         span,
         node,
         silent,
+        recursive,
     })
 }
 
@@ -1101,6 +1112,36 @@ mod tests {
     }
 
     #[test]
+    fn rule_with_recursive_modifier() {
+        let parsed = parse_rule(
+            PestParser::parse(Rule::grammar_rule, "a = @ { a - \"b\" | \"b\" }")
+                .unwrap()
+                .next()
+                .unwrap(),
+            PathBuf::from(file!()),
+        )
+        .unwrap();
+
+        assert!(parsed.recursive);
+        assert!(!parsed.silent);
+    }
+
+    #[test]
+    fn rule_with_multiple_modifiers() {
+        let parsed = parse_rule(
+            PestParser::parse(Rule::grammar_rule, "a = @_ { \"a\" }")
+                .unwrap()
+                .next()
+                .unwrap(),
+            PathBuf::from(file!()),
+        )
+        .unwrap();
+
+        assert!(parsed.recursive);
+        assert!(parsed.silent);
+    }
+
+    #[test]
     fn path() {
         parses_to! {
             parser: PestParser,
@@ -1345,6 +1386,7 @@ mod tests {
             positives: vec![
                 Rule::opening_brace,
                 Rule::silent_modifier,
+                Rule::recursive_modifier,
                 Rule::expression
             ],
             negatives: vec![],

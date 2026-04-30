@@ -8,6 +8,7 @@ pub fn rename_meta_rule(rule: &Rule) -> String {
         Rule::grammar_rule => "rule".to_owned(),
         Rule::assignment_operator => "`=`".to_owned(),
         Rule::silent_modifier => "`_`".to_owned(),
+        Rule::recursive_modifier => "`@` or `%` (equivalent recursive modifiers)".to_owned(),
         Rule::opening_brace => "`{`".to_owned(),
         Rule::closing_brace => "`}`".to_owned(),
         Rule::opening_brack => "`[`".to_owned(),
