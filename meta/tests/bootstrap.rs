@@ -1,4 +1,4 @@
-use pest3::typed::TypedParser;
+use pest3_core::typed::TypedParser;
 use pest3_meta::grammar::{rules, PestParser};
 
 #[test]
