@@ -856,7 +856,8 @@ impl<'a, 'i, T: Tracer> Runtime<'a, 'i, T> {
                 }
             },
             Builtin::Unicode(property) => {
-                let predicate = unicode::by_name(property).expect("unicode property must exist");
+                let predicate = unicode::by_name(property)
+                    .unwrap_or_else(|| panic!("unicode property `{property}` must exist"));
                 match match_predicate(self.input, position, predicate) {
                     Some(end) => Some(MatchResult { end, pairs: vec![] }),
                     None => {
@@ -1111,14 +1112,12 @@ fn match_newline(input: &str, position: usize) -> Option<usize> {
 }
 
 fn constrain_index(index: isize, len: usize) -> Option<usize> {
-    if index > len as isize {
-        None
-    } else if index >= 0 {
-        Some(index as usize)
-    } else if index >= -(len as isize) {
-        Some((index + len as isize) as usize)
-    } else {
-        None
+    let len = len as isize;
+    match index {
+        index if index > len => None,
+        index if index >= 0 => Some(index as usize),
+        index if index >= -len => Some((index + len) as usize),
+        _ => None,
     }
 }
 
@@ -1157,6 +1156,8 @@ fn peek_stack(
         Some((start, end)) => {
             let range = constrain_range(start, end, stack.len())?;
             if range.end <= range.start {
+                // An empty slice is a successful zero-width match, mirroring the
+                // empty-iterator behavior in the typed stack helpers.
                 return Some(position);
             }
             match_span_sequence(input, position, stack[range].iter().copied())
