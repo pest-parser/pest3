@@ -18,22 +18,26 @@ fn sequence_optional_trivia() {
     let output = vm().parse("sequence_optional_trivia", "abcabc").unwrap();
     assert_eq!(
         output.pairs,
-        vec![token!(sequence_optional_trivia(0, 6, [
-            string(0, 3),
-            string(3, 6)
-        ]))]
+        vec![token!(sequence_optional_trivia(
+            0,
+            6,
+            [string(0, 3), string(3, 6)]
+        ))]
     );
 }
 
 #[test]
 fn sequence_mandatory_trivia() {
-    let output = vm().parse("sequence_mandatory_trivia", "abc   abc").unwrap();
+    let output = vm()
+        .parse("sequence_mandatory_trivia", "abc   abc")
+        .unwrap();
     assert_eq!(
         output.pairs,
-        vec![token!(sequence_mandatory_trivia(0, 9, [
-            string(0, 3),
-            string(6, 9)
-        ]))]
+        vec![token!(sequence_mandatory_trivia(
+            0,
+            9,
+            [string(0, 3), string(6, 9)]
+        ))]
     );
 }
 
@@ -51,11 +55,11 @@ fn repeat_min_max_atomic_thrice() {
     let output = vm().parse("repeat_min_max_atomic", "abcabcabc").unwrap();
     assert_eq!(
         output.pairs,
-        vec![token!(repeat_min_max_atomic(0, 9, [
-            string(0, 3),
-            string(3, 6),
-            string(6, 9)
-        ]))]
+        vec![token!(repeat_min_max_atomic(
+            0,
+            9,
+            [string(0, 3), string(3, 6), string(6, 9)]
+        ))]
     );
 }
 
@@ -64,10 +68,11 @@ fn repeat_max_atomic_twice() {
     let output = vm().parse("repeat_max_atomic", "abcabc").unwrap();
     assert_eq!(
         output.pairs,
-        vec![token!(repeat_max_atomic(0, 6, [
-            string(0, 3),
-            string(3, 6)
-        ]))]
+        vec![token!(repeat_max_atomic(
+            0,
+            6,
+            [string(0, 3), string(3, 6)]
+        ))]
     );
 }
 
@@ -76,10 +81,7 @@ fn repeat_comment() {
     let output = vm().parse("repeat_once", "abc$$$ $$$abc").unwrap();
     assert_eq!(
         output.pairs,
-        vec![token!(repeat_once(0, 13, [
-            string(0, 3),
-            string(10, 13)
-        ]))]
+        vec![token!(repeat_once(0, 13, [string(0, 3), string(10, 13)]))]
     );
 }
 
@@ -88,7 +90,11 @@ fn stack_resume_after_fail() {
     let output = vm().parse("stack_resume_after_fail", "a,b,c,cba").unwrap();
     assert_eq!(
         output.pairs,
-        vec![token!(stack_resume_after_fail(0, 9, [repeat_mutate_stack_pop_all(0, 9)]))]
+        vec![token!(stack_resume_after_fail(
+            0,
+            9,
+            [repeat_mutate_stack_pop_all(0, 9)]
+        ))]
     );
 }
 
@@ -97,13 +103,17 @@ fn peek_slice_23() {
     let output = vm().parse("peek_slice_23", "0123412").unwrap();
     assert_eq!(
         output.pairs,
-        vec![token!(peek_slice_23(0, 7, [
-            range(0, 1),
-            range(1, 2),
-            range(2, 3),
-            range(3, 4),
-            range(4, 5)
-        ]))]
+        vec![token!(peek_slice_23(
+            0,
+            7,
+            [
+                range(0, 1),
+                range(1, 2),
+                range(2, 3),
+                range(3, 4),
+                range(4, 5)
+            ]
+        ))]
     );
 }
 
@@ -129,4 +139,3 @@ fn repeat_once_atomic_empty_fails() {
     assert_eq!(error.position, 0);
     assert!(error.expected.iter().any(|item| item == "\"abc\""));
 }
-

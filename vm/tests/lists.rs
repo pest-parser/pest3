@@ -21,10 +21,7 @@ fn items() {
 #[test]
 fn children() {
     let output = vm().parse("children", "  - b").unwrap();
-    assert_eq!(
-        output.pairs,
-        vec![token!(children(0, 5, [item(4, 5)]))]
-    );
+    assert_eq!(output.pairs, vec![token!(children(0, 5, [item(4, 5)]))]);
 }
 
 #[test]
@@ -55,10 +52,11 @@ fn nested_two_levels() {
         output.pairs,
         vec![
             token!(item(2, 3)),
-            token!(children(4, 17, [
-                item(8, 9),
-                children(10, 17, [item(16, 17)])
-            ]))
+            token!(children(
+                4,
+                17,
+                [item(8, 9), children(10, 17, [item(16, 17)])]
+            ))
         ]
     );
 }
@@ -75,4 +73,3 @@ fn nested_then_not() {
         ]
     );
 }
-
