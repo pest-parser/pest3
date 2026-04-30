@@ -998,6 +998,8 @@ fn generate_event_processor_methods(module: &GrammarModule, prefix: &[String]) -
             [
                 quote! {
                     #[doc = concat!("Called when rule `", #path, "` starts.")]
+                    #[doc = "The `pair` argument contains the matched rule, span, and child pairs."]
+                    #[doc = "The `input` argument is the full original parser input."]
                     fn #start(
                         &mut self,
                         _pair: &#pest::token::Pair<Rule>,
@@ -1006,6 +1008,8 @@ fn generate_event_processor_methods(module: &GrammarModule, prefix: &[String]) -
                 },
                 quote! {
                     #[doc = concat!("Called when rule `", #path, "` ends.")]
+                    #[doc = "The `pair` argument contains the matched rule, span, and child pairs."]
+                    #[doc = "The `input` argument is the full original parser input."]
                     fn #end(
                         &mut self,
                         _pair: &#pest::token::Pair<Rule>,
@@ -1166,7 +1170,7 @@ fn generate_pair_parser(
             });
         } else {
             let message = format!(
-                "Rule `{}` does not produce pair events directly and cannot be parsed directly through the event API.",
+                "Rule `{}` does not produce pair events directly and cannot be parsed directly through the event API. Parse a parent rule that includes it instead.",
                 if prefix.is_empty() {
                     rule.name.clone()
                 } else {
@@ -1244,6 +1248,9 @@ fn generate_event_api(
             type Output;
 
             /// Finalize the processor after all events have been emitted.
+            ///
+            /// This is called automatically by [`parse`](Self::parse). When using `parse_into`,
+            /// call it manually on your processor afterwards if you need a final output value.
             fn finalize(self) -> Self::Output;
         }
 
