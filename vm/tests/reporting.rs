@@ -45,7 +45,9 @@ fn nested() {
 
 #[test]
 fn negative() {
-    assert_failure("negative", "x", 0, &["negative"]);
+    let error = parse_error(vm().parse("negative", "x").unwrap_err());
+    assert_eq!(error.position, 0);
+    assert!(error.expected.is_empty());
 }
 
 #[test]
@@ -62,4 +64,3 @@ fn mixed() {
 fn mixed_progress() {
     assert_failure("mixed_progress", "b", 1, &["\"a\""]);
 }
-

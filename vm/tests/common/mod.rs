@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use pest3_core::token::Pair;
 use pest3_vm::{Error, ParseError, Vm};
 
@@ -34,4 +36,3 @@ macro_rules! token {
         $crate::common::pair(stringify!($rule), $start, $end, vec![$( token!($names $tokens) ),*])
     }};
 }
-

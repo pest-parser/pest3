@@ -8,6 +8,6 @@ fn vm() -> pest3_vm::Vm {
 
 #[test]
 fn quote() {
-    let output = vm().parse("Quote", "(abc)").unwrap();
+    let output = vm().parse("Quote", "\"abc\"").unwrap();
     assert_eq!(output.pairs, vec![token!(QuoteChars(1, 4))]);
 }
