@@ -86,6 +86,10 @@ impl ErasedValue {
         }
     }
 
+    /// # Safety
+    ///
+    /// The caller must ensure `T` is the same concrete type that was originally stored in this
+    /// erased value.
     fn clone_as<T: Clone>(&self) -> T {
         unsafe { (&*(self.ptr as *const T)).clone() }
     }
@@ -230,7 +234,7 @@ impl<'i, R: RuleType> Tracker<'i, R> {
         Some((pos, value.clone_as::<T>()))
     }
     fn active_at_position(active_positions: &BTreeMap<usize, usize>, pos: usize) -> bool {
-        active_positions.get(&pos).copied().unwrap_or_default() != 0
+        active_positions.get(&pos).is_some_and(|count| *count != 0)
     }
     fn begin_position(active_positions: &mut BTreeMap<usize, usize>, pos: usize) {
         *active_positions.entry(pos).or_default() += 1;
