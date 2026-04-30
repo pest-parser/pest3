@@ -43,6 +43,46 @@
 //!
 //! And later we may support constant arguments
 //! just like the built-in rule `pest::stack::peek`.
+//!
+//! ### Event processors
+//!
+//! Deriving a parser also generates event traits based on the parser type name:
+//! `<ParserName>EventObserver` and `<ParserName>EventProcessor`.
+//!
+//! ```rust
+//! use pest3_derive::Parser;
+//!
+//! #[derive(Parser)]
+//! #[grammar_inline = r#"
+//!   main = lhs - rhs
+//!   lhs = "a"
+//!   rhs = "b"
+//! "#]
+//! struct Parser;
+//!
+//! #[derive(Default)]
+//! struct Recorder(Vec<&'static str>);
+//!
+//! impl<'i> ParserEventObserver<'i> for Recorder {
+//!   fn on_main_start(&mut self, _pair: &pest3_core::token::Pair<Rule>, _input: &'i str) {
+//!     self.0.push("main:start");
+//!   }
+//! }
+//!
+//! impl<'i> ParserEventProcessor<'i> for Recorder {
+//!   type Output = Vec<&'static str>;
+//!
+//!   fn finalize(self) -> Self::Output {
+//!     self.0
+//!   }
+//! }
+//!
+//! fn main() -> anyhow::Result<()> {
+//!   let events = Parser::parse(Rule::r#main, Recorder::default(), "ab")?;
+//!   assert_eq!(events, vec!["main:start"]);
+//!   Ok(())
+//! }
+//! ```
 
 #![warn(rust_2018_idioms, rust_2021_compatibility, missing_docs)]
 

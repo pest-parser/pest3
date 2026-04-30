@@ -3,7 +3,7 @@ use super::{
     config::Config,
     getter::GetterByName,
     module::{ModuleNode, ModuleSystem},
-    output::{generics, Output, Tracker},
+    output::{generics, types_mod, Output, Tracker},
 };
 use crate::{
     common::generate_include,
@@ -942,6 +942,372 @@ fn inline_silent_rules_with_args(module: GrammarModule) -> GrammarModule {
     new_module
 }
 
+fn prefixed_rule_method(prefix: &[String], rule_name: &str, suffix: &str) -> Ident {
+    let mut name = String::from("on");
+    for part in prefix {
+        name.push('_');
+        name.push_str(part);
+    }
+    name.push('_');
+    name.push_str(rule_name);
+    name.push('_');
+    name.push_str(suffix);
+    format_ident!("{name}")
+}
+
+fn helper_name(prefix: &[String], suffix: &str) -> Ident {
+    if prefix.is_empty() {
+        format_ident!("__{suffix}")
+    } else {
+        format_ident!("__{}_{}", suffix, prefix.join("_"))
+    }
+}
+
+fn nested_rule_type(types: &proc_macro2::TokenStream, prefix: &[String]) -> TokenStream {
+    if prefix.is_empty() {
+        return quote! { Rule };
+    }
+    let prefix = prefix.iter().map(|segment| format_ident!("r#{}", segment));
+    quote! { #types::#(#prefix::)* Rule }
+}
+
+fn nested_types_path(types: &proc_macro2::TokenStream, prefix: &[String]) -> TokenStream {
+    let mut path = quote! { #types };
+    for segment in prefix {
+        let segment = format_ident!("r#{}", segment);
+        path = quote! { #path::#segment::#types };
+    }
+    path
+}
+
+fn generate_event_processor_methods(module: &GrammarModule, prefix: &[String]) -> Vec<TokenStream> {
+    let pest = pest();
+    let mut methods = module
+        .rules
+        .iter()
+        .filter(|rule| rule.name != "~" && rule.name != "^")
+        .flat_map(|rule| {
+            let rule_name = &rule.name;
+            let start = prefixed_rule_method(prefix, rule_name, "start");
+            let end = prefixed_rule_method(prefix, rule_name, "end");
+            let path = if prefix.is_empty() {
+                rule_name.clone()
+            } else {
+                format!("{}::{}", prefix.join("::"), rule_name)
+            };
+            [
+                quote! {
+                    #[doc = concat!("Called when rule `", #path, "` starts.")]
+                    #[doc = "The `pair` argument contains the matched rule, span, and child pairs."]
+                    #[doc = "The `input` argument is the full original parser input."]
+                    fn #start(
+                        &mut self,
+                        _pair: &#pest::token::Pair<Rule>,
+                        _input: &'i str,
+                    ) {}
+                },
+                quote! {
+                    #[doc = concat!("Called when rule `", #path, "` ends.")]
+                    #[doc = "The `pair` argument contains the matched rule, span, and child pairs."]
+                    #[doc = "The `input` argument is the full original parser input."]
+                    fn #end(
+                        &mut self,
+                        _pair: &#pest::token::Pair<Rule>,
+                        _input: &'i str,
+                    ) {}
+                },
+            ]
+        })
+        .collect::<Vec<_>>();
+
+    for import in &module.imports {
+        if let Import::File(name, module) = import {
+            let mut next_prefix = prefix.to_vec();
+            next_prefix.push(name.clone());
+            methods.extend(generate_event_processor_methods(module, &next_prefix));
+        }
+    }
+
+    methods
+}
+
+fn generate_event_dispatchers(
+    module: &GrammarModule,
+    prefix: &[String],
+    observer_trait: &Ident,
+    types: &TokenStream,
+) -> TokenStream {
+    let pest = pest();
+    let top_rule = quote! { Rule };
+    let module_rule = nested_rule_type(types, prefix);
+    let root_start = helper_name(prefix, "dispatch_start");
+    let root_end = helper_name(prefix, "dispatch_end");
+
+    let mut start_arms = vec![quote! { #module_rule::EOI => {} }];
+    let mut end_arms = vec![quote! { #module_rule::EOI => {} }];
+    let mut nested = Vec::new();
+
+    for rule in module.rules.iter().filter(|rule| rule.name != "~" && rule.name != "^") {
+        let rule_id = format_ident!("r#{}", rule.name);
+        let start = prefixed_rule_method(prefix, &rule.name, "start");
+        let end = prefixed_rule_method(prefix, &rule.name, "end");
+        start_arms.push(quote! { #module_rule::#rule_id => processor.#start(pair, input), });
+        end_arms.push(quote! { #module_rule::#rule_id => processor.#end(pair, input), });
+    }
+
+    for import in &module.imports {
+        if let Import::File(name, module) = import {
+            let import_id = format_ident!("r#{}", name);
+            let mut next_prefix = prefix.to_vec();
+            next_prefix.push(name.clone());
+            let nested_start = helper_name(&next_prefix, "dispatch_start");
+            let nested_end = helper_name(&next_prefix, "dispatch_end");
+            start_arms.push(
+                quote! { #module_rule::#import_id(rule) => Self::#nested_start(processor, input, pair, rule), },
+            );
+            end_arms
+                .push(quote! { #module_rule::#import_id(rule) => Self::#nested_end(processor, input, pair, rule), });
+            nested.push(generate_event_dispatchers(
+                module,
+                &next_prefix,
+                observer_trait,
+                types,
+            ));
+        }
+    }
+
+    let start_fn = if prefix.is_empty() {
+        quote! {
+            fn #root_start<'i, P: #observer_trait<'i>>(
+                processor: &mut P,
+                input: &'i str,
+                pair: &#pest::token::Pair<#top_rule>,
+            ) {
+                match pair.rule {
+                    #(#start_arms)*
+                }
+            }
+        }
+    } else {
+        quote! {
+            fn #root_start<'i, P: #observer_trait<'i>>(
+                processor: &mut P,
+                input: &'i str,
+                pair: &#pest::token::Pair<#top_rule>,
+                rule: #module_rule,
+            ) {
+                match rule {
+                    #(#start_arms)*
+                }
+            }
+        }
+    };
+
+    let end_fn = if prefix.is_empty() {
+        quote! {
+            fn #root_end<'i, P: #observer_trait<'i>>(
+                processor: &mut P,
+                input: &'i str,
+                pair: &#pest::token::Pair<#top_rule>,
+            ) {
+                match pair.rule {
+                    #(#end_arms)*
+                }
+            }
+        }
+    } else {
+        quote! {
+            fn #root_end<'i, P: #observer_trait<'i>>(
+                processor: &mut P,
+                input: &'i str,
+                pair: &#pest::token::Pair<#top_rule>,
+                rule: #module_rule,
+            ) {
+                match rule {
+                    #(#end_arms)*
+                }
+            }
+        }
+    };
+
+    quote! {
+        #start_fn
+        #end_fn
+        #(#nested)*
+    }
+}
+
+fn generate_pair_parser(
+    module: &GrammarModule,
+    prefix: &[String],
+    types: &TokenStream,
+    config: &Config,
+) -> TokenStream {
+    let pest = pest();
+    let parse_fn = helper_name(prefix, "parse_pair");
+    let error_fn = helper_name(&[], "event_parse_error");
+    let module_rule = nested_rule_type(types, prefix);
+    let types_path = nested_types_path(types, prefix);
+
+    let mut arms = vec![quote! {
+        #module_rule::EOI => {
+            Err(Self::#error_fn(
+                input,
+                "Rule::EOI cannot be parsed directly through the event API.",
+            ))
+        }
+    }];
+    let mut nested = Vec::new();
+
+    for rule in module.rules.iter().filter(|rule| rule.name != "~" && rule.name != "^") {
+        let rule_id = format_ident!("r#{}", rule.name);
+        if !config.no_pair && !rule.silent && rule.args.is_empty() {
+            arms.push(quote! {
+                #module_rule::#rule_id => {
+                    use #pest::typed::{PairTree as _, TypedNode as _};
+                    Ok(#types_path::#rule_id::try_parse(input)?.as_pair_tree())
+                }
+            });
+        } else {
+            let message = format!(
+                "Rule `{}` does not produce pair events directly and cannot be parsed directly through the event API. Parse a parent rule that includes it instead.",
+                if prefix.is_empty() {
+                    rule.name.clone()
+                } else {
+                    format!("{}::{}", prefix.join("::"), rule.name)
+                }
+            );
+            arms.push(quote! {
+                #module_rule::#rule_id => Err(Self::#error_fn(input, #message))
+            });
+        }
+    }
+
+    for import in &module.imports {
+        if let Import::File(name, module) = import {
+            let import_id = format_ident!("r#{}", name);
+            let mut next_prefix = prefix.to_vec();
+            next_prefix.push(name.clone());
+            let nested_parse = helper_name(&next_prefix, "parse_pair");
+            arms.push(quote! {
+                #module_rule::#import_id(rule) => {
+                    Self::#nested_parse(rule, input)
+                        .map(|pair| pair.convert(&#module_rule::#import_id))
+                        .map_err(|error| Self::#error_fn(input, error.to_string()))
+                }
+            });
+            nested.push(generate_pair_parser(module, &next_prefix, types, config));
+        }
+    }
+
+    quote! {
+        fn #parse_fn<'i>(
+            rule: #module_rule,
+            input: &'i str,
+        ) -> #pest::std::Result<
+            #pest::token::Pair<#module_rule>,
+            #pest::std::Box<#pest::error::Error<#module_rule>>,
+        > {
+            match rule {
+                #(#arms,)*
+            }
+        }
+        #(#nested)*
+    }
+}
+
+fn generate_event_api(
+    name: &Ident,
+    generics: &Generics,
+    module: &GrammarModule,
+    config: &Config,
+) -> TokenStream {
+    let pest = pest();
+    let types = types_mod(config.rules_mod.as_deref());
+    let observer_trait = format_ident!("{}EventObserver", name);
+    let processor_trait = format_ident!("{}EventProcessor", name);
+    let parse_pair = helper_name(&[], "parse_pair");
+    let dispatch_start = helper_name(&[], "dispatch_start");
+    let dispatch_end = helper_name(&[], "dispatch_end");
+    let walk = helper_name(&[], "walk_events");
+    let error_fn = helper_name(&[], "event_parse_error");
+    let methods = generate_event_processor_methods(module, &[]);
+    let dispatchers = generate_event_dispatchers(module, &[], &observer_trait, &types);
+    let parsers = generate_pair_parser(module, &[], &types, config);
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+
+    quote! {
+        #[doc = "Receives parser events for matched rules."]
+        pub trait #observer_trait<'i> {
+            #(#methods)*
+        }
+
+        #[doc = "Receives parser events and can return a final output value."]
+        pub trait #processor_trait<'i>: #observer_trait<'i> {
+            /// Final output produced after the parser finishes walking the matched rule tree.
+            type Output;
+
+            /// Finalize the processor after all events have been emitted.
+            ///
+            /// This is called automatically by [`parse`](Self::parse). When using `parse_into`,
+            /// call it manually on your processor afterwards if you need a final output value.
+            fn finalize(self) -> Self::Output;
+        }
+
+        #[allow(clippy::all)]
+        impl #impl_generics #name #ty_generics #where_clause {
+            fn #error_fn<R: #pest::typed::RuleType>(
+                input: &str,
+                message: impl ::core::fmt::Display,
+            ) -> #pest::std::Box<#pest::error::Error<R>> {
+                #pest::std::Box::new(#pest::error::Error::new_from_pos(
+                    #pest::error::ErrorVariant::CustomError {
+                        message: message.to_string(),
+                    },
+                    #pest::Position::from_start(input).into(),
+                ))
+            }
+
+            #dispatchers
+
+            fn #walk<'i, P: #observer_trait<'i>>(
+                processor: &mut P,
+                input: &'i str,
+                pair: &#pest::token::Pair<Rule>,
+            ) {
+                Self::#dispatch_start(processor, input, pair);
+                for child in &pair.children {
+                    Self::#walk(processor, input, child);
+                }
+                Self::#dispatch_end(processor, input, pair);
+            }
+
+            #parsers
+
+            /// Parse a rule and emit events into an existing observer.
+            pub fn parse_into<'i, P: #observer_trait<'i>>(
+                rule: Rule,
+                processor: &mut P,
+                input: &'i str,
+            ) -> #pest::std::Result<(), #pest::std::Box<#pest::error::Error<Rule>>> {
+                let pair = Self::#parse_pair(rule, input)?;
+                Self::#walk(processor, input, &pair);
+                Ok(())
+            }
+
+            /// Parse a rule, emit events, and finalize the processor into an output value.
+            pub fn parse<'i, P: #processor_trait<'i>>(
+                rule: Rule,
+                mut processor: P,
+                input: &'i str,
+            ) -> #pest::std::Result<P::Output, #pest::std::Box<#pest::error::Error<Rule>>> {
+                Self::parse_into(rule, &mut processor, input)?;
+                Ok(processor.finalize())
+            }
+        }
+    }
+}
+
 /// Generate codes for Parser.
 fn generate_typed(
     name: Ident,
@@ -964,11 +1330,13 @@ fn generate_typed(
     let definition = generate_typed_pair_from_rule(&module, config, global, &mut tracker);
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
     let pest = pest();
+    let event_api = generate_event_api(&name, generics, &module, config);
 
     let impl_parser = match impl_parser {
         true => quote! {
             #[allow(clippy::all)]
             impl #impl_generics #pest::typed::TypedParser<Rule> for #name #ty_generics #where_clause {}
+            #event_api
         },
         false => quote! {},
     };
