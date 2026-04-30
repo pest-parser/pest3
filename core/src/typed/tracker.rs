@@ -11,13 +11,14 @@ use crate::{
 };
 use alloc::{
     borrow::ToOwned,
+    boxed::Box,
     collections::BTreeMap,
     format,
     string::{String, ToString},
     vec,
     vec::Vec,
 };
-use core::cmp::Ordering;
+use core::{any::type_name, cmp::Ordering};
 
 /// Some special errors that are not matching failures.
 pub enum SpecialError {
@@ -44,6 +45,80 @@ impl ToString for SpecialError {
 
 type Tracked<R> = (Vec<R>, Vec<R>, Vec<SpecialError>);
 
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+struct MemoKey<R> {
+    rule: R,
+    pos: usize,
+    ty: &'static str,
+}
+
+impl<R> MemoKey<R> {
+    fn new<T>(rule: R, pos: usize) -> Self {
+        Self {
+            rule,
+            pos,
+            ty: type_name::<T>(),
+        }
+    }
+}
+
+struct ErasedValue {
+    ptr: *mut (),
+    clone_fn: unsafe fn(*const ()) -> *mut (),
+    drop_fn: unsafe fn(*mut ()),
+}
+
+impl ErasedValue {
+    fn new<T: Clone>(value: T) -> Self {
+        unsafe fn clone_impl<T: Clone>(ptr: *const ()) -> *mut () {
+            let value = unsafe { &*(ptr as *const T) };
+            Box::into_raw(Box::new(value.clone())) as *mut ()
+        }
+
+        unsafe fn drop_impl<T>(ptr: *mut ()) {
+            unsafe { drop(Box::from_raw(ptr as *mut T)) };
+        }
+
+        Self {
+            ptr: Box::into_raw(Box::new(value)) as *mut (),
+            clone_fn: clone_impl::<T>,
+            drop_fn: drop_impl::<T>,
+        }
+    }
+
+    fn clone_as<T: Clone>(&self) -> T {
+        unsafe { (&*(self.ptr as *const T)).clone() }
+    }
+}
+
+impl Clone for ErasedValue {
+    fn clone(&self) -> Self {
+        Self {
+            ptr: unsafe { (self.clone_fn)(self.ptr) },
+            clone_fn: self.clone_fn,
+            drop_fn: self.drop_fn,
+        }
+    }
+}
+
+impl Drop for ErasedValue {
+    fn drop(&mut self) {
+        unsafe { (self.drop_fn)(self.ptr) };
+    }
+}
+
+#[derive(Clone)]
+struct ParseMemoEntry {
+    active: bool,
+    value: Option<(usize, ErasedValue)>,
+}
+
+#[derive(Clone, Copy, Default)]
+struct CheckMemoEntry {
+    active: bool,
+    value: Option<usize>,
+}
+
 /// Error tracker.
 pub struct Tracker<'i, R: RuleType> {
     position: Position<'i>,
@@ -51,6 +126,10 @@ pub struct Tracker<'i, R: RuleType> {
     /// upper rule -> (positives, negatives)
     attempts: BTreeMap<Option<R>, Tracked<R>>,
     stack: Vec<(R, Position<'i>, bool)>,
+    parse_memo: BTreeMap<MemoKey<R>, ParseMemoEntry>,
+    check_memo: BTreeMap<MemoKey<R>, CheckMemoEntry>,
+    parse_active_positions: BTreeMap<usize, usize>,
+    check_active_positions: BTreeMap<usize, usize>,
 }
 impl<'i, R: RuleType> Tracker<'i, R> {
     /// Create an empty tracker for attempts.
@@ -60,6 +139,10 @@ impl<'i, R: RuleType> Tracker<'i, R> {
             positive: true,
             attempts: BTreeMap::new(),
             stack: vec![],
+            parse_memo: BTreeMap::new(),
+            check_memo: BTreeMap::new(),
+            parse_active_positions: BTreeMap::new(),
+            check_active_positions: BTreeMap::new(),
         }
     }
     fn clear(&mut self) {
@@ -133,6 +216,33 @@ impl<'i, R: RuleType> Tracker<'i, R> {
             None => false,
         }
     }
+    fn clone_parse_memo<T: Clone>(
+        input: Position<'i>,
+        entry: &ParseMemoEntry,
+    ) -> Option<(Position<'i>, T)> {
+        let (end, value) = entry.value.as_ref()?;
+        let pos = Position::new(input.input, *end).unwrap_or_else(|| {
+            panic!(
+                "memoized position {} is not valid for the current input",
+                end
+            )
+        });
+        Some((pos, value.clone_as::<T>()))
+    }
+    fn active_at_position(active_positions: &BTreeMap<usize, usize>, pos: usize) -> bool {
+        active_positions.get(&pos).copied().unwrap_or_default() != 0
+    }
+    fn begin_position(active_positions: &mut BTreeMap<usize, usize>, pos: usize) {
+        *active_positions.entry(pos).or_default() += 1;
+    }
+    fn end_position(active_positions: &mut BTreeMap<usize, usize>, pos: usize) {
+        if let Some(count) = active_positions.get_mut(&pos) {
+            *count -= 1;
+            if *count == 0 {
+                active_positions.remove(&pos);
+            }
+        }
+    }
     #[inline]
     fn record(&mut self, rule: R, pos: Position<'i>, succeeded: bool) {
         if self.prepare(pos) && succeeded != self.positive {
@@ -193,6 +303,60 @@ impl<'i, R: RuleType> Tracker<'i, R> {
         }
         res
     }
+    /// Record a rule attempt while reusing and growing memoized results for marked recursive rules.
+    pub fn record_memoized_option_during<T: Clone>(
+        &mut self,
+        pos: Position<'i>,
+        mut f: impl FnMut(&mut Self) -> Option<(Position<'i>, T)>,
+        rule: R,
+        recursive: bool,
+    ) -> Option<(Position<'i>, T)> {
+        if !recursive {
+            return self.record_option_during_with(pos, f, rule);
+        }
+
+        let key = MemoKey::new::<T>(rule, pos.pos());
+        let active_at_pos = Self::active_at_position(&self.parse_active_positions, pos.pos());
+
+        if let Some(entry) = self.parse_memo.get(&key) {
+            if entry.active || !active_at_pos {
+                return Self::clone_parse_memo(pos, entry);
+            }
+        }
+
+        let mut best = self
+            .parse_memo
+            .get(&key)
+            .and_then(|entry| Self::clone_parse_memo(pos, entry));
+        self.parse_memo.entry(key).or_insert(ParseMemoEntry {
+            active: false,
+            value: None,
+        });
+        self.parse_memo.get_mut(&key).unwrap().active = true;
+        Self::begin_position(&mut self.parse_active_positions, pos.pos());
+
+        loop {
+            let next = self.record_option_during_with(pos, |tracker| f(tracker), rule);
+            let grew = match (&best, &next) {
+                (_, None) => false,
+                (None, Some(_)) => true,
+                (Some((best_pos, _)), Some((next_pos, _))) => best_pos.pos() < next_pos.pos(),
+            };
+            if !grew {
+                break;
+            }
+
+            best = next;
+            self.parse_memo.get_mut(&key).unwrap().value = best
+                .as_ref()
+                .map(|(end, value)| (end.pos(), ErasedValue::new(value.clone())));
+        }
+
+        Self::end_position(&mut self.parse_active_positions, pos.pos());
+        self.parse_memo.get_mut(&key).unwrap().active = false;
+
+        best
+    }
     /// Record if the result doesn't match the state during calling `f`.
     #[inline]
     pub fn record_option_during<T>(
@@ -212,6 +376,55 @@ impl<'i, R: RuleType> Tracker<'i, R> {
         rule: R,
     ) -> Option<Position<'i>> {
         self.record_option_during_with(pos, f, rule)
+    }
+    /// Record a check attempt while reusing and growing memoized results for marked recursive rules.
+    pub fn record_memoized_empty_during<T>(
+        &mut self,
+        pos: Position<'i>,
+        mut f: impl FnMut(&mut Self) -> Option<Position<'i>>,
+        rule: R,
+        recursive: bool,
+    ) -> Option<Position<'i>> {
+        if !recursive {
+            return self.record_empty_during::<T>(pos, f, rule);
+        }
+
+        let key = MemoKey::new::<T>(rule, pos.pos());
+        let active_at_pos = Self::active_at_position(&self.check_active_positions, pos.pos());
+
+        if let Some(entry) = self.check_memo.get(&key) {
+            if entry.active || !active_at_pos {
+                return entry.value.and_then(|end| Position::new(pos.input, end));
+            }
+        }
+
+        let mut best = self
+            .check_memo
+            .get(&key)
+            .and_then(|entry| entry.value.and_then(|end| Position::new(pos.input, end)));
+        self.check_memo.entry(key).or_default();
+        self.check_memo.get_mut(&key).unwrap().active = true;
+        Self::begin_position(&mut self.check_active_positions, pos.pos());
+
+        loop {
+            let next = self.record_empty_during::<T>(pos, |tracker| f(tracker), rule);
+            let grew = match (best, next) {
+                (_, None) => false,
+                (None, Some(_)) => true,
+                (Some(best_pos), Some(next_pos)) => best_pos.pos() < next_pos.pos(),
+            };
+            if !grew {
+                break;
+            }
+
+            best = next;
+            self.check_memo.get_mut(&key).unwrap().value = best.map(|end| end.pos());
+        }
+
+        Self::end_position(&mut self.check_active_positions, pos.pos());
+        self.check_memo.get_mut(&key).unwrap().active = false;
+
+        best
     }
     fn collect_to_message(self) -> String {
         let (pos, attempts) = self.finish();
